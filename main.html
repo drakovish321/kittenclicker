@@ -213,6 +213,11 @@
       +7 click value<br />
       <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span id="scratcherCost">700</span></button>
     </div>
+    <div class="shop-item" id="kittenFactoryItem">
+      <strong>Kitten Factory</strong><br />
+      +1 click value<br />
+      <button onclick="buyUpgrade('kittenFactory', 1)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
+    </div>
   </div>
 
   <div id="cpsUpgrades" class="shop-content" style="display:none;">
@@ -272,26 +277,32 @@
 </div>
 
 <script>
+  // Game state variables
   let score = 0;
   let clickValue = 1;
   let autoClickers = 0;
 
+  // Upgrade costs
   let upgradeCosts = {
     milkBowl: 25,
     catFood: 115,
     scratcher: 700,
+    kittenFactory: 5000,
     autoClicker: 2000,
     offline: 10000,
   };
 
+  // Purchased upgrades counts
   let upgrades = {
     milkBowl: 0,
     catFood: 0,
     scratcher: 0,
+    kittenFactory: 0,
     autoClicker: 0,
     offline: 0,
   };
 
+  // Achievements
   const achievementsData = [
     { id: 'score100', text: 'Score 100 points', achieved: false, condition: () => score >= 100 },
     { id: 'score1000', text: 'Score 1000 points', achieved: false, condition: () => score >= 1000 },
@@ -299,39 +310,49 @@
     { id: 'auto1', text: 'Buy your first Auto-Mouse', achieved: false, condition: () => upgrades.autoClicker >= 1 },
   ];
 
+  // Initialize UI elements
   const scoreEl = document.getElementById('score');
   const clickValueEl = document.getElementById('clickValue');
   const autoClickersEl = document.getElementById('autoClickers');
   const kittenImg = document.getElementById('kitten');
+  const themeSelect = document.getElementById('themeSelect');
 
+  // Handle click on kitten
   kittenImg.addEventListener('click', () => {
     addScore(clickValue);
     kittenImg.classList.add('pulse');
     setTimeout(() => kittenImg.classList.remove('pulse'), 300);
   });
 
+  // Add score function
   function addScore(amount) {
     score += amount;
     updateUI();
     checkAchievements();
   }
 
+  // Update UI function
   function updateUI() {
     scoreEl.textContent = `Score: ${Math.floor(score)}`;
     clickValueEl.textContent = clickValue.toFixed(1);
     autoClickersEl.textContent = upgrades.autoClicker * 5;
+    // Update costs display
     document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
     document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
     document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
+    document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
     document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
     document.getElementById('offlineCost').textContent = upgradeCosts.offline;
+    // Enable/disable buttons based on affordability
     document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
     document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
     document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
+    document.getElementById('kittenFactoryBtn').disabled = score < upgradeCosts.kittenFactory;
     document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
     document.getElementById('offlineBtn').disabled = score < upgradeCosts.offline || upgrades.offline > 0;
   }
 
+  // Buy click upgrades
   function buyUpgrade(name, increment) {
     if (score >= upgradeCosts[name]) {
       score -= upgradeCosts[name];
@@ -342,6 +363,7 @@
     }
   }
 
+  // Buy auto clicker
   function buyAutoClicker() {
     if (score >= upgradeCosts.autoClicker) {
       score -= upgradeCosts.autoClicker;
@@ -352,6 +374,7 @@
     }
   }
 
+  // Buy offline upgrade (only once)
   function buyOffline() {
     if (score >= upgradeCosts.offline && upgrades.offline === 0) {
       score -= upgradeCosts.offline;
@@ -360,18 +383,25 @@
     }
   }
 
+  // Autos add score every second
   setInterval(() => {
-    if (upgrades.autoClicker > 0) addScore(upgrades.autoClicker * 5);
+    if (upgrades.autoClicker > 0) {
+      addScore(upgrades.autoClicker * 5);
+    }
   }, 1000);
 
+  // Overlay controls
   function openOverlay(id) {
-    document.getElementById(id).style.display = 'block';
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
     if(id === 'achievementsOverlay') renderAchievements();
   }
   function closeOverlay(id) {
-    document.getElementById(id).style.display = 'none';
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
   }
 
+  // Shop tabs
   function showTab(tabName) {
     document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
     document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
@@ -379,8 +409,11 @@
     document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
   }
 
+  // Save/load functions
   function exportSave() {
-    const saveData = { score, clickValue, upgrades, upgradeCosts };
+    const saveData = {
+      score, clickValue, upgrades, upgradeCosts
+    };
     const saveString = btoa(JSON.stringify(saveData));
     const textarea = document.getElementById('saveCodeBox');
     textarea.value = saveString;
@@ -402,28 +435,36 @@
     }
   }
 
+  // Theme function (fixed: was previously missing/unfinished)
   function changeTheme(theme) {
-    if (theme === 'pink') {
-      document.body.style.background = '#fce4ec';
-      document.body.style.color = '#880e4f';
-    } else if (theme === 'blue') {
+    // Save theme preference
+    try { localStorage.setItem('kittenTheme', theme); } catch (e) {}
+
+    if (theme === 'blue') {
       document.body.style.background = '#e3f2fd';
       document.body.style.color = '#1565c0';
     } else if (theme === 'dark') {
       document.body.style.background = '#121212';
       document.body.style.color = '#bb86fc';
+    } else {
+      // default pink
+      document.body.style.background = '#fce4ec';
+      document.body.style.color = '#880e4f';
     }
   }
 
+  // Achievements
   function checkAchievements() {
     for (const ach of achievementsData) {
       if (!ach.achieved && ach.condition()) {
         ach.achieved = true;
-        alert('Achievement unlocked: ' + ach.text);
+        // non-blocking notification instead of alert to avoid interrupting gameplay
+        showNotification('Achievement unlocked: ' + ach.text);
         renderAchievements();
       }
     }
   }
+
   function renderAchievements() {
     const container = document.getElementById('achievementsList');
     container.innerHTML = '';
@@ -434,27 +475,58 @@
     }
   }
 
+  // Small in-page notification for achievements
+  function showNotification(text) {
+    const notif = document.createElement('div');
+    notif.textContent = text;
+    notif.style.position = 'fixed';
+    notif.style.top = '80px';
+    notif.style.left = '50%';
+    notif.style.transform = 'translateX(-50%)';
+    notif.style.background = '#c2185b';
+    notif.style.color = 'white';
+    notif.style.padding = '10px 20px';
+    notif.style.borderRadius = '8px';
+    notif.style.zIndex = 2000;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+  }
+
   // Auto-save every 5 seconds
   setInterval(() => {
-    const saveData = { score, clickValue, upgrades, upgradeCosts };
-    localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
+    try {
+      const saveData = { score, clickValue, upgrades, upgradeCosts };
+      localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
+    } catch (e) { /* ignore storage errors */ }
   }, 5000);
 
-  // Auto-load on startup
+  // Auto-load on startup (also restores theme if available)
   window.addEventListener('load', () => {
-    const saved = localStorage.getItem('kittenSave');
-    if (saved) {
-      try {
+    try {
+      const saved = localStorage.getItem('kittenSave');
+      if (saved) {
         const data = JSON.parse(atob(saved));
         score = data.score || 0;
         clickValue = data.clickValue || 1;
         upgrades = data.upgrades || upgrades;
         upgradeCosts = data.upgradeCosts || upgradeCosts;
-        updateUI();
-      } catch (e) { console.error('Save load error', e); }
-    }
+      }
+    } catch (e) { console.error('Save load error', e); }
+
+    // restore theme
+    try {
+      const savedTheme = localStorage.getItem('kittenTheme');
+      if (savedTheme) {
+        changeTheme(savedTheme);
+        if (themeSelect) themeSelect.value = savedTheme;
+      }
+    } catch (e) {}
+
+    updateUI();
+    renderAchievements();
   });
 
+  // Initialize UI on page load
   updateUI();
   renderAchievements();
 </script>
