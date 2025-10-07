@@ -98,6 +98,8 @@
     max-width: 600px;
     margin: 0 auto;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    max-height: 70vh;
+    overflow-y: auto;
   }
   .shop-item {
     margin: 15px auto;
@@ -132,30 +134,6 @@
     font-size: 20px;
     border-radius: 8px;
     cursor: pointer;
-  }
-  #progressOverlay textarea {
-    width: 90%;
-    height: 150px;
-    margin-top: 10px;
-    font-family: monospace;
-    font-size: 14px;
-    resize: none;
-  }
-  #progressOverlay input {
-    width: 90%;
-    padding: 8px;
-    font-size: 16px;
-    margin-top: 10px;
-  }
-  #progressOverlay button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background-color: #c2185b;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
   }
   #settingsOverlay label, #settingsOverlay select {
     font-size: 18px;
@@ -215,8 +193,8 @@
     </div>
     <div class="shop-item" id="kittenFactoryItem">
       <strong>Kitten Factory</strong><br />
-      +1 click value<br />
-      <button onclick="buyUpgrade('kittenFactory', 1)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
+      +15 click value<br />
+      <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
     </div>
   </div>
 
@@ -234,116 +212,45 @@
   </div>
 </div>
 
-<!-- Progress Overlay -->
-<div id="progressOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('progressOverlay')">X</button>
-  <h2>Save / Load Progress</h2>
-  <button onclick="exportSave()">Get Save Code</button><br />
-  <textarea id="saveCodeBox" readonly placeholder="Your save code will appear here after clicking 'Get Save Code'"></textarea><br />
-  <input type="text" id="loadSaveCode" placeholder="Paste your save code here" />
-  <button onclick="loadSave()">Load Save Code</button>
-</div>
-
-<!-- Settings Overlay -->
-<div id="settingsOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('settingsOverlay')">X</button>
-  <h2>Settings</h2>
-  <label for="themeSelect">Choose Theme:</label><br />
-  <select id="themeSelect" onchange="changeTheme(this.value)">
-    <option value="pink" selected>Pink</option>
-    <option value="blue">Blue</option>
-    <option value="dark">Dark</option>
-  </select>
-</div>
-
-<!-- Achievements Overlay -->
-<div id="achievementsOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('achievementsOverlay')">X</button>
-  <h2>Achievements</h2>
-  <div id="achievementsList"></div>
-</div>
-
-<!-- Breeds Overlay -->
-<div id="breedsOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('breedsOverlay')">X</button>
-  <h2>Cat Breeds</h2>
-  <ul>
-    <li><b>Siamese</b>: Elegant and vocal</li>
-    <li><b>Maine Coon</b>: Large and fluffy</li>
-    <li><b>Bengal</b>: Wild-looking spots</li>
-    <li><b>Persian</b>: Long-haired and calm</li>
-    <li><b>Scottish Fold</b>: Folded ears</li>
-  </ul>
-</div>
-
 <script>
   // Game state variables
   let score = 0;
   let clickValue = 1;
-  let autoClickers = 0;
+  let upgrades = { milkBowl: 0, catFood: 0, scratcher: 0, kittenFactory: 0, autoClicker: 0, offline: 0 };
+  let upgradeCosts = { milkBowl: 25, catFood: 115, scratcher: 700, kittenFactory: 5000, autoClicker: 2000, offline: 10000 };
 
-  // Upgrade costs
-  let upgradeCosts = {
-    milkBowl: 25,
-    catFood: 115,
-    scratcher: 700,
-    kittenFactory: 5000,
-    autoClicker: 2000,
-    offline: 10000,
-  };
-
-  // Purchased upgrades counts
-  let upgrades = {
-    milkBowl: 0,
-    catFood: 0,
-    scratcher: 0,
-    kittenFactory: 0,
-    autoClicker: 0,
-    offline: 0,
-  };
-
-  // Achievements
-  const achievementsData = [
-    { id: 'score100', text: 'Score 100 points', achieved: false, condition: () => score >= 100 },
-    { id: 'score1000', text: 'Score 1000 points', achieved: false, condition: () => score >= 1000 },
-    { id: 'click10', text: 'Get 10 click value', achieved: false, condition: () => clickValue >= 10 },
-    { id: 'auto1', text: 'Buy your first Auto-Mouse', achieved: false, condition: () => upgrades.autoClicker >= 1 },
-  ];
-
-  // Initialize UI elements
   const scoreEl = document.getElementById('score');
   const clickValueEl = document.getElementById('clickValue');
   const autoClickersEl = document.getElementById('autoClickers');
   const kittenImg = document.getElementById('kitten');
   const themeSelect = document.getElementById('themeSelect');
 
-  // Handle click on kitten
+  // Click kitten to add score
   kittenImg.addEventListener('click', () => {
     addScore(clickValue);
     kittenImg.classList.add('pulse');
     setTimeout(() => kittenImg.classList.remove('pulse'), 300);
   });
 
-  // Add score function
   function addScore(amount) {
     score += amount;
     updateUI();
-    checkAchievements();
   }
 
-  // Update UI function
   function updateUI() {
     scoreEl.textContent = `Score: ${Math.floor(score)}`;
     clickValueEl.textContent = clickValue.toFixed(1);
     autoClickersEl.textContent = upgrades.autoClicker * 5;
-    // Update costs display
+
+    // Update costs
     document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
     document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
     document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
     document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
     document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
     document.getElementById('offlineCost').textContent = upgradeCosts.offline;
-    // Enable/disable buttons based on affordability
+
+    // Enable/disable buttons
     document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
     document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
     document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
@@ -352,7 +259,6 @@
     document.getElementById('offlineBtn').disabled = score < upgradeCosts.offline || upgrades.offline > 0;
   }
 
-  // Buy click upgrades
   function buyUpgrade(name, increment) {
     if (score >= upgradeCosts[name]) {
       score -= upgradeCosts[name];
@@ -363,18 +269,15 @@
     }
   }
 
-  // Buy auto clicker
   function buyAutoClicker() {
     if (score >= upgradeCosts.autoClicker) {
       score -= upgradeCosts.autoClicker;
       upgrades.autoClicker++;
-      autoClickers = upgrades.autoClicker * 5;
       upgradeCosts.autoClicker = Math.ceil(upgradeCosts.autoClicker * 1.2);
       updateUI();
     }
   }
 
-  // Buy offline upgrade (only once)
   function buyOffline() {
     if (score >= upgradeCosts.offline && upgrades.offline === 0) {
       score -= upgradeCosts.offline;
@@ -383,25 +286,14 @@
     }
   }
 
-  // Autos add score every second
-  setInterval(() => {
-    if (upgrades.autoClicker > 0) {
-      addScore(upgrades.autoClicker * 5);
-    }
-  }, 1000);
-
-  // Overlay controls
+  // Overlay functions
   function openOverlay(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'block';
-    if(id === 'achievementsOverlay') renderAchievements();
+    document.getElementById(id).style.display = 'block';
   }
   function closeOverlay(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
+    document.getElementById(id).style.display = 'none';
   }
 
-  // Shop tabs
   function showTab(tabName) {
     document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
     document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
@@ -409,37 +301,8 @@
     document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
   }
 
-  // Save/load functions
-  function exportSave() {
-    const saveData = {
-      score, clickValue, upgrades, upgradeCosts
-    };
-    const saveString = btoa(JSON.stringify(saveData));
-    const textarea = document.getElementById('saveCodeBox');
-    textarea.value = saveString;
-    textarea.select();
-  }
-
-  function loadSave() {
-    const input = document.getElementById('loadSaveCode').value;
-    try {
-      const data = JSON.parse(atob(input));
-      score = data.score || 0;
-      clickValue = data.clickValue || 1;
-      upgrades = data.upgrades || upgrades;
-      upgradeCosts = data.upgradeCosts || upgradeCosts;
-      updateUI();
-      alert('Save loaded!');
-    } catch (e) {
-      alert('Invalid save code.');
-    }
-  }
-
-  // Theme function (fixed: was previously missing/unfinished)
   function changeTheme(theme) {
-    // Save theme preference
-    try { localStorage.setItem('kittenTheme', theme); } catch (e) {}
-
+    try { localStorage.setItem('kittenTheme', theme); } catch(e) {}
     if (theme === 'blue') {
       document.body.style.background = '#e3f2fd';
       document.body.style.color = '#1565c0';
@@ -447,88 +310,25 @@
       document.body.style.background = '#121212';
       document.body.style.color = '#bb86fc';
     } else {
-      // default pink
       document.body.style.background = '#fce4ec';
       document.body.style.color = '#880e4f';
     }
   }
 
-  // Achievements
-  function checkAchievements() {
-    for (const ach of achievementsData) {
-      if (!ach.achieved && ach.condition()) {
-        ach.achieved = true;
-        // non-blocking notification instead of alert to avoid interrupting gameplay
-        showNotification('Achievement unlocked: ' + ach.text);
-        renderAchievements();
-      }
-    }
-  }
-
-  function renderAchievements() {
-    const container = document.getElementById('achievementsList');
-    container.innerHTML = '';
-    for (const ach of achievementsData) {
-      const div = document.createElement('div');
-      div.textContent = (ach.achieved ? '✅ ' : '❌ ') + ach.text;
-      container.appendChild(div);
-    }
-  }
-
-  // Small in-page notification for achievements
-  function showNotification(text) {
-    const notif = document.createElement('div');
-    notif.textContent = text;
-    notif.style.position = 'fixed';
-    notif.style.top = '80px';
-    notif.style.left = '50%';
-    notif.style.transform = 'translateX(-50%)';
-    notif.style.background = '#c2185b';
-    notif.style.color = 'white';
-    notif.style.padding = '10px 20px';
-    notif.style.borderRadius = '8px';
-    notif.style.zIndex = 2000;
-    document.body.appendChild(notif);
-    setTimeout(() => notif.remove(), 3000);
-  }
-
-  // Auto-save every 5 seconds
+  // Auto CPS
   setInterval(() => {
-    try {
-      const saveData = { score, clickValue, upgrades, upgradeCosts };
-      localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
-    } catch (e) { /* ignore storage errors */ }
-  }, 5000);
+    if (upgrades.autoClicker > 0) addScore(upgrades.autoClicker * 5);
+  }, 1000);
 
-  // Auto-load on startup (also restores theme if available)
+  // Initialize UI on load
   window.addEventListener('load', () => {
-    try {
-      const saved = localStorage.getItem('kittenSave');
-      if (saved) {
-        const data = JSON.parse(atob(saved));
-        score = data.score || 0;
-        clickValue = data.clickValue || 1;
-        upgrades = data.upgrades || upgrades;
-        upgradeCosts = data.upgradeCosts || upgradeCosts;
-      }
-    } catch (e) { console.error('Save load error', e); }
-
-    // restore theme
-    try {
-      const savedTheme = localStorage.getItem('kittenTheme');
-      if (savedTheme) {
-        changeTheme(savedTheme);
-        if (themeSelect) themeSelect.value = savedTheme;
-      }
-    } catch (e) {}
-
+    const savedTheme = localStorage.getItem('kittenTheme');
+    if (savedTheme) {
+      changeTheme(savedTheme);
+      if (themeSelect) themeSelect.value = savedTheme;
+    }
     updateUI();
-    renderAchievements();
   });
-
-  // Initialize UI on page load
-  updateUI();
-  renderAchievements();
 </script>
 
 </body>
