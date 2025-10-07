@@ -84,7 +84,6 @@
     background: #fce4ec;
     border-radius: 8px;
   }
-  /* For Firefox */
   .overlay {
     scrollbar-color: #f8bbd0 #fce4ec;
     scrollbar-width: thin;
@@ -343,7 +342,32 @@
 <div id="achievementsOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('achievementsOverlay')">X</button>
   <h2>Achievements</h2>
-  <div id="achievementsList"></div>
+  <div id="achievementsList">
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>CLICK: Click the kitten!</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>You have to start somewhere: Buy your first Milk Bowl</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Score 100 points</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Score 1000 points</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Get 10 click value</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Buy your first Auto-Mouse</span>
+    </div>
+  </div>
 </div>
 
 <!-- Breeds Overlay -->
@@ -382,6 +406,8 @@
   };
   // Achievements
   const achievementsData = [
+    { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
+    { id: 'milkBowl1', text: 'You have to start somewhere: Buy your first Milk Bowl', achieved: false, condition: () => upgrades.milkBowl >= 1 },
     { id: 'score100', text: 'Score 100 points', achieved: false, condition: () => score >= 100 },
     { id: 'score1000', text: 'Score 1000 points', achieved: false, condition: () => score >= 1000 },
     { id: 'click10', text: 'Get 10 click value', achieved: false, condition: () => clickValue >= 10 },
