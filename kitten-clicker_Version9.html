@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kitten Clicker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fce4ec;
+    margin: 0;
+    padding-top: 80px;
+    text-align: center;
+    transition: background 0.3s ease;
+    color: #880e4f;
+  }
+  h1 {
+    color: #ad1457;
+    margin-bottom: 0;
+  }
+  #score {
+    font-size: 24px;
+    margin: 5px 0 10px 0;
+  }
+  #stats {
+    margin-bottom: 30px;
+  }
+  #kitten {
+    width: 300px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: transform 0.2s ease;
+  }
+  .pulse {
+    animation: pulseAnim 0.3s ease forwards;
+  }
+  @keyframes pulseAnim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  .top-buttons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1001;
+  }
+  .top-buttons button {
+    padding: 10px 20px;
+    background-color: #880e4f;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .top-buttons button:hover {
+    background-color: #ad1457;
+  }
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.95);
+    z-index: 1000;
+    padding: 60px 20px 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    scrollbar-color: #f8bbd0 #fce4ec;
+    scrollbar-width: thin;
+  }
+  .overlay::-webkit-scrollbar {
+    width: 12px;
+  }
+  .overlay::-webkit-scrollbar-thumb {
+    background: #f8bbd0;
+    border-radius: 8px;
+  }
+  .overlay::-webkit-scrollbar-track {
+    background: #fce4ec;
+    border-radius: 8px;
+  }
+  .overlay h2 {
+    margin-bottom: 30px;
+    color: #880e4f;
+  }
+  .shop-tabs {
+    margin-bottom: 20px;
+  }
+  .shop-tab {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: #f8bbd0;
+    color: #880e4f;
+    font-weight: bold;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+  }
+  .shop-tab.active {
+    background-color: #c2185b;
+    color: white;
+  }
+  .shop-content {
+    background: #f8bbd0;
+    border-radius: 0 8px 8px 8px;
+    padding: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  .shop-item {
+    margin: 15px auto;
+    padding: 15px;
+    border-radius: 10px;
+    background: #fce4ec;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .shop-item strong {
+    font-size: 18px;
+  }
+  .shop-item button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #c2185b;
+    color: white;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .shop-item button:disabled {
+    background-color: #e1bee7;
+    cursor: not-allowed;
+  }
+  .closeOverlay {
+    position: absolute;
+    top: 20px; left: 20px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;
+  }
+  #progressOverlay textarea {
+    width: 90%;
+    height: 150px;
+    margin-top: 10px;
+    font-family: monospace;
+    font-size: 14px;
+    resize: none;
+  }
+  #progressOverlay input {
+    width: 90%;
+    padding: 8px;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  #progressOverlay button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background-color: #c2185b;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  #settingsOverlay label,
+  #settingsOverlay select {
+    font-size: 18px;
+    color: #880e4f;
+  }
+  #settingsOverlay select {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #880e4f;
+    background: white;
+    cursor: pointer;
+  }
+  #achievementsList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .achievement-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 260px;
+    max-width: 320px;
+    padding: 18px 20px;
+    margin: 8px 0;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(140,0,70,0.12);
+    background: #ffe0f7;
+    font-size: 18px;
+    font-weight: 500;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
+    border: 2px solid #f8bbd0;
+    opacity: 0.92;
+    position: relative;
+  }
+  .achievement-card.achieved {
+    background: linear-gradient(90deg, #ffe282 0%, #ffeaa7 100%);
+    border-color: #ffd600;
+    color: #7c4d00;
+    opacity: 1;
+    box-shadow: 0 6px 16px rgba(255,215,64,0.13);
+  }
+  .achievement-card.locked {
+    background: #eeeeee;
+    border-color: #bdbdbd;
+    color: #757575;
+    opacity: 0.7;
+  }
+  .achievement-icon {
+    font-size: 2em;
+    margin-right: 5px;
+    filter: drop-shadow(0 1px 1px #fff5);
+    text-shadow: 0 2px 10px #fff8;
+    width: 40px;
+    text-align: center;
+  }
+  .achievement-card:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 24px 0 rgba(180,40,130,0.13);
+    opacity: 1;
+    z-index: 2;
+  }
+  @media (max-width: 600px) {
+    #achievementsList {
+      flex-direction: column;
+      align-items: center;
+    }
+    .achievement-card {
+      min-width: 0;
+      width: 98%;
+      max-width: 99vw;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Kitten Clicker</h1>
+<p id="score">Score: 0</p>
+<p id="stats">Click Value: <span id="clickValue">1</span> | CPS: <span id="autoClickers">0</span></p>
+
+<img id="kitten" src="https://www.zooplus.co.uk/magazine/wp-content/uploads/2021/01/striped-grey-kitten.jpg" alt="Cute Kitten" />
+
+<div class="top-buttons">
+  <button onclick="openOverlay('shopOverlay')">Shop</button>
+  <button onclick="openOverlay('progressOverlay')">Progress</button>
+  <button onclick="openOverlay('settingsOverlay')">Settings</button>
+  <button onclick="openOverlay('achievementsOverlay')">Achievements</button>
+  <button onclick="openOverlay('breedsOverlay')">Breeds</button>
+</div>
+
+<!-- Shop Overlay -->
+<div id="shopOverlay" class="overlay">
+  <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">X</button>
+  <h2>Kitten Shop</h2>
+  <div class="shop-tabs">
+    <div class="shop-tab active" id="tabClickUpgrades" onclick="showTab('clickUpgrades')">Click Upgrades</div>
+    <div class="shop-tab" id="tabCPSUpgrades" onclick="showTab('cpsUpgrades')">CPS Upgrades</div>
+  </div>
+  <div id="clickUpgrades" class="shop-content">
+    <div class="shop-item" id="milkBowlItem">
+      <strong>Milk Bowl</strong><br />
+      +0.5 click value<br />
+      <button onclick="buyUpgrade('milkBowl', 0.5)" id="milkBowlBtn">Buy for <span id="milkBowlCost">25</span></button>
+    </div>
+    <div class="shop-item" id="catFoodItem">
+      <strong>Cat Food</strong><br />
+      +2 click value<br />
+      <button onclick="buyUpgrade('catFood', 2)" id="catFoodBtn">Buy for <span id="catFoodCost">115</span></button>
+    </div>
+    <div class="shop-item" id="scratcherItem">
+      <strong>Scratcher</strong><br />
+      +7 click value<br />
+      <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span id="scratcherCost">700</span></button>
+    </div>
+    <div class="shop-item" id="kittenFactoryItem">
+      <strong>Kitten Factory</strong><br />
+      +15 click value<br />
+      <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
+    </div>
+  </div>
+  <div id="cpsUpgrades" class="shop-content" style="display:none;">
+    <div class="shop-item" id="autoClickerItem">
+      <strong>Auto-Mouse</strong><br />
+      +5 CPS<br />
+      <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span id="autoClickerCost">2000</span></button>
+    </div>
+    <div class="shop-item" id="autoKittenFarmItem">
+      <strong>Auto-Kitten Farm</strong><br />
+      +7 CPS<br />
+      <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span id="autoKittenFarmCost">15000</span></button>
+    </div>
+    <div class="shop-item" id="offlineItem">
+      <strong>Offline Clicker</strong><br />
+      Earn while offline (max 70%)<br />
+      <button onclick="buyOffline()" id="offlineBtn">Buy for <span id="offlineCost">10000</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Progress Overlay -->
+<div id="progressOverlay" class="overlay">
+  <button class="closeOverlay" onclick="closeOverlay('progressOverlay')">X</button>
+  <h2>Save / Load Progress</h2>
+  <button onclick="exportSave()">Get Save Code</button><br />
+  <textarea id="saveCodeBox" readonly placeholder="Your save code will appear here after clicking 'Get Save Code'"></textarea><br />
+  <input type="text" id="loadSaveCode" placeholder="Paste your save code here" />
+  <button onclick="loadSave()">Load Save Code</button>
+</div>
+
+<!-- Settings Overlay -->
+<div id="settingsOverlay" class="overlay">
+  <button class="closeOverlay" onclick="closeOverlay('settingsOverlay')">X</button>
+  <h2>Settings</h2>
+  <label for="themeSelect">Choose Theme:</label><br />
+  <select id="themeSelect" onchange="changeTheme(this.value)">
+    <option value="pink" selected>Pink</option>
+    <option value="blue">Blue</option>
+    <option value="dark">Dark</option>
+  </select>
+</div>
+
+<!-- Achievements Overlay -->
+<div id="achievementsOverlay" class="overlay">
+  <button class="closeOverlay" onclick="closeOverlay('achievementsOverlay')">X</button>
+  <h2>Achievements</h2>
+  <div id="achievementsList">
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>CLICK: Click the kitten!</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>You have to start somewhere: Buy your first Milk Bowl</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Score 100 points</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Score 1000 points</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Get 10 click value</span>
+    </div>
+    <div class="achievement-card locked">
+      <span class="achievement-icon">🔒</span>
+      <span>Buy your first Auto-Mouse</span>
+    </div>
+  </div>
+</div>
+
+<!-- Breeds Overlay -->
+<div id="breedsOverlay" class="overlay">
+  <button class="closeOverlay" onclick="closeOverlay('breedsOverlay')">X</button>
+  <h2>Cat Breeds</h2>
+  <ul>
+    <li><b>Siamese</b>: Elegant and vocal</li>
+    <li><b>Maine Coon</b>: Large and fluffy</li>
+    <li><b>Bengal</b>: Wild-looking spots</li>
+    <li><b>Persian</b>: Long-haired and calm</li>
+    <li><b>Scottish Fold</b>: Folded ears</li>
+  </ul>
+</div>
+
+<script>
+  // Game state variables
+  let score = 0;
+  let clickValue = 1;
+  let upgrades = {
+    milkBowl: 0,
+    catFood: 0,
+    scratcher: 0,
+    kittenFactory: 0,
+    autoClicker: 0,
+    autoKittenFarm: 0,
+    offline: 0,
+  };
+  // Upgrade costs
+  let upgradeCosts = {
+    milkBowl: 25,
+    catFood: 115,
+    scratcher: 700,
+    kittenFactory: 5000,
+    autoClicker: 2000,
+    autoKittenFarm: 15000,
+    offline: 10000,
+  };
+  // Achievements
+  const achievementsData = [
+    { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
+    { id: 'milkBowl1', text: 'You have to start somewhere: Buy your first Milk Bowl', achieved: false, condition: () => upgrades.milkBowl >= 1 },
+    { id: 'score100', text: 'Score 100 points', achieved: false, condition: () => score >= 100 },
+    { id: 'score1000', text: 'Score 1000 points', achieved: false, condition: () => score >= 1000 },
+    { id: 'click10', text: 'Get 10 click value', achieved: false, condition: () => clickValue >= 10 },
+    { id: 'auto1', text: 'Buy your first Auto-Mouse', achieved: false, condition: () => upgrades.autoClicker >= 1 },
+  ];
+  const scoreEl = document.getElementById('score');
+  const clickValueEl = document.getElementById('clickValue');
+  const autoClickersEl = document.getElementById('autoClickers');
+  const kittenImg = document.getElementById('kitten');
+  const themeSelect = document.getElementById('themeSelect');
+
+  // Click on kitten
+  kittenImg.addEventListener('click', () => {
+    addScore(clickValue);
+    kittenImg.classList.add('pulse');
+    setTimeout(() => kittenImg.classList.remove('pulse'), 300);
+  });
+
+  // Add score function
+  function addScore(amount) {
+    score += amount;
+    showFloatingScore(amount);
+    updateUI();
+    checkAchievements();
+  }
+
+  // Floating score animation
+  function showFloatingScore(amount) {
+    const floatEl = document.createElement('div');
+    floatEl.textContent = `+${Math.floor(amount)}`;
+    floatEl.style.position = 'absolute';
+    floatEl.style.left = `${window.innerWidth/2}px`;
+    floatEl.style.top = `${kittenImg.getBoundingClientRect().top}px`;
+    floatEl.style.transform = 'translateX(-50%)';
+    floatEl.style.color = '#c2185b';
+    floatEl.style.fontWeight = 'bold';
+    floatEl.style.fontSize = '20px';
+    floatEl.style.zIndex = 2000;
+    document.body.appendChild(floatEl);
+    let top = floatEl.offsetTop;
+    let opacity = 1;
+    const anim = setInterval(() => {
+      top -= 1.5;
+      opacity -= 0.02;
+      floatEl.style.top = top + 'px';
+      floatEl.style.opacity = opacity;
+      if (opacity <= 0) {
+        clearInterval(anim);
+        floatEl.remove();
+      }
+    }, 16);
+  }
+
+  // Update UI
+  function updateUI() {
+    // Calculate total CPS from all CPS upgrades
+    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7;
+    scoreEl.textContent = `Score: ${Math.floor(score)}`;
+    clickValueEl.textContent = clickValue.toFixed(1);
+    autoClickersEl.textContent = totalCPS;
+    document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
+    document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
+    document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
+    document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
+    document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
+    document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
+    document.getElementById('offlineCost').textContent = upgradeCosts.offline;
+    document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
+    document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
+    document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
+    document.getElementById('kittenFactoryBtn').disabled = score < upgradeCosts.kittenFactory;
+    document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
+    document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
+    document.getElementById('offlineBtn').disabled = score < upgradeCosts.offline || upgrades.offline > 0;
+  }
+
+  // Buy upgrades
+  function buyUpgrade(name, increment) {
+    if (score >= upgradeCosts[name]) {
+      score -= upgradeCosts[name];
+      clickValue += increment;
+      upgrades[name]++;
+      upgradeCosts[name] = Math.ceil(upgradeCosts[name] * 1.2);
+      updateUI();
+    }
+  }
+
+  function buyAutoClicker() {
+    if (score >= upgradeCosts.autoClicker) {
+      score -= upgradeCosts.autoClicker;
+      upgrades.autoClicker++;
+      upgradeCosts.autoClicker = Math.ceil(upgradeCosts.autoClicker * 1.2);
+      updateUI();
+    }
+  }
+
+  function buyAutoKittenFarm() {
+    if (score >= upgradeCosts.autoKittenFarm) {
+      score -= upgradeCosts.autoKittenFarm;
+      upgrades.autoKittenFarm++;
+      upgradeCosts.autoKittenFarm = Math.ceil(upgradeCosts.autoKittenFarm * 1.2);
+      updateUI();
+    }
+  }
+
+  function buyOffline() {
+    if (score >= upgradeCosts.offline && upgrades.offline === 0) {
+      score -= upgradeCosts.offline;
+      upgrades.offline = 1;
+      updateUI();
+    }
+  }
+
+  // Auto-clicker interval
+  setInterval(() => {
+    // Give 5 CPS per Auto-Mouse and 7 CPS per Auto-Kitten Farm
+    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7;
+    if (totalCPS > 0) {
+      addScore(totalCPS);
+    }
+  }, 1000);
+
+  // Overlay functions
+  function openOverlay(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+    if(id === 'achievementsOverlay') renderAchievements();
+  }
+  function closeOverlay(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  }
+
+  // Shop tabs
+  function showTab(tabName) {
+    document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
+    document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
+    document.getElementById('tabClickUpgrades').classList.toggle('active', tabName === 'clickUpgrades');
+    document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
+  }
+
+  // Save/load functions
+  function exportSave() {
+    const saveData = { score, clickValue, upgrades, upgradeCosts };
+    const saveString = btoa(JSON.stringify(saveData));
+    const textarea = document.getElementById('saveCodeBox');
+    textarea.value = saveString;
+    textarea.select();
+  }
+
+  function loadSave() {
+    const input = document.getElementById('loadSaveCode').value;
+    try {
+      const data = JSON.parse(atob(input));
+      score = data.score || 0;
+      clickValue = data.clickValue || 1;
+      upgrades = data.upgrades || upgrades;
+      upgradeCosts = data.upgradeCosts || upgradeCosts;
+      updateUI();
+      alert('Save loaded!');
+    } catch (e) {
+      alert('Invalid save code.');
+    }
+  }
+
+  // Auto-select save textarea
+  document.getElementById('saveCodeBox').addEventListener('click', function() {
+    this.select();
+  });
+
+  // Theme function
+  function changeTheme(theme) {
+    try { localStorage.setItem('kittenTheme', theme); } catch (e) {}
+    if (theme === 'blue') {
+      document.body.style.background = '#e3f2fd';
+      document.body.style.color = '#1565c0';
+    } else if (theme === 'dark') {
+      document.body.style.background = '#121212';
+      document.body.style.color = '#bb86fc';
+    } else {
+      document.body.style.background = '#fce4ec';
+      document.body.style.color = '#880e4f';
+    }
+  }
+
+  // Achievements
+  function checkAchievements() {
+    for (const ach of achievementsData) {
+      if (!ach.achieved && ach.condition()) {
+        ach.achieved = true;
+        showNotification('Achievement unlocked: ' + ach.text);
+        renderAchievements();
+      }
+    }
+  }
+  function renderAchievements() {
+    const container = document.getElementById('achievementsList');
+    container.innerHTML = '';
+    for (const ach of achievementsData) {
+      const card = document.createElement('div');
+      card.className = 'achievement-card ' + (ach.achieved ? 'achieved' : 'locked');
+      card.innerHTML = `
+        <span class="achievement-icon">${ach.achieved ? '🏆' : '🔒'}</span>
+        <span>${ach.text}</span>
+      `;
+      container.appendChild(card);
+    }
+  }
+  function showNotification(text) {
+    const notif = document.createElement('div');
+    notif.textContent = text;
+    notif.style.position = 'fixed';
+    notif.style.top = '80px';
+    notif.style.left = '50%';
+    notif.style.transform = 'translateX(-50%)';
+    notif.style.background = '#c2185b';
+    notif.style.color = 'white';
+    notif.style.padding = '10px 20px';
+    notif.style.borderRadius = '8px';
+    notif.style.zIndex = 2000;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+  }
+
+  // Auto-save
+  setInterval(() => {
+    try {
+      const saveData = { score, clickValue, upgrades, upgradeCosts };
+      localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
+    } catch (e) {}
+  }, 5000);
+
+  // Auto-load on startup
+  window.addEventListener('load', () => {
+    try {
+      const saved = localStorage.getItem('kittenSave');
+      if (saved) {
+        const data = JSON.parse(atob(saved));
+        score = data.score || 0;
+        clickValue = data.clickValue || 1;
+        upgrades = data.upgrades || upgrades;
+        upgradeCosts = data.upgradeCosts || upgradeCosts;
+      }
+    } catch (e) {}
+    try {
+      const savedTheme = localStorage.getItem('kittenTheme');
+      if (savedTheme) {
+        changeTheme(savedTheme);
+        if (themeSelect) themeSelect.value = savedTheme;
+      }
+    } catch (e) {}
+    updateUI();
+    renderAchievements();
+  });
+
+  updateUI();
+  renderAchievements();
+</script>
+
+</body>
+</html>
