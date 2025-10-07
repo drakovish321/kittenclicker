@@ -60,7 +60,6 @@
   .top-buttons button:hover {
     background-color: #ad1457;
   }
-  /* Overlay scrollable styling */
   .overlay {
     display: none;
     position: fixed;
@@ -71,8 +70,9 @@
     padding: 60px 20px 20px;
     overflow-y: auto;
     box-sizing: border-box;
+    scrollbar-color: #f8bbd0 #fce4ec;
+    scrollbar-width: thin;
   }
-  /* Stylish scrollbars for overlays */
   .overlay::-webkit-scrollbar {
     width: 12px;
   }
@@ -83,10 +83,6 @@
   .overlay::-webkit-scrollbar-track {
     background: #fce4ec;
     border-radius: 8px;
-  }
-  .overlay {
-    scrollbar-color: #f8bbd0 #fce4ec;
-    scrollbar-width: thin;
   }
   .overlay h2 {
     margin-bottom: 30px;
@@ -189,7 +185,6 @@
     background: white;
     cursor: pointer;
   }
-  /* Achievements Section Decoration */
   #achievementsList {
     display: flex;
     flex-wrap: wrap;
@@ -308,6 +303,11 @@
       +5 CPS<br />
       <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span id="autoClickerCost">2000</span></button>
     </div>
+    <div class="shop-item" id="autoKittenFarmItem">
+      <strong>Auto-Kitten Farm</strong><br />
+      +7 CPS<br />
+      <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span id="autoKittenFarmCost">15000</span></button>
+    </div>
     <div class="shop-item" id="offlineItem">
       <strong>Offline Clicker</strong><br />
       Earn while offline (max 70%)<br />
@@ -393,6 +393,7 @@
     scratcher: 0,
     kittenFactory: 0,
     autoClicker: 0,
+    autoKittenFarm: 0,
     offline: 0,
   };
   // Upgrade costs
@@ -402,6 +403,7 @@
     scratcher: 700,
     kittenFactory: 5000,
     autoClicker: 2000,
+    autoKittenFarm: 15000,
     offline: 10000,
   };
   // Achievements
@@ -418,12 +420,14 @@
   const autoClickersEl = document.getElementById('autoClickers');
   const kittenImg = document.getElementById('kitten');
   const themeSelect = document.getElementById('themeSelect');
+
   // Click on kitten
   kittenImg.addEventListener('click', () => {
     addScore(clickValue);
     kittenImg.classList.add('pulse');
     setTimeout(() => kittenImg.classList.remove('pulse'), 300);
   });
+
   // Add score function
   function addScore(amount) {
     score += amount;
@@ -431,6 +435,7 @@
     updateUI();
     checkAchievements();
   }
+
   // Floating score animation
   function showFloatingScore(amount) {
     const floatEl = document.createElement('div');
@@ -457,24 +462,30 @@
       }
     }, 16);
   }
+
   // Update UI
   function updateUI() {
+    // Calculate total CPS from all CPS upgrades
+    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7;
     scoreEl.textContent = `Score: ${Math.floor(score)}`;
     clickValueEl.textContent = clickValue.toFixed(1);
-    autoClickersEl.textContent = upgrades.autoClicker * 5;
+    autoClickersEl.textContent = totalCPS;
     document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
     document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
     document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
     document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
     document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
+    document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
     document.getElementById('offlineCost').textContent = upgradeCosts.offline;
     document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
     document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
     document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
     document.getElementById('kittenFactoryBtn').disabled = score < upgradeCosts.kittenFactory;
     document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
+    document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
     document.getElementById('offlineBtn').disabled = score < upgradeCosts.offline || upgrades.offline > 0;
   }
+
   // Buy upgrades
   function buyUpgrade(name, increment) {
     if (score >= upgradeCosts[name]) {
@@ -485,6 +496,7 @@
       updateUI();
     }
   }
+
   function buyAutoClicker() {
     if (score >= upgradeCosts.autoClicker) {
       score -= upgradeCosts.autoClicker;
@@ -493,6 +505,16 @@
       updateUI();
     }
   }
+
+  function buyAutoKittenFarm() {
+    if (score >= upgradeCosts.autoKittenFarm) {
+      score -= upgradeCosts.autoKittenFarm;
+      upgrades.autoKittenFarm++;
+      upgradeCosts.autoKittenFarm = Math.ceil(upgradeCosts.autoKittenFarm * 1.2);
+      updateUI();
+    }
+  }
+
   function buyOffline() {
     if (score >= upgradeCosts.offline && upgrades.offline === 0) {
       score -= upgradeCosts.offline;
@@ -500,11 +522,17 @@
       updateUI();
     }
   }
+
+  // Auto-clicker interval
   setInterval(() => {
-    if (upgrades.autoClicker > 0) {
-      addScore(upgrades.autoClicker * 5);
+    // Give 5 CPS per Auto-Mouse and 7 CPS per Auto-Kitten Farm
+    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7;
+    if (totalCPS > 0) {
+      addScore(totalCPS);
     }
   }, 1000);
+
+  // Overlay functions
   function openOverlay(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'block';
@@ -514,12 +542,16 @@
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   }
+
+  // Shop tabs
   function showTab(tabName) {
     document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
     document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
     document.getElementById('tabClickUpgrades').classList.toggle('active', tabName === 'clickUpgrades');
     document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
   }
+
+  // Save/load functions
   function exportSave() {
     const saveData = { score, clickValue, upgrades, upgradeCosts };
     const saveString = btoa(JSON.stringify(saveData));
@@ -527,6 +559,7 @@
     textarea.value = saveString;
     textarea.select();
   }
+
   function loadSave() {
     const input = document.getElementById('loadSaveCode').value;
     try {
@@ -541,9 +574,13 @@
       alert('Invalid save code.');
     }
   }
+
+  // Auto-select save textarea
   document.getElementById('saveCodeBox').addEventListener('click', function() {
     this.select();
   });
+
+  // Theme function
   function changeTheme(theme) {
     try { localStorage.setItem('kittenTheme', theme); } catch (e) {}
     if (theme === 'blue') {
@@ -557,6 +594,8 @@
       document.body.style.color = '#880e4f';
     }
   }
+
+  // Achievements
   function checkAchievements() {
     for (const ach of achievementsData) {
       if (!ach.achieved && ach.condition()) {
@@ -594,12 +633,16 @@
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
   }
+
+  // Auto-save
   setInterval(() => {
     try {
       const saveData = { score, clickValue, upgrades, upgradeCosts };
       localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
     } catch (e) {}
   }, 5000);
+
+  // Auto-load on startup
   window.addEventListener('load', () => {
     try {
       const saved = localStorage.getItem('kittenSave');
@@ -621,6 +664,7 @@
     updateUI();
     renderAchievements();
   });
+
   updateUI();
   renderAchievements();
 </script>
