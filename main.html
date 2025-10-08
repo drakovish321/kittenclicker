@@ -1,270 +1,299 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Kitten Clicker</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #fce4ec;
-    margin: 0;
-    padding-top: 80px;
-    text-align: center;
-    transition: background 0.3s ease;
-    color: #880e4f;
-  }
-  h1 {
-    color: #ad1457;
-    margin-bottom: 0;
-  }
-  #score {
-    font-size: 24px;
-    margin: 5px 0 10px 0;
-  }
-  #stats {
-    margin-bottom: 30px;
-  }
-  #kitten {
-    width: 300px;
-    cursor: pointer;
-    border-radius: 20px;
-    transition: transform 0.2s ease;
-  }
-  .pulse {
-    animation: pulseAnim 0.3s ease forwards;
-  }
-  @keyframes pulseAnim {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
-  .top-buttons {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 1001;
-  }
-  .top-buttons button {
-    padding: 10px 20px;
-    background-color: #880e4f;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
-  .top-buttons button:hover {
-    background-color: #ad1457;
-  }
-  .overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(255,255,255,0.95);
-    z-index: 1000;
-    padding: 60px 20px 20px;
-    overflow-y: auto;
-    box-sizing: border-box;
-    scrollbar-color: #f8bbd0 #fce4ec;
-    scrollbar-width: thin;
-  }
-  .overlay::-webkit-scrollbar {
-    width: 12px;
-  }
-  .overlay::-webkit-scrollbar-thumb {
-    background: #f8bbd0;
-    border-radius: 8px;
-  }
-  .overlay::-webkit-scrollbar-track {
-    background: #fce4ec;
-    border-radius: 8px;
-  }
-  .overlay h2 {
-    margin-bottom: 30px;
-    color: #880e4f;
-  }
-  .shop-tabs {
-    margin-bottom: 20px;
-  }
-  .shop-tab {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 0 5px;
-    background-color: #f8bbd0;
-    color: #880e4f;
-    font-weight: bold;
-    border-radius: 8px 8px 0 0;
-    cursor: pointer;
-  }
-  .shop-tab.active {
-    background-color: #c2185b;
-    color: white;
-  }
-  .shop-content {
-    background: #f8bbd0;
-    border-radius: 0 8px 8px 8px;
-    padding: 15px;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  }
-  .shop-item {
-    margin: 15px auto;
-    padding: 15px;
-    border-radius: 10px;
-    background: #fce4ec;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .shop-item strong {
-    font-size: 18px;
-  }
-  .shop-item button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    background-color: #c2185b;
-    color: white;
-    cursor: pointer;
-    margin-top: 8px;
-  }
-  .shop-item button:disabled {
-    background-color: #e1bee7;
-    cursor: not-allowed;
-  }
-  .closeOverlay {
-    position: absolute;
-    top: 20px; left: 20px;
-    background: red;
-    color: white;
-    border: none;
-    padding: 5px 15px;
-    font-size: 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 1001;
-  }
-  #progressOverlay textarea {
-    width: 90%;
-    height: 150px;
-    margin-top: 10px;
-    font-family: monospace;
-    font-size: 14px;
-    resize: none;
-  }
-  #progressOverlay input {
-    width: 90%;
-    padding: 8px;
-    font-size: 16px;
-    margin-top: 10px;
-  }
-  #progressOverlay button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background-color: #c2185b;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  #settingsOverlay label,
-  #settingsOverlay select {
-    font-size: 18px;
-    color: #880e4f;
-  }
-  #settingsOverlay select {
-    margin-top: 10px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #880e4f;
-    background: white;
-    cursor: pointer;
-  }
-  #achievementsList {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 18px;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-  .achievement-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    width: 320px;
-    min-width: 320px;
-    max-width: 320px;
-    min-height: 72px;
-    max-height: 72px;
-    padding: 18px 20px;
-    margin: 8px 0;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(140,0,70,0.12);
-    background: #ffe0f7;
-    font-size: 18px;
-    font-weight: 500;
-    transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
-    border: 2px solid #f8bbd0;
-    opacity: 0.92;
-    position: relative;
-    box-sizing: border-box;
-  }
-  .achievement-card.achieved {
-    background: linear-gradient(90deg, #ffe282 0%, #ffeaa7 100%);
-    border-color: #ffd600;
-    color: #7c4d00;
-    opacity: 1;
-    box-shadow: 0 6px 16px rgba(255,215,64,0.13);
-  }
-  .achievement-card.locked {
-    background: #eeeeee;
-    border-color: #bdbdbd;
-    color: #757575;
-    opacity: 0.7;
-  }
-  .achievement-icon {
-    font-size: 2em;
-    margin-right: 5px;
-    filter: drop-shadow(0 1px 1px #fff5);
-    text-shadow: 0 2px 10px #fff8;
-    width: 40px;
-    text-align: center;
-  }
-  .achievement-card:hover {
-    transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 10px 24px 0 rgba(180,40,130,0.13);
-    opacity: 1;
-    z-index: 2;
-  }
-  @media (max-width: 600px) {
-    #achievementsList {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kitten Clicker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fce4ec;
+      margin: 0;
+      padding-top: 80px;
+      text-align: center;
+      transition: background 0.3s ease;
+      color: #880e4f;
+    }
+    h1 {
+      color: #ad1457;
+      margin-bottom: 0;
+    }
+    #score {
+      font-size: 24px;
+      margin: 5px 0 10px 0;
+    }
+    #stats {
+      margin-bottom: 30px;
+    }
+    #kitten {
+      width: 300px;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: transform 0.2s ease;
+    }
+    .pulse {
+      animation: pulseAnim 0.3s ease forwards;
+    }
+    @keyframes pulseAnim {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .top-buttons {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
       flex-direction: column;
-      align-items: center;
+      gap: 10px;
+      z-index: 1001;
+    }
+    .top-buttons button {
+      padding: 10px 20px;
+      background-color: #880e4f;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .top-buttons button:hover {
+      background-color: #ad1457;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255,255,255,0.95);
+      z-index: 1000;
+      padding: 60px 20px 20px;
+      overflow-y: auto;
+      box-sizing: border-box;
+      scrollbar-color: #f8bbd0 #fce4ec;
+      scrollbar-width: thin;
+    }
+    .overlay::-webkit-scrollbar {
+      width: 12px;
+    }
+    .overlay::-webkit-scrollbar-thumb {
+      background: #f8bbd0;
+      border-radius: 8px;
+    }
+    .overlay::-webkit-scrollbar-track {
+      background: #fce4ec;
+      border-radius: 8px;
+    }
+    .overlay h2 {
+      margin-bottom: 30px;
+      color: #880e4f;
+    }
+    .shop-tabs {
+      margin-bottom: 20px;
+    }
+    .shop-tab {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 0 5px;
+      background-color: #f8bbd0;
+      color: #880e4f;
+      font-weight: bold;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+    }
+    .shop-tab.active {
+      background-color: #c2185b;
+      color: white;
+    }
+    .shop-content {
+      background: #f8bbd0;
+      border-radius: 0 8px 8px 8px;
+      padding: 15px;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .shop-item {
+      margin: 15px auto;
+      padding: 15px;
+      border-radius: 10px;
+      background: #fce4ec;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .shop-item strong {
+      font-size: 18px;
+    }
+    .shop-item button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #c2185b;
+      color: white;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .shop-item button:disabled {
+      background-color: #e1bee7;
+      cursor: not-allowed;
+    }
+    .closeOverlay {
+      position: absolute;
+      top: 20px; left: 20px;
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 15px;
+      font-size: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    #progressOverlay textarea {
+      width: 90%;
+      height: 150px;
+      margin-top: 10px;
+      font-family: monospace;
+      font-size: 14px;
+      resize: none;
+    }
+    #progressOverlay input {
+      width: 90%;
+      padding: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #progressOverlay button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      background-color: #c2185b;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #settingsOverlay label,
+    #settingsOverlay select {
+      font-size: 18px;
+      color: #880e4f;
+    }
+    #settingsOverlay select {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #880e4f;
+      background: white;
+      cursor: pointer;
+    }
+    #achievementsList {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+      max-width: 700px;
+      margin: 0 auto;
     }
     .achievement-card {
-      min-width: 0;
-      width: 98%;
-      max-width: 99vw;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 320px;
+      min-width: 320px;
+      max-width: 320px;
+      min-height: 72px;
+      max-height: 72px;
+      padding: 18px 20px;
+      margin: 8px 0;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(140,0,70,0.12);
+      background: #ffe0f7;
+      font-size: 18px;
+      font-weight: 500;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
+      border: 2px solid #f8bbd0;
+      opacity: 0.92;
+      position: relative;
+      box-sizing: border-box;
     }
-  }
-</style>
+    .achievement-card.achieved {
+      background: linear-gradient(90deg, #ffe282 0%, #ffeaa7 100%);
+      border-color: #ffd600;
+      color: #7c4d00;
+      opacity: 1;
+      box-shadow: 0 6px 16px rgba(255,215,64,0.13);
+    }
+    .achievement-card.locked {
+      background: #eeeeee;
+      border-color: #bdbdbd;
+      color: #757575;
+      opacity: 0.7;
+    }
+    .achievement-icon {
+      font-size: 2em;
+      margin-right: 5px;
+      filter: drop-shadow(0 1px 1px #fff5);
+      text-shadow: 0 2px 10px #fff8;
+      width: 40px;
+      text-align: center;
+    }
+    .achievement-card:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 24px 0 rgba(180,40,130,0.13);
+      opacity: 1;
+      z-index: 2;
+    }
+    .breed-select-btn {
+      padding: 8px 22px;
+      border-radius: 12px;
+      border: none;
+      background: #ad1457;
+      color: #fff;
+      margin-top: 10px;
+      margin-left: 8px;
+      margin-right: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .breed-select-btn.selected,
+    .breed-select-btn:disabled {
+      background: #ffd600;
+      color: #7c4d00;
+      cursor: default;
+    }
+    .breed-select-btn:not(.selected):hover {
+      background: #c2185b;
+      color: #fff;
+    }
+    .breed-lock {
+      color: #aaa;
+      font-size: 20px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    @media (max-width: 600px) {
+      #achievementsList {
+        flex-direction: column;
+        align-items: center;
+      }
+      .achievement-card {
+        min-width: 0;
+        width: 98%;
+        max-width: 99vw;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<!-- Click Sound -->
 <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa6e3e.mp3" preload="auto"></audio>
 
 <h1>Kitten Clicker</h1>
 <p id="score">Score: 0</p>
 <p id="stats">Click Value: <span id="clickValue">1</span> | CPS: <span id="autoClickers">0</span></p>
 
-<img id="kitten" src="https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg" alt="Cute Kitten" />
+<img id="kitten" src="https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg" alt="American Shorthair Kitten" />
 
 <div class="top-buttons">
   <button onclick="openOverlay('shopOverlay')">Shop</button>
@@ -354,49 +383,17 @@
 <div id="achievementsOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('achievementsOverlay')">X</button>
   <h2>Achievements</h2>
-  <div id="achievementsList">
-    <div class="achievement-card locked">
-      <span class="achievement-icon">🔒</span>
-      <span>CLICK: Click the kitten!</span>
-    </div>
-    <div class="achievement-card locked">
-      <span class="achievement-icon">🔒</span>
-      <span>You have to start somewhere: Buy your first Milk Bowl</span>
-    </div>
-    <div class="achievement-card locked">
-      <span class="achievement-icon">🔒</span>
-      <span>Score 100 points</span>
-    </div>
-    <div class="achievement-card locked">
-      <span class="achievement-icon">🔒</span>
-      <span>Score 1000 points</span>
-    </div>
-    <div class="achievement-card locked">
-      <span class="achievement-icon">🔒</span>
-      <span>Get 10 click value</span>
-    </div>
-    <div class="achievement-card locked">
-      <span class="achievement-icon">🔒</span>
-      <span>Buy your first Auto-Mouse</span>
-    </div>
-  </div>
+  <div id="achievementsList"></div>
 </div>
 
 <!-- Breeds Overlay -->
 <div id="breedsOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('breedsOverlay')">X</button>
   <h2>Cat Breeds</h2>
-  <ul>
-    <li><b>Siamese</b>: Elegant and vocal</li>
-    <li><b>Maine Coon</b>: Large and fluffy</li>
-    <li><b>Bengal</b>: Wild-looking spots</li>
-    <li><b>Persian</b>: Long-haired and calm</li>
-    <li><b>Scottish Fold</b>: Folded ears</li>
-  </ul>
+  <div id="breedsList"></div>
 </div>
 
 <script>
-  // Game state variables
   let score = 0;
   let clickValue = 1;
   let upgrades = {
@@ -409,7 +406,6 @@
     autoClicker: 0,
     autoKittenFarm: 0,
   };
-  // Upgrade costs
   let upgradeCosts = {
     milkBowl: 25,
     catFood: 115,
@@ -420,23 +416,35 @@
     autoClicker: 2000,
     autoKittenFarm: 15000
   };
-  // Achievements
-  const achievementsData = [
+  let selectedBreed = "american_shorthair";
+  let breedsUnlocked = { american_shorthair: true, maine_coon: false };
+  let breedImages = {
+    american_shorthair: "https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg",
+    maine_coon: "https://cdn.pixabay.com/photo/2016/10/25/12/28/cat-1723612_1280.jpg"
+  };
+  let breedNames = {
+    american_shorthair: "American Shorthair",
+    maine_coon: "Maine Coon"
+  };
+  let extraCPSBreed = { maine_coon: 5, american_shorthair: 0 };
+
+  let achievementsData = [
     { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
     { id: 'milkBowl1', text: 'You have to start somewhere: Buy your first Milk Bowl', achieved: false, condition: () => upgrades.milkBowl >= 1 },
     { id: 'score100', text: 'Score 100 points', achieved: false, condition: () => score >= 100 },
     { id: 'score1000', text: 'Score 1000 points', achieved: false, condition: () => score >= 1000 },
     { id: 'click10', text: 'Get 10 click value', achieved: false, condition: () => clickValue >= 10 },
     { id: 'auto1', text: 'Buy your first Auto-Mouse', achieved: false, condition: () => upgrades.autoClicker >= 1 },
+    { id: 'truepower', text: 'True Power: Select a new kitten breed!', achieved: false, condition: () => selectedBreed !== "american_shorthair" },
+    { id: 'tenk', text: '10k: Get 10000 kittens!', achieved: false, condition: () => score >= 10000 }
   ];
+
   const scoreEl = document.getElementById('score');
   const clickValueEl = document.getElementById('clickValue');
   const autoClickersEl = document.getElementById('autoClickers');
   const kittenImg = document.getElementById('kitten');
-  const themeSelect = document.getElementById('themeSelect');
   const clickSound = document.getElementById('clickSound');
 
-  // Click on kitten
   kittenImg.addEventListener('click', () => {
     clickSound.currentTime = 0;
     clickSound.play();
@@ -445,7 +453,6 @@
     setTimeout(() => kittenImg.classList.remove('pulse'), 300);
   });
 
-  // Add score function
   function addScore(amount) {
     score += amount;
     showFloatingScore(amount);
@@ -453,7 +460,6 @@
     checkAchievements();
   }
 
-  // Floating score animation
   function showFloatingScore(amount) {
     const floatEl = document.createElement('div');
     floatEl.textContent = `+${Math.floor(amount)}`;
@@ -480,32 +486,32 @@
     }, 16);
   }
 
-  // Update UI
   function updateUI() {
-    // Calculate total CPS from all CPS upgrades
-    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7;
+    let breedCPS = extraCPSBreed[selectedBreed] || 0;
+    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + breedCPS;
     scoreEl.textContent = `Score: ${Math.floor(score)}`;
     clickValueEl.textContent = clickValue.toFixed(1);
     autoClickersEl.textContent = totalCPS;
-    document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
-    document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
-    document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
-    document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
-    document.getElementById('cityOfKittensCost').textContent = upgradeCosts.cityOfKittens;
-    document.getElementById('worldOfMeowsCost').textContent = upgradeCosts.worldOfMeows;
-    document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
-    document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
-    document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
-    document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
-    document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
-    document.getElementById('kittenFactoryBtn').disabled = score < upgradeCosts.kittenFactory;
-    document.getElementById('cityOfKittensBtn').disabled = score < upgradeCosts.cityOfKittens;
-    document.getElementById('worldOfMeowsBtn').disabled = score < upgradeCosts.worldOfMeows;
-    document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
-    document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
+    kittenImg.src = breedImages[selectedBreed];
+    // Shop prices
+    if(document.getElementById('milkBowlCost')) document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
+    if(document.getElementById('catFoodCost')) document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
+    if(document.getElementById('scratcherCost')) document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
+    if(document.getElementById('kittenFactoryCost')) document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
+    if(document.getElementById('cityOfKittensCost')) document.getElementById('cityOfKittensCost').textContent = upgradeCosts.cityOfKittens;
+    if(document.getElementById('worldOfMeowsCost')) document.getElementById('worldOfMeowsCost').textContent = upgradeCosts.worldOfMeows;
+    if(document.getElementById('autoClickerCost')) document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
+    if(document.getElementById('autoKittenFarmCost')) document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
+    if(document.getElementById('milkBowlBtn')) document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
+    if(document.getElementById('catFoodBtn')) document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
+    if(document.getElementById('scratcherBtn')) document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
+    if(document.getElementById('kittenFactoryBtn')) document.getElementById('kittenFactoryBtn').disabled = score < upgradeCosts.kittenFactory;
+    if(document.getElementById('cityOfKittensBtn')) document.getElementById('cityOfKittensBtn').disabled = score < upgradeCosts.cityOfKittens;
+    if(document.getElementById('worldOfMeowsBtn')) document.getElementById('worldOfMeowsBtn').disabled = score < upgradeCosts.worldOfMeows;
+    if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
+    if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
   }
 
-  // Buy upgrades
   function buyUpgrade(name, increment) {
     if (score >= upgradeCosts[name]) {
       score -= upgradeCosts[name];
@@ -515,7 +521,6 @@
       updateUI();
     }
   }
-
   function buyAutoClicker() {
     if (score >= upgradeCosts.autoClicker) {
       score -= upgradeCosts.autoClicker;
@@ -524,7 +529,6 @@
       updateUI();
     }
   }
-
   function buyAutoKittenFarm() {
     if (score >= upgradeCosts.autoKittenFarm) {
       score -= upgradeCosts.autoKittenFarm;
@@ -534,27 +538,24 @@
     }
   }
 
-  // Auto-clicker interval
   setInterval(() => {
-    // Give 5 CPS per Auto-Mouse and 7 CPS per Auto-Kitten Farm
-    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7;
+    let breedCPS = extraCPSBreed[selectedBreed] || 0;
+    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + breedCPS;
     if (totalCPS > 0) {
       addScore(totalCPS);
     }
   }, 1000);
 
-  // Overlay functions
   function openOverlay(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'block';
     if(id === 'achievementsOverlay') renderAchievements();
+    if(id === 'breedsOverlay') renderBreeds();
   }
   function closeOverlay(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   }
-
-  // Shop tabs
   function showTab(tabName) {
     document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
     document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
@@ -562,51 +563,6 @@
     document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
   }
 
-  // Save/load functions
-  function exportSave() {
-    const saveData = { score, clickValue, upgrades, upgradeCosts };
-    const saveString = btoa(JSON.stringify(saveData));
-    const textarea = document.getElementById('saveCodeBox');
-    textarea.value = saveString;
-    textarea.select();
-  }
-
-  function loadSave() {
-    const input = document.getElementById('loadSaveCode').value;
-    try {
-      const data = JSON.parse(atob(input));
-      score = data.score || 0;
-      clickValue = data.clickValue || 1;
-      upgrades = data.upgrades || upgrades;
-      upgradeCosts = data.upgradeCosts || upgradeCosts;
-      updateUI();
-      alert('Save loaded!');
-    } catch (e) {
-      alert('Invalid save code.');
-    }
-  }
-
-  // Auto-select save textarea
-  document.getElementById('saveCodeBox').addEventListener('click', function() {
-    this.select();
-  });
-
-  // Theme function
-  function changeTheme(theme) {
-    try { localStorage.setItem('kittenTheme', theme); } catch (e) {}
-    if (theme === 'blue') {
-      document.body.style.background = '#e3f2fd';
-      document.body.style.color = '#1565c0';
-    } else if (theme === 'dark') {
-      document.body.style.background = '#121212';
-      document.body.style.color = '#bb86fc';
-    } else {
-      document.body.style.background = '#fce4ec';
-      document.body.style.color = '#880e4f';
-    }
-  }
-
-  // Achievements
   function checkAchievements() {
     for (const ach of achievementsData) {
       if (!ach.achieved && ach.condition()) {
@@ -614,6 +570,12 @@
         showNotification('Achievement unlocked: ' + ach.text);
         renderAchievements();
       }
+    }
+    let achCount = achievementsData.reduce((acc, a) => acc + (a.achieved ? 1 : 0), 0);
+    if (!breedsUnlocked["maine_coon"] && achCount >= 3) {
+      breedsUnlocked["maine_coon"] = true;
+      showNotification("You unlocked the Maine Coon breed!");
+      renderBreeds();
     }
   }
   function renderAchievements() {
@@ -645,15 +607,106 @@
     setTimeout(() => notif.remove(), 3000);
   }
 
-  // Auto-save
+  function renderBreeds() {
+    const list = document.getElementById('breedsList');
+    list.innerHTML = '';
+    ["american_shorthair", "maine_coon"].forEach(breed => {
+      const div = document.createElement('div');
+      div.style.margin = "28px 0 25px 0";
+      div.style.padding = "12px";
+      div.style.background = "#fff6f6";
+      div.style.borderRadius = "12px";
+      div.style.boxShadow = "0 2px 12px #f8bbd0";
+      div.style.maxWidth = "340px";
+      div.style.marginLeft = "auto";
+      div.style.marginRight = "auto";
+      let label = `<b>${breedNames[breed]}</b>`;
+      if (breed === "maine_coon" && !breedsUnlocked.maine_coon) {
+        label += `<span class="breed-lock">🔒 (Unlock by earning 3 achievements)</span>`;
+      }
+      div.innerHTML = `
+        <div style="font-size:20px;margin-bottom:8px;">${label}</div>
+        <img src="${breedImages[breed]}" alt="${breedNames[breed]}" style="width:120px;border-radius: 14px;box-shadow:0 2px 8px #f8bbd0;">
+        <div style="margin-top:7px;">
+          <button class="breed-select-btn${selectedBreed===breed?" selected":""}"
+            onclick="selectBreed('${breed}')" ${!breedsUnlocked[breed] ? "disabled" : ""}>
+            ${selectedBreed===breed ? "Selected" : "Select"}
+          </button>
+        </div>
+        ${breed === "maine_coon" ? `<div style="font-size:15px;margin-top:4px;color:#ad1457;"><b>Bonus:</b> +5 CPS</div>` : ""}
+      `;
+      list.appendChild(div);
+    });
+  }
+  window.selectBreed = function(breed) {
+    if (!breedsUnlocked[breed]) return;
+    if (selectedBreed !== breed) {
+      selectedBreed = breed;
+      updateUI();
+      checkAchievements();
+      renderBreeds();
+    }
+  };
+
+  // Save/load progress
+  function exportSave() {
+    const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData };
+    const saveString = btoa(JSON.stringify(saveData));
+    const textarea = document.getElementById('saveCodeBox');
+    textarea.value = saveString;
+    textarea.select();
+  }
+  function loadSave() {
+    const input = document.getElementById('loadSaveCode').value;
+    try {
+      const data = JSON.parse(atob(input));
+      score = data.score || 0;
+      clickValue = data.clickValue || 1;
+      upgrades = data.upgrades || upgrades;
+      upgradeCosts = data.upgradeCosts || upgradeCosts;
+      selectedBreed = data.selectedBreed || "american_shorthair";
+      breedsUnlocked = data.breedsUnlocked || breedsUnlocked;
+      // Support older saves: merge achievement states by id
+      if (Array.isArray(data.achievementsData)) {
+        for (let ach of data.achievementsData) {
+          const found = achievementsData.find(a => a.id === ach.id);
+          if (found) found.achieved = ach.achieved;
+        }
+      }
+      updateUI();
+      renderAchievements();
+      renderBreeds();
+      alert('Save loaded!');
+    } catch (e) {
+      alert('Invalid save code.');
+    }
+  }
+  document.getElementById('saveCodeBox').addEventListener('click', function() {
+    this.select();
+  });
+
+  // Theme
+  function changeTheme(theme) {
+    try { localStorage.setItem('kittenTheme', theme); } catch (e) {}
+    if (theme === 'blue') {
+      document.body.style.background = '#e3f2fd';
+      document.body.style.color = '#1565c0';
+    } else if (theme === 'dark') {
+      document.body.style.background = '#121212';
+      document.body.style.color = '#bb86fc';
+    } else {
+      document.body.style.background = '#fce4ec';
+      document.body.style.color = '#880e4f';
+    }
+  }
+
   setInterval(() => {
     try {
-      const saveData = { score, clickValue, upgrades, upgradeCosts };
+      const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData };
       localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
     } catch (e) {}
   }, 5000);
 
-  // Auto-load on startup
   window.addEventListener('load', () => {
     try {
       const saved = localStorage.getItem('kittenSave');
@@ -663,21 +716,29 @@
         clickValue = data.clickValue || 1;
         upgrades = data.upgrades || upgrades;
         upgradeCosts = data.upgradeCosts || upgradeCosts;
+        selectedBreed = data.selectedBreed || "american_shorthair";
+        breedsUnlocked = data.breedsUnlocked || breedsUnlocked;
+        // Support older saves: merge achievement states by id
+        if (Array.isArray(data.achievementsData)) {
+          for (let ach of data.achievementsData) {
+            const found = achievementsData.find(a => a.id === ach.id);
+            if (found) found.achieved = ach.achieved;
+          }
+        }
       }
     } catch (e) {}
     try {
       const savedTheme = localStorage.getItem('kittenTheme');
       if (savedTheme) {
         changeTheme(savedTheme);
-        if (themeSelect) themeSelect.value = savedTheme;
+        if (document.getElementById('themeSelect')) document.getElementById('themeSelect').value = savedTheme;
       }
     } catch (e) {}
     updateUI();
     renderAchievements();
+    renderBreeds();
   });
 
-  updateUI();
-  renderAchievements();
 </script>
 
 </body>
