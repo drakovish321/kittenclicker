@@ -257,11 +257,14 @@
 </head>
 <body>
 
+<!-- Click Sound -->
+<audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa6e3e.mp3" preload="auto"></audio>
+
 <h1>Kitten Clicker</h1>
 <p id="score">Score: 0</p>
 <p id="stats">Click Value: <span id="clickValue">1</span> | CPS: <span id="autoClickers">0</span></p>
 
-<img id="kitten" src="https://www.zooplus.co.uk/magazine/wp-content/uploads/2021/01/striped-grey-kitten.jpg" alt="Cute Kitten" />
+<img id="kitten" src="https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg" alt="Cute Kitten" />
 
 <div class="top-buttons">
   <button onclick="openOverlay('shopOverlay')">Shop</button>
@@ -300,6 +303,16 @@
       +15 click value<br />
       <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
     </div>
+    <div class="shop-item" id="cityOfKittensItem">
+      <strong>City of Kittens</strong><br />
+      +30 click value<br />
+      <button onclick="buyUpgrade('cityOfKittens', 30)" id="cityOfKittensBtn">Buy for <span id="cityOfKittensCost">30000</span></button>
+    </div>
+    <div class="shop-item" id="worldOfMeowsItem">
+      <strong>A World of Meows</strong><br />
+      +80 click value<br />
+      <button onclick="buyUpgrade('worldOfMeows', 80)" id="worldOfMeowsBtn">Buy for <span id="worldOfMeowsCost">200000</span></button>
+    </div>
   </div>
   <div id="cpsUpgrades" class="shop-content" style="display:none;">
     <div class="shop-item" id="autoClickerItem">
@@ -311,11 +324,6 @@
       <strong>Auto-Kitten Farm</strong><br />
       +7 CPS<br />
       <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span id="autoKittenFarmCost">15000</span></button>
-    </div>
-    <div class="shop-item" id="offlineItem">
-      <strong>Offline Clicker</strong><br />
-      Earn while offline (max 70%)<br />
-      <button onclick="buyOffline()" id="offlineBtn">Buy for <span id="offlineCost">10000</span></button>
     </div>
   </div>
 </div>
@@ -396,9 +404,10 @@
     catFood: 0,
     scratcher: 0,
     kittenFactory: 0,
+    cityOfKittens: 0,
+    worldOfMeows: 0,
     autoClicker: 0,
     autoKittenFarm: 0,
-    offline: 0,
   };
   // Upgrade costs
   let upgradeCosts = {
@@ -406,9 +415,10 @@
     catFood: 115,
     scratcher: 700,
     kittenFactory: 5000,
+    cityOfKittens: 30000,
+    worldOfMeows: 200000,
     autoClicker: 2000,
-    autoKittenFarm: 15000,
-    offline: 10000,
+    autoKittenFarm: 15000
   };
   // Achievements
   const achievementsData = [
@@ -424,9 +434,12 @@
   const autoClickersEl = document.getElementById('autoClickers');
   const kittenImg = document.getElementById('kitten');
   const themeSelect = document.getElementById('themeSelect');
+  const clickSound = document.getElementById('clickSound');
 
   // Click on kitten
   kittenImg.addEventListener('click', () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
     addScore(clickValue);
     kittenImg.classList.add('pulse');
     setTimeout(() => kittenImg.classList.remove('pulse'), 300);
@@ -478,16 +491,18 @@
     document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
     document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
     document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
+    document.getElementById('cityOfKittensCost').textContent = upgradeCosts.cityOfKittens;
+    document.getElementById('worldOfMeowsCost').textContent = upgradeCosts.worldOfMeows;
     document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
     document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
-    document.getElementById('offlineCost').textContent = upgradeCosts.offline;
     document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
     document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
     document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
     document.getElementById('kittenFactoryBtn').disabled = score < upgradeCosts.kittenFactory;
+    document.getElementById('cityOfKittensBtn').disabled = score < upgradeCosts.cityOfKittens;
+    document.getElementById('worldOfMeowsBtn').disabled = score < upgradeCosts.worldOfMeows;
     document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
     document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
-    document.getElementById('offlineBtn').disabled = score < upgradeCosts.offline || upgrades.offline > 0;
   }
 
   // Buy upgrades
@@ -515,14 +530,6 @@
       score -= upgradeCosts.autoKittenFarm;
       upgrades.autoKittenFarm++;
       upgradeCosts.autoKittenFarm = Math.ceil(upgradeCosts.autoKittenFarm * 1.2);
-      updateUI();
-    }
-  }
-
-  function buyOffline() {
-    if (score >= upgradeCosts.offline && upgrades.offline === 0) {
-      score -= upgradeCosts.offline;
-      upgrades.offline = 1;
       updateUI();
     }
   }
