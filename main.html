@@ -138,145 +138,29 @@
       color: #aaa; font-size: 20px; margin-left: 6px; vertical-align: middle;
     }
     #mysteryKittenBtn {
-      display:none;
-      margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;
-      transition: opacity 0.2s;
+      display: none;
+      position: fixed;
+      z-index: 2500;
+      padding: 14px 34px;
+      font-size: 20px;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #ffd600;
+      color: #880e4f;
+      transition: opacity 0.2s, left 0.2s, top 0.2s;
     }
     #mysteryKittenBtn:disabled,
     #mysteryKittenBtn[disabled] {
       opacity: 0.5;
       cursor: not-allowed;
     }
-    /* Theme - Pink (default) */
-    body.theme-pink {
-      background: #fce4ec;
-      color: #880e4f;
-    }
-    body.theme-pink .shop-tab.active,
-    body.theme-pink .shop-item button,
-    body.theme-pink #progressOverlay button,
-    body.theme-pink #mysteryKittenBtn,
-    body.theme-pink .breed-select-btn.selected,
-    body.theme-pink .breed-select-btn:disabled {
-      background-color: #c2185b;
-      color: #fff;
-    }
-    body.theme-pink .shop-tab { background: #f8bbd0; color: #880e4f; }
-    body.theme-pink .shop-content { background: #f8bbd0; }
-    body.theme-pink .shop-item { background: #fce4ec; }
-    body.theme-pink .achievement-card { background: #ffe0f7; border-color: #f8bbd0; }
-    body.theme-pink .achievement-card.achieved { background: linear-gradient(90deg, #ffe282 0%, #ffeaa7 100%); border-color: #ffd600; color: #7c4d00; }
-    body.theme-pink .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-pink .breed-select-btn.selected,
-    body.theme-pink .breed-select-btn:disabled {
-      background: #ffd600; color: #7c4d00; cursor: default;
-    }
-    /* Theme - Blue */
-    body.theme-blue {
-      background: #e3f2fd;
-      color: #1565c0;
-    }
-    body.theme-blue .shop-tab.active,
-    body.theme-blue .shop-item button,
-    body.theme-blue #progressOverlay button,
-    body.theme-blue #mysteryKittenBtn,
-    body.theme-blue .breed-select-btn.selected,
-    body.theme-blue .breed-select-btn:disabled {
-      background-color: #1565c0;
-      color: #fff;
-    }
-    body.theme-blue .shop-tab { background: #b3d6fc; color: #1565c0; }
-    body.theme-blue .shop-content { background: #b3d6fc; }
-    body.theme-blue .shop-item { background: #e3f2fd; }
-    body.theme-blue .achievement-card { background: #e3e9fc; border-color: #b3d6fc; }
-    body.theme-blue .achievement-card.achieved { background: linear-gradient(90deg,#82b1ff 0%, #bbdefb 100%); border-color: #ffd600; color: #0d3057; }
-    body.theme-blue .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-blue .breed-select-btn.selected,
-    body.theme-blue .breed-select-btn:disabled {
-      background: #ffd600; color: #0d3057; cursor: default;
-    }
-    /* Theme - Dark */
-    body.theme-dark {
-      background: #121212;
-      color: #bb86fc;
-    }
-    body.theme-dark .shop-tab.active,
-    body.theme-dark .shop-item button,
-    body.theme-dark #progressOverlay button,
-    body.theme-dark #mysteryKittenBtn,
-    body.theme-dark .breed-select-btn.selected,
-    body.theme-dark .breed-select-btn:disabled {
-      background-color: #333;
-      color: #bb86fc;
-    }
-    body.theme-dark .shop-tab { background: #333; color: #bb86fc; }
-    body.theme-dark .shop-content { background: #242424; }
-    body.theme-dark .shop-item { background: #181818; }
-    body.theme-dark .achievement-card { background: #2d2336; border-color: #3e3152; }
-    body.theme-dark .achievement-card.achieved { background: linear-gradient(90deg,#2e2a41 0%, #655885 100%); border-color: #ffd600; color: #fffde7; }
-    body.theme-dark .achievement-card.locked { background: #222; border-color: #222; color: #757575; }
-    body.theme-dark .breed-select-btn.selected,
-    body.theme-dark .breed-select-btn:disabled {
-      background: #ffd600; color: #222; cursor: default;
-    }
-    /* Theme - Mint */
-    body.theme-mint {
-      background: #e0fdfa;
-      color: #00796b;
-    }
-    body.theme-mint .shop-tab.active,
-    body.theme-mint .shop-item button,
-    body.theme-mint #progressOverlay button,
-    body.theme-mint #mysteryKittenBtn,
-    body.theme-mint .breed-select-btn.selected,
-    body.theme-mint .breed-select-btn:disabled {
-      background-color: #00796b;
-      color: #e0fdfa;
-    }
-    body.theme-mint .shop-tab { background: #b2fef7; color: #00796b; }
-    body.theme-mint .shop-content { background: #b2fef7; }
-    body.theme-mint .shop-item { background: #e0fdfa; }
-    body.theme-mint .achievement-card { background: #b0fff4; border-color: #b2fef7; }
-    body.theme-mint .achievement-card.achieved { background: linear-gradient(90deg,#b2ffea 0%, #ccfff6 100%); border-color: #ffd600; color: #00796b; }
-    body.theme-mint .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-mint .breed-select-btn.selected,
-    body.theme-mint .breed-select-btn:disabled {
-      background: #ffd600; color: #00796b; cursor: default;
-    }
-    /* Theme - Orange */
-    body.theme-orange {
-      background: #fff3e0;
-      color: #e65100;
-    }
-    body.theme-orange .shop-tab.active,
-    body.theme-orange .shop-item button,
-    body.theme-orange #progressOverlay button,
-    body.theme-orange #mysteryKittenBtn,
-    body.theme-orange .breed-select-btn.selected,
-    body.theme-orange .breed-select-btn:disabled {
-      background-color: #fb8c00;
-      color: #fff3e0;
-    }
-    body.theme-orange .shop-tab { background: #ffe0b2; color: #e65100; }
-    body.theme-orange .shop-content { background: #ffe0b2; }
-    body.theme-orange .shop-item { background: #fff3e0; }
-    body.theme-orange .achievement-card { background: #ffe5b2; border-color: #ffe0b2; }
-    body.theme-orange .achievement-card.achieved { background: linear-gradient(90deg,#ffecb3 0%, #fff9c4 100%); border-color: #ffd600; color: #e65100; }
-    body.theme-orange .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-orange .breed-select-btn.selected,
-    body.theme-orange .breed-select-btn:disabled {
-      background: #ffd600; color: #e65100; cursor: default;
-    }
-    /* Theme - Default fallback */
-    body { background: #fce4ec; color: #880e4f; }
-    @media (max-width: 600px) {
-      #achievementsList {
-        flex-direction: column; align-items: center;
-      }
-      .achievement-card {
-        min-width: 0; width: 98%; max-width: 99vw;
-      }
-    }
+    body.theme-pink { background: #fce4ec; color: #880e4f; }
+    body.theme-blue { background: #e3f2fd; color: #1565c0; }
+    body.theme-dark { background: #121212; color: #bb86fc; }
+    body.theme-mint { background: #e0fdfa; color: #00796b; }
+    body.theme-orange { background: #fff3e0; color: #e65100; }
   </style>
 </head>
 <body class="theme-pink">
@@ -285,7 +169,7 @@
 <p id="score">Score: 0</p>
 <p id="stats">Click Value: <span id="clickValue">1</span> | CPS: <span id="autoClickers">0</span></p>
 <img id="kitten" src="https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg" alt="American Shorthair Kitten" />
-<button id="mysteryKittenBtn">🐾 Mystery Kitten</button>
+<button id="mysteryKittenBtn">Mystery Kitten</button>
 <div class="top-buttons">
   <button onclick="openOverlay('shopOverlay')">Shop</button>
   <button onclick="openOverlay('progressOverlay')">Progress</button>
@@ -293,8 +177,7 @@
   <button onclick="openOverlay('achievementsOverlay')">Achievements</button>
   <button onclick="openOverlay('breedsOverlay')">Breeds</button>
 </div>
-
-<!-- Shop Overlay -->
+<!-- ... overlays unchanged ... -->
 <div id="shopOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">X</button>
   <h2>Kitten Shop</h2>
@@ -334,8 +217,6 @@
     </div>
   </div>
 </div>
-
-<!-- Progress Overlay -->
 <div id="progressOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('progressOverlay')">X</button>
   <h2>Save / Load Progress</h2>
@@ -344,8 +225,6 @@
   <input type="text" id="loadSaveCode" placeholder="Paste your save code here" />
   <button onclick="loadSave()">Load Save Code</button>
 </div>
-
-<!-- Settings Overlay -->
 <div id="settingsOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('settingsOverlay')">X</button>
   <h2>Settings</h2>
@@ -378,21 +257,16 @@
     <button onclick="resetProgress()" style="background:#b71c1c;color:#fff;">Reset Progress</button>
   </div>
 </div>
-
-<!-- Achievements Overlay -->
 <div id="achievementsOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('achievementsOverlay')">X</button>
   <h2>Achievements</h2>
   <div id="achievementsList"></div>
 </div>
-
-<!-- Breeds Overlay -->
 <div id="breedsOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('breedsOverlay')">X</button>
   <h2>Cat Breeds</h2>
   <div id="breedsList"></div>
 </div>
-
 <script>
   let score = 0, clickValue = 1;
   let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
@@ -412,8 +286,6 @@
   // Extra CPS/click bonus for breeds
   let extraCPSBreed = { maine_coon: 5, american_shorthair: 0, siamese: 0 };
   let extraClickValueBreed = { american_shorthair: 0, maine_coon: 0, siamese: 20 };
-  // Mystery kitten appearance flag for siamese
-  let siameseMysterySpawned = false;
 
   let achievementsData = [
     { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
@@ -436,7 +308,6 @@
     disableAnimations: false
   };
 
-  // -- UI elements --
   const scoreEl = document.getElementById('score');
   const clickValueEl = document.getElementById('clickValue');
   const autoClickersEl = document.getElementById('autoClickers');
@@ -583,6 +454,8 @@
     if (!breedsUnlocked["siamese"] && achCount >= 6) {
       breedsUnlocked["siamese"] = true;
       showNotification("You unlocked the Siamese breed!");
+      // Spawn a mystery kitten when Siamese is unlocked
+      spawnMysteryKittenButton();
       renderBreeds();
     }
   }
@@ -649,14 +522,8 @@
   }
   window.selectBreed = function(breed) {
     if (!breedsUnlocked[breed]) return;
-    // Mystery Kitten spawn on switching to siamese
-    if (breed === "siamese" && selectedBreed !== "siamese") {
-      // Show mystery kitten if not already shown
-      siameseMysterySpawned = true;
-      // Only respawn if not visible
-      if (mysteryKittenBtn.style.display === 'none') {
-        mysteryKittenBtn.style.display = '';
-      }
+    if (breed === "siamese") {
+      spawnMysteryKittenButton();
     }
     selectedBreed = breed;
     updateUI();
@@ -702,7 +569,6 @@
     this.select();
   });
 
-  // --- SETTINGS LOGIC ---
   function updateSettingsUI() {
     document.getElementById('themeSelect').value = userSettings.theme;
     document.getElementById('floatScoreToggle').checked = userSettings.floatScore;
@@ -718,19 +584,15 @@
     document.body.className = '';
     document.body.classList.add('theme-' + theme);
   }
-  // Floating Score toggle
   document.getElementById('floatScoreToggle').addEventListener('change', function() {
     userSettings.floatScore = this.checked;
   });
-  // Notification volume
   document.getElementById('notifVolume').addEventListener('input', function() {
     userSettings.notifVolume = parseFloat(this.value);
   });
-  // Disable animations
   document.getElementById('disableAnimations').addEventListener('change', function() {
     userSettings.disableAnimations = this.checked;
   });
-  // Reset
   function resetProgress() {
     if(confirm('Are you sure you want to reset all progress?')) {
       score = 0; clickValue = 1;
@@ -746,71 +608,50 @@
     }
   }
 
-  // --- SAVE/LOAD ON PAGE LOAD ---
   window.addEventListener('load', () => {
-    try {
-      const saved = localStorage.getItem('kittenSave');
-      if (saved) {
-        const data = JSON.parse(atob(saved));
-        score = data.score || 0;
-        clickValue = data.clickValue || 1;
-        upgrades = data.upgrades || upgrades;
-        upgradeCosts = data.upgradeCosts || upgradeCosts;
-        selectedBreed = data.selectedBreed || "american_shorthair";
-        breedsUnlocked = data.breedsUnlocked || breedsUnlocked;
-        if (Array.isArray(data.achievementsData)) {
-          for (let ach of data.achievementsData) {
-            const found = achievementsData.find(a => a.id === ach.id);
-            if (found) found.achieved = ach.achieved;
-          }
-        }
-        if (data.userSettings) {
-          userSettings = data.userSettings;
-        }
-      }
-    } catch (e) {}
-    try {
-      const savedTheme = localStorage.getItem('kittenTheme');
-      if (savedTheme) {
-        userSettings.theme = savedTheme;
-      }
-    } catch (e) {}
-    applyTheme(userSettings.theme);
-    updateSettingsUI();
-    updateUI();
-    renderAchievements();
-    renderBreeds();
-  });
-  setInterval(() => {
-    try {
-      const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings };
-      localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
-    } catch (e) {}
-  }, 5000);
-
-  // --- MYSTERY KITTEN RANDOM SPAWN ---
-  let mysteryKittenTimeout = null;
-  function scheduleMysteryKitten() {
-    // If siamese is selected, always show the mystery kitten
-    if (selectedBreed === "siamese") {
-      mysteryKittenBtn.style.display = '';
-      return;
-    }
-    const randomDelay = Math.floor(Math.random() * 1800 * 1000); // 0-30min
-    // For debug: const randomDelay = (10 + Math.random()*20)*1000;
-    mysteryKittenTimeout = setTimeout(() => {
-      mysteryKittenBtn.style.display = '';
-    }, randomDelay);
-  }
-  // Hide the button & schedule first appearance on page load
-  window.addEventListener('load', () => {
-    mysteryKittenBtn.style.display = 'none';
+    document.getElementById('mysteryKittenBtn').style.display = 'none';
     if(mysteryKittenTimeout) clearTimeout(mysteryKittenTimeout);
     scheduleMysteryKitten();
   });
 
-  // MYSTERY KITTEN BUTTON LOGIC
-  mysteryKittenBtn.addEventListener('click', function() {
+  // --- MYSTERY KITTEN RANDOM SPAWN ---
+  let mysteryKittenTimeout = null;
+  let mysteryKittenHideTimeout = null;
+  function randomizeMysteryKittenButtonPosition() {
+    const btn = document.getElementById('mysteryKittenBtn');
+    // Wait until the button is rendered
+    setTimeout(() => {
+      const minX = window.innerWidth * 0.05;
+      const maxX = window.innerWidth * 0.85 - btn.offsetWidth;
+      const minY = window.innerHeight * 0.15;
+      const maxY = window.innerHeight * 0.80 - btn.offsetHeight;
+      const left = Math.floor(Math.random() * (maxX - minX) + minX);
+      const top = Math.floor(Math.random() * (maxY - minY) + minY);
+      btn.style.left = left + "px";
+      btn.style.top = top + "px";
+    }, 15);
+  }
+  function spawnMysteryKittenButton() {
+    const btn = document.getElementById('mysteryKittenBtn');
+    btn.style.display = '';
+    randomizeMysteryKittenButtonPosition();
+    if (mysteryKittenHideTimeout) clearTimeout(mysteryKittenHideTimeout);
+    mysteryKittenHideTimeout = setTimeout(() => {
+      btn.style.display = 'none';
+    }, 10000);
+  }
+  function scheduleMysteryKitten() {
+    if (selectedBreed === "siamese") {
+      spawnMysteryKittenButton();
+      return;
+    }
+    const randomDelay = Math.floor(Math.random() * 1800 * 1000);
+    mysteryKittenTimeout = setTimeout(() => {
+      spawnMysteryKittenButton();
+    }, randomDelay);
+  }
+
+  document.getElementById('mysteryKittenBtn').addEventListener('click', function() {
     if (score < 1) {
       showNotification('You need some kittens to risk!');
       return;
@@ -833,12 +674,11 @@
     }
     updateUI();
     checkAchievements();
-    // Hide the button and schedule the next spawn, unless siamese is picked
+    // Hide button and reschedule (except for siamese, which always shows)
+    this.style.display = 'none';
     if (selectedBreed === "siamese") {
-      // For siamese breed, immediately show mystery kitten again
-      setTimeout(() => { mysteryKittenBtn.style.display = ''; }, 1000);
+      setTimeout(spawnMysteryKittenButton, 1000);
     } else {
-      this.style.display = 'none';
       if (mysteryKittenTimeout) clearTimeout(mysteryKittenTimeout);
       scheduleMysteryKitten();
     }
