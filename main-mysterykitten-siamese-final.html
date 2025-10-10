@@ -54,12 +54,9 @@
       if (rand < 0.5) {
         result.textContent = '🎉 You gained +17% kittens!';
         result.style.color = '#4caf50';
-      } else if (rand < 0.67) {
+      } else {
         result.textContent = '😿 Mystery Kitten took -17% kittens!';
         result.style.color = '#d32f2f';
-      } else {
-        result.textContent = '😸 Nothing happened this time.';
-        result.style.color = '#f57c00';
       }
       img.style.pointerEvents = 'none'; // prevent multiple clicks
     });
