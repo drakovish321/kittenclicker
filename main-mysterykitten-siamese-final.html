@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mystery Kitten</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #fff3e0;
+      color: #e65100;
+      padding: 50px 20px;
+    }
+    h1 { font-size: 2em; margin-bottom: 20px; }
+    #mysteryKittenImg {
+      width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    #mysteryResult {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #backBtn {
+      margin-top: 30px;
+      padding: 10px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #ffd600;
+      color: #880e4f;
+    }
+    #mysteryKittenImg:hover { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+  <h1>Mystery Kitten!</h1>
+  <p>Click the kitten to see what happens!</p>
+  <img id="mysteryKittenImg" src="https://cdn.pixabay.com/photo/2017/09/08/22/30/siamese-2730465_1280.jpg" alt="Mystery Siamese Kitten">
+  <div id="mysteryResult"></div>
+  <button id="backBtn" onclick="goBack()">Back to Game</button>
+
+  <script>
+    const img = document.getElementById('mysteryKittenImg');
+    const result = document.getElementById('mysteryResult');
+
+    img.addEventListener('click', () => {
+      const rand = Math.random();
+      if (rand < 0.5) {
+        result.textContent = '🎉 You gained +17% kittens!';
+        result.style.color = '#4caf50';
+      } else if (rand < 0.67) {
+        result.textContent = '😿 Mystery Kitten took -17% kittens!';
+        result.style.color = '#d32f2f';
+      } else {
+        result.textContent = '😸 Nothing happened this time.';
+        result.style.color = '#f57c00';
+      }
+      img.style.pointerEvents = 'none'; // prevent multiple clicks
+    });
+
+    function goBack() {
+      window.location.href = '/'; // Go back to your main Kitten Clicker page
+    }
+  </script>
+</body>
+</html>
