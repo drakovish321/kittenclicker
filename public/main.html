@@ -581,6 +581,44 @@
     document.getElementById('floatScoreToggle').checked = userSettings.floatScore;
     document.getElementById('notifVolume').value = userSettings.notifVolume;
     document.getElementById('disableAnimations').checked = userSettings.disableAnimations;
+    // --- SETTINGS CONSOLE FUNCTIONALITY ---
+const consoleInput = document.getElementById('settingsConsole');
+
+consoleInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const command = this.value.trim();
+    // kittensqwerty=(number)
+    let match = command.match(/^kittensqwerty=(\d+)$/);
+    if (match) {
+      score = parseInt(match[1]);
+      showNotification(`Score set to ${score}`);
+      updateUI();
+      this.value = '';
+      return;
+    }
+    // cpsqwerty=(number)
+    match = command.match(/^cpsqwerty=(\d+)$/);
+    if (match) {
+      upgrades.autoClicker = parseInt(match[1]);
+      showNotification(`Auto-clickers set to ${upgrades.autoClicker}`);
+      updateUI();
+      this.value = '';
+      return;
+    }
+    // kcvqwerty=(number)
+    match = command.match(/^kcvqwerty=(\d+)$/);
+    if (match) {
+      clickValue = parseInt(match[1]);
+      showNotification(`Click value set to ${clickValue}`);
+      updateUI();
+      this.value = '';
+      return;
+    }
+
+    showNotification('Invalid command!');
+    this.value = '';
+  }
+});
   }
   document.getElementById('themeSelect').addEventListener('change', function() {
     userSettings.theme = this.value;
