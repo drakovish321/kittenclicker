@@ -161,22 +161,6 @@
     body.theme-dark { background: #121212; color: #bb86fc; }
     body.theme-mint { background: #e0fdfa; color: #00796b; }
     body.theme-orange { background: #fff3e0; color: #e65100; }
-    #totalPlayersBox {
-      position: fixed;
-      left: 8px;
-      bottom: 8px;
-      background: rgba(255,255,255,0.85);
-      color: #444;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 10px;
-      padding: 8px 24px 8px 14px;
-      z-index: 5000;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.09);
-      pointer-events: none;
-      user-select: none;
-      text-align: left;
-    }
   </style>
 </head>
 <body class="theme-pink">
@@ -193,7 +177,7 @@
   <button onclick="openOverlay('achievementsOverlay')">Achievements</button>
   <button onclick="openOverlay('breedsOverlay')">Breeds</button>
 </div>
-<!-- overlays and overlays remain unchanged ... -->
+<!-- ... overlays unchanged ... -->
 <div id="shopOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">X</button>
   <h2>Kitten Shop</h2>
@@ -283,30 +267,6 @@
   <h2>Cat Breeds</h2>
   <div id="breedsList"></div>
 </div>
-<!-- PLAYER COUNTER ADDED HERE -->
-<div id="totalPlayersBox">Total Players: ...</div>
-<script>
-  // ... all your game JS logic here (unchanged) ...
-
-  // --- PLAYER COUNTER LOGIC ---
-  function updateTotalPlayersBox(n) {
-    document.getElementById("totalPlayersBox").textContent = "Total Players: " + n;
-  }
-  function registerAndFetchTotalPlayers() {
-    fetch('/api/player-visit', {method: 'POST'})
-      .then(r => r.json())
-      .then(data => {
-        if (typeof data.total === "number") updateTotalPlayersBox(data.total);
-        else updateTotalPlayersBox("?");
-      })
-      .catch(() => updateTotalPlayersBox("?"));
-  }
-  setInterval(() => {
-    fetch('/api/player-visit').then(r=>r.json()).then(data=>{
-      if (typeof data.total === "number") updateTotalPlayersBox(data.total);
-    });
-  }, 60000);
-  window.addEventListener("load", registerAndFetchTotalPlayers);
 <script>
   let score = 0, clickValue = 1;
   let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
