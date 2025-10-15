@@ -1,248 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
   <title>Kitten Clicker</title>
+  <link rel="icon" href="https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg" type="image/png">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding-top: 80px;
-      text-align: center;
-    }
-    h1 { margin-bottom: 0; }
-    #score { font-size: 24px; margin: 5px 0 10px 0; }
+    /* --- Base --- */
+    html, body { margin:0; padding:0; font-family: 'Arial', sans-serif; text-align:center; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { padding-top: 80px; background:#fce4ec; color:#880e4f; transition: background 0.3s, color 0.3s; }
+    h1 { margin-bottom: 0; font-size: 2.5em; }
+    #score { font-size: 1.5em; margin: 5px 0 10px; }
     #stats { margin-bottom: 30px; }
-    #kitten {
-      width: 300px; cursor: pointer; border-radius: 20px;
-      transition: transform 0.2s ease;
-    }
+    img#kitten { width:300px; cursor:pointer; border-radius:20px; transition: transform 0.2s ease; }
     .pulse { animation: pulseAnim 0.3s ease forwards; }
-    @keyframes pulseAnim {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    .top-buttons {
-      position: fixed; top: 20px; right: 20px;
-      display: flex; flex-direction: column; gap: 10px; z-index: 1001;
-    }
-    .top-buttons button {
-      padding: 10px 20px; font-size: 16px;
-      border: none; border-radius: 8px; cursor: pointer;
-    }
+    @keyframes pulseAnim { 0% {transform:scale(1);} 50% {transform:scale(1.2);} 100% {transform:scale(1);} }
+
+    /* --- Top buttons --- */
+    .top-buttons { position:fixed; top:20px; right:20px; display:flex; flex-direction:column; gap:10px; z-index:1001; }
+    .top-buttons button { padding:10px 20px; font-size:16px; border:none; border-radius:8px; cursor:pointer; transition: transform 0.15s; }
+    .top-buttons button:hover { transform: scale(1.05); }
+
+    /* --- Overlays --- */
     .overlay {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255,255,255,0.95); z-index: 1000; padding: 60px 20px 20px;
-      overflow-y: auto; box-sizing: border-box;
+      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(255,255,255,0.95); z-index:1000; padding:60px 20px 20px; overflow-y:auto; box-sizing:border-box; transition: opacity 0.3s;
     }
-    .overlay h2 { margin-bottom: 30px; }
-    .shop-tabs { margin-bottom: 20px; }
+    .overlay h2 { margin-bottom:30px; }
+    .closeOverlay {
+      position:absolute; top:20px; left:20px; background:red; color:white;
+      border:none; padding:5px 15px; font-size:20px; border-radius:8px; cursor:pointer; z-index:1001;
+      transition: background 0.2s;
+    }
+    .closeOverlay:hover { background:#b71c1c; }
+
+    /* --- Shop --- */
+    .shop-tabs { margin-bottom:20px; }
     .shop-tab {
-      display: inline-block; padding: 10px 20px; margin: 0 5px;
-      font-weight: bold; border-radius: 8px 8px 0 0; cursor: pointer;
+      display:inline-block; padding:10px 20px; margin:0 5px;
+      font-weight:bold; border-radius:8px 8px 0 0; cursor:pointer; transition: background 0.2s;
     }
+    .shop-tab.active { box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
     .shop-content {
-      border-radius: 0 8px 8px 8px; padding: 15px;
-      max-width: 600px; margin: 0 auto; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius:0 8px 8px 8px; padding:15px; max-width:600px; margin:0 auto; box-shadow:0 4px 8px rgba(0,0,0,0.2);
+      background:#f8bbd0;
     }
     .shop-item {
-      margin: 15px auto; padding: 15px; border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin:15px auto; padding:15px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);
     }
-    .shop-item strong { font-size: 18px; }
-    .shop-item button {
-      padding: 10px 20px; border: none; border-radius: 6px;
-      cursor: pointer; margin-top: 8px;
-    }
-    .shop-item button:disabled { cursor: not-allowed; }
-    .closeOverlay {
-      position: absolute; top: 20px; left: 20px; background: red; color: white;
-      border: none; padding: 5px 15px; font-size: 20px; border-radius: 8px;
-      cursor: pointer; z-index: 1001;
-    }
-    #progressOverlay textarea {
-      width: 90%; height: 150px; margin-top: 10px; font-family: monospace;
-      font-size: 14px; resize: none;
-    }
-    #progressOverlay input { width: 90%; padding: 8px; font-size: 16px; margin-top: 10px; }
-    #progressOverlay button {
-      margin-top: 10px; padding: 8px 16px; border-radius: 6px; border: none;
-      cursor: pointer; font-size: 16px;
-    }
-    #settingsOverlay label, #settingsOverlay select, #settingsOverlay input, #settingsOverlay button { font-size: 18px; }
-    #settingsOverlay select, #settingsOverlay input[type="range"] {
-      margin-top: 10px; padding: 8px 12px; border-radius: 6px;
-      border: 1px solid #880e4f; background: white; cursor: pointer;
-    }
-    #settingsOverlay label { display: block; margin-top: 16px; }
-    #settingsOverlay input[type="checkbox"] { margin-left:10px;margin-right:6px; }
-    #settingsOverlay .setting-row { margin-bottom: 16px; }
-    #settingsOverlay .setting-title { font-weight:bold;display:inline-block;width:180px;text-align:left;}
-    #achievementsList {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 18px;
-      max-width: 700px; margin: 0 auto;
-    }
+    .shop-item strong { font-size:18px; }
+    .shop-item button { padding:10px 20px; border:none; border-radius:6px; cursor:pointer; margin-top:8px; transition: transform 0.15s; }
+    .shop-item button:disabled { cursor:not-allowed; opacity:0.6; }
+    .shop-item button:hover:not(:disabled) { transform:scale(1.05); }
+
+    /* --- Progress --- */
+    #progressOverlay textarea { width:90%; height:150px; margin-top:10px; font-family: monospace; font-size:14px; resize:none; }
+    #progressOverlay input { width:90%; padding:8px; font-size:16px; margin-top:10px; }
+    #progressOverlay button { margin-top:10px; padding:8px 16px; border-radius:6px; border:none; cursor:pointer; font-size:16px; }
+
+    /* --- Settings --- */
+    #settingsOverlay label, #settingsOverlay select, #settingsOverlay input, #settingsOverlay button { font-size:18px; }
+    #settingsOverlay select, #settingsOverlay input[type="range"] { margin-top:10px; padding:8px 12px; border-radius:6px; border:1px solid #880e4f; background:white; cursor:pointer; }
+    #settingsOverlay label { display:block; margin-top:16px; }
+    #settingsOverlay input[type="checkbox"] { margin-left:10px; margin-right:6px; }
+    #settingsOverlay .setting-row { margin-bottom:16px; }
+    #settingsOverlay .setting-title { font-weight:bold; display:inline-block; width:180px; text-align:left; }
+
+    /* --- Achievements --- */
+    #achievementsList { display:flex; flex-wrap:wrap; justify-content:center; gap:18px; max-width:700px; margin:0 auto; }
     .achievement-card {
-      display: flex; align-items: center; gap: 14px;
-      width: 320px; min-width: 320px; max-width: 320px;
-      min-height: 72px; max-height: 72px;
-      padding: 18px 20px; margin: 8px 0; border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(140,0,70,0.12);
-      font-size: 18px; font-weight: 500;
-      transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
-      border: 2px solid #f8bbd0; opacity: 0.92; position: relative; box-sizing: border-box;
+      display:flex; align-items:center; gap:14px; width:320px; min-width:320px; max-width:320px; min-height:72px; max-height:72px;
+      padding:18px 20px; margin:8px 0; border-radius:15px; box-shadow:0 4px 12px rgba(140,0,70,0.12); font-size:18px; font-weight:500;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.3s; border:2px solid #f8bbd0; opacity:0.92; position:relative; box-sizing:border-box;
     }
-    .achievement-icon {
-      font-size: 2em; margin-right: 5px; filter: drop-shadow(0 1px 1px #fff5);
-      text-shadow: 0 2px 10px #fff8; width: 40px; text-align: center;
-    }
-    .achievement-card:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 10px 24px 0 rgba(180,40,130,0.13); opacity: 1; z-index: 2;
-    }
-    .breed-select-btn {
-      padding: 8px 22px; border-radius: 12px; border: none;
-      margin-top: 10px; margin-left: 8px; margin-right: 8px;
-      font-size: 18px; font-weight: bold; cursor: pointer; transition: background .2s;
-    }
-    .breed-lock {
-      color: #aaa; font-size: 20px; margin-left: 6px; vertical-align: middle;
-    }
-    #mysteryKittenBtn {
-      display:none;
-      margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;
-    }
-    /* Theme - Pink (default) */
-    body.theme-pink {
-      background: #fce4ec;
-      color: #880e4f;
-    }
-    body.theme-pink .shop-tab.active,
-    body.theme-pink .shop-item button,
-    body.theme-pink #progressOverlay button,
-    body.theme-pink #mysteryKittenBtn,
-    body.theme-pink .breed-select-btn.selected,
-    body.theme-pink .breed-select-btn:disabled {
-      background-color: #c2185b;
-      color: #fff;
-    }
-    body.theme-pink .shop-tab { background: #f8bbd0; color: #880e4f; }
-    body.theme-pink .shop-content { background: #f8bbd0; }
-    body.theme-pink .shop-item { background: #fce4ec; }
-    body.theme-pink .achievement-card { background: #ffe0f7; border-color: #f8bbd0; }
-    body.theme-pink .achievement-card.achieved { background: linear-gradient(90deg, #ffe282 0%, #ffeaa7 100%); border-color: #ffd600; color: #7c4d00; }
-    body.theme-pink .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-pink .breed-select-btn.selected,
-    body.theme-pink .breed-select-btn:disabled {
-      background: #ffd600; color: #7c4d00; cursor: default;
-    }
-    /* Theme - Blue */
-    body.theme-blue {
-      background: #e3f2fd;
-      color: #1565c0;
-    }
-    body.theme-blue .shop-tab.active,
-    body.theme-blue .shop-item button,
-    body.theme-blue #progressOverlay button,
-    body.theme-blue #mysteryKittenBtn,
-    body.theme-blue .breed-select-btn.selected,
-    body.theme-blue .breed-select-btn:disabled {
-      background-color: #1565c0;
-      color: #fff;
-    }
-    body.theme-blue .shop-tab { background: #b3d6fc; color: #1565c0; }
-    body.theme-blue .shop-content { background: #b3d6fc; }
-    body.theme-blue .shop-item { background: #e3f2fd; }
-    body.theme-blue .achievement-card { background: #e3e9fc; border-color: #b3d6fc; }
-    body.theme-blue .achievement-card.achieved { background: linear-gradient(90deg,#82b1ff 0%, #bbdefb 100%); border-color: #ffd600; color: #0d3057; }
-    body.theme-blue .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-blue .breed-select-btn.selected,
-    body.theme-blue .breed-select-btn:disabled {
-      background: #ffd600; color: #0d3057; cursor: default;
-    }
-    /* Theme - Dark */
-    body.theme-dark {
-      background: #121212;
-      color: #bb86fc;
-    }
-    body.theme-dark .shop-tab.active,
-    body.theme-dark .shop-item button,
-    body.theme-dark #progressOverlay button,
-    body.theme-dark #mysteryKittenBtn,
-    body.theme-dark .breed-select-btn.selected,
-    body.theme-dark .breed-select-btn:disabled {
-      background-color: #333;
-      color: #bb86fc;
-    }
-    body.theme-dark .shop-tab { background: #333; color: #bb86fc; }
-    body.theme-dark .shop-content { background: #242424; }
-    body.theme-dark .shop-item { background: #181818; }
-    body.theme-dark .achievement-card { background: #2d2336; border-color: #3e3152; }
-    body.theme-dark .achievement-card.achieved { background: linear-gradient(90deg,#2e2a41 0%, #655885 100%); border-color: #ffd600; color: #fffde7; }
-    body.theme-dark .achievement-card.locked { background: #222; border-color: #222; color: #757575; }
-    body.theme-dark .breed-select-btn.selected,
-    body.theme-dark .breed-select-btn:disabled {
-      background: #ffd600; color: #222; cursor: default;
-    }
-    /* Theme - Mint */
-    body.theme-mint {
-      background: #e0fdfa;
-      color: #00796b;
-    }
-    body.theme-mint .shop-tab.active,
-    body.theme-mint .shop-item button,
-    body.theme-mint #progressOverlay button,
-    body.theme-mint #mysteryKittenBtn,
-    body.theme-mint .breed-select-btn.selected,
-    body.theme-mint .breed-select-btn:disabled {
-      background-color: #00796b;
-      color: #e0fdfa;
-    }
-    body.theme-mint .shop-tab { background: #b2fef7; color: #00796b; }
-    body.theme-mint .shop-content { background: #b2fef7; }
-    body.theme-mint .shop-item { background: #e0fdfa; }
-    body.theme-mint .achievement-card { background: #b0fff4; border-color: #b2fef7; }
-    body.theme-mint .achievement-card.achieved { background: linear-gradient(90deg,#b2ffea 0%, #ccfff6 100%); border-color: #ffd600; color: #00796b; }
-    body.theme-mint .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-mint .breed-select-btn.selected,
-    body.theme-mint .breed-select-btn:disabled {
-      background: #ffd600; color: #00796b; cursor: default;
-    }
-    /* Theme - Orange */
-    body.theme-orange {
-      background: #fff3e0;
-      color: #e65100;
-    }
-    body.theme-orange .shop-tab.active,
-    body.theme-orange .shop-item button,
-    body.theme-orange #progressOverlay button,
-    body.theme-orange #mysteryKittenBtn,
-    body.theme-orange .breed-select-btn.selected,
-    body.theme-orange .breed-select-btn:disabled {
-      background-color: #fb8c00;
-      color: #fff3e0;
-    }
-    body.theme-orange .shop-tab { background: #ffe0b2; color: #e65100; }
-    body.theme-orange .shop-content { background: #ffe0b2; }
-    body.theme-orange .shop-item { background: #fff3e0; }
-    body.theme-orange .achievement-card { background: #ffe5b2; border-color: #ffe0b2; }
-    body.theme-orange .achievement-card.achieved { background: linear-gradient(90deg,#ffecb3 0%, #fff9c4 100%); border-color: #ffd600; color: #e65100; }
-    body.theme-orange .achievement-card.locked { background: #eeeeee; border-color: #bdbdbd; color: #757575; }
-    body.theme-orange .breed-select-btn.selected,
-    body.theme-orange .breed-select-btn:disabled {
-      background: #ffd600; color: #e65100; cursor: default;
-    }
-    /* Theme - Default fallback */
-    body { background: #fce4ec; color: #880e4f; }
-    @media (max-width: 600px) {
-      #achievementsList {
-        flex-direction: column; align-items: center;
-      }
-      .achievement-card {
-        min-width: 0; width: 98%; max-width: 99vw;
-      }
+    .achievement-card:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 24px rgba(180,40,130,0.13); opacity:1; z-index:2; }
+    .achievement-icon { font-size:2em; margin-right:5px; filter: drop-shadow(0 1px 1px #fff5); text-shadow:0 2px 10px #fff8; width:40px; text-align:center; }
+
+    /* --- Breeds --- */
+    .breed-select-btn { padding:8px 22px; border-radius:12px; border:none; margin:10px 8px 0 8px; font-size:18px; font-weight:bold; cursor:pointer; transition: background 0.2s; }
+    .breed-lock { color:#aaa; font-size:20px; margin-left:6px; vertical-align:middle; }
+
+    /* --- Mystery Kitten --- */
+    #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; }
+    #mysteryKittenBtn:hover { transform: scale(1.05); }
+
+    /* --- Themes --- */
+    body.theme-pink { background:#fce4ec; color:#880e4f; }
+    body.theme-blue { background:#e3f2fd; color:#1565c0; }
+    body.theme-dark { background:#121212; color:#bb86fc; }
+    body.theme-mint { background:#e0fdfa; color:#00796b; }
+    body.theme-orange { background:#fff3e0; color:#e65100; }
+
+    /* --- Responsive --- */
+    @media (max-width:600px){
+      #achievementsList { flex-direction:column; align-items:center; }
+      .achievement-card { min-width:0; width:98%; max-width:99vw; }
+      img#kitten { width:80%; max-width:300px; }
     }
   </style>
 </head>
