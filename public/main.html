@@ -227,7 +227,6 @@ let breedImages = {
     maine_coon: "https://cdn.pixabay.com/photo/2021/12/17/19/15/pet-6877246_1280.jpg",
     siamese: "https://cdn.pixabay.com/photo/2017/09/15/21/41/siamese-2753784_1280.jpg"
 };
-  };
 let breedNames = {
     american_shorthair: "American Shorthair",
     maine_coon: "Maine Coon",
@@ -402,11 +401,19 @@ let extraCPSBreed = {
         renderAchievements();
       }
     }
-    let achCount = achievementsData.reduce((acc, a) => acc + (a.achieved ? 1 : 0), 0);
-    if (!breedsUnlocked["maine_coon"] && achCount >= 3) {
-      breedsUnlocked["maine_coon"] = true;
-      showNotification("You unlocked the Maine Coon breed!");
-      renderBreeds();
+  const breedUnlocks = [
+  { breed: "maine_coon", requiredAchievements: 3, message: "You unlocked the Maine Coon breed!" },
+  { breed: "siamese", requiredAchievements: 6, message: "You unlocked the Siamese breed!" }
+];
+
+for (const unlock of breedUnlocks) {
+  let achCount = achievementsData.reduce((acc, a) => acc + (a.achieved ? 1 : 0), 0);
+  if (!breedsUnlocked[unlock.breed] && achCount >= unlock.requiredAchievements) {
+    breedsUnlocked[unlock.breed] = true;
+    showNotification(unlock.message);
+    renderBreeds();
+  }
+}
     }
   }
   function renderAchievements() {
@@ -477,15 +484,7 @@ let extraCPSBreed = {
     list.appendChild(div);
   });
 }
-  window.selectBreed = function(breed) {
-    if (!breedsUnlocked[breed]) return;
-    if (selectedBreed !== breed) {
-        selectedBreed = breed;
-        updateUI();
-        checkAchievements();
-        renderBreeds();
-    }
-};window.selectBreed = function(breed) {
+window.selectBreed = function(breed) {
     if (!breedsUnlocked[breed]) return;
     if (selectedBreed !== breed) {
         selectedBreed = breed;
@@ -494,6 +493,16 @@ let extraCPSBreed = {
         renderBreeds();
     }
 };
+// --- Breed-specific click bonus ---
+if (breed === 'siamese') {
+  clickValue = 1 + 20; // Base 1 + 20 bonus
+} else {
+  clickValue = 1; // Reset for other breeds
+}
+
+updateUI();
+checkAchievements();
+renderBreeds();
     // --- Breed-specific click bonus ---
     if (breed === 'siamese') {
       clickValue = 1 + 20; // Base 1 + 20 bonus
