@@ -217,16 +217,27 @@
   let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
   let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
   let selectedBreed = "american_shorthair";
-  let breedsUnlocked = { american_shorthair: true, maine_coon: false };
-  let breedImages = {
+ let breedsUnlocked = { 
+    american_shorthair: true, 
+    maine_coon: false, 
+    siamese: false 
+};
+let breedImages = {
     american_shorthair: "https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg",
-    maine_coon: "https://cdn.pixabay.com/photo/2021/12/17/19/15/pet-6877246_1280.jpg"
+    maine_coon: "https://cdn.pixabay.com/photo/2021/12/17/19/15/pet-6877246_1280.jpg",
+    siamese: "https://cdn.pixabay.com/photo/2017/09/15/21/41/siamese-2753784_1280.jpg"
+};
   };
-  let breedNames = {
+let breedNames = {
     american_shorthair: "American Shorthair",
-    maine_coon: "Maine Coon"
-  };
-  let extraCPSBreed = { maine_coon: 5, american_shorthair: 0 };
+    maine_coon: "Maine Coon",
+    siamese: "Siamese"
+};
+let extraCPSBreed = {
+    american_shorthair: 0,
+    maine_coon: 5,
+    siamese: 0
+};
   let achievementsData = [
   { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
   { id: 'milkBowl1', text: 'You have to start somewhere: Buy your first Milk Bowl', achieved: false, condition: () => upgrades.milkBowl >= 1 },
@@ -295,13 +306,19 @@
       if (opacity <= 0) { clearInterval(anim); floatEl.remove(); }
     }, 16);
   }
-  function updateUI() {
+ function updateUI() {
     let breedCPS = extraCPSBreed[selectedBreed] || 0;
     const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + upgrades.kittenPlanet * 20 + breedCPS;
+    
     scoreEl.textContent = `Score: ${Math.floor(score)}`;
-    clickValueEl.textContent = clickValue.toFixed(1);
+    
+    // --- Breed click bonus ---
+    let breedClickBonus = (selectedBreed === 'siamese') ? 20 : 0;
+    clickValueEl.textContent = (clickValue + breedClickBonus).toFixed(1);
+    
     autoClickersEl.textContent = totalCPS;
     kittenImg.src = breedImages[selectedBreed];
+    
     if(document.getElementById('milkBowlCost')) document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
     if(document.getElementById('catFoodCost')) document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
     if(document.getElementById('scratcherCost')) document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
@@ -311,6 +328,7 @@
     if(document.getElementById('autoClickerCost')) document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmCost')) document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetCost')) document.getElementById('kittenPlanetCost').textContent = upgradeCosts.kittenPlanet;
+    
     if(document.getElementById('milkBowlBtn')) document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
     if(document.getElementById('catFoodBtn')) document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
     if(document.getElementById('scratcherBtn')) document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
@@ -320,7 +338,7 @@
     if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetBtn')) document.getElementById('kittenPlanetBtn').disabled = score < upgradeCosts.kittenPlanet;
-  }
+}
   function buyUpgrade(name, increment) {
     if (score >= upgradeCosts[name]) {
       score -= upgradeCosts[name];
@@ -416,45 +434,78 @@
     notif.style.opacity = userSettings.notifVolume;
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
-  }
-  function renderBreeds() {
-    const list = document.getElementById('breedsList');
-    list.innerHTML = '';
-    ["american_shorthair", "maine_coon"].forEach(breed => {
-      const div = document.createElement('div');
-      div.style.margin = "28px 0 25px 0";
-      div.style.padding = "12px";
-      div.style.background = "#fff6f6";
-      div.style.borderRadius = "12px";
-      div.style.boxShadow = "0 2px 12px #f8bbd0";
-      div.style.maxWidth = "340px";
-      div.style.marginLeft = "auto";
-      div.style.marginRight = "auto";
-      let label = `<b>${breedNames[breed]}</b>`;
-      if (breed === "maine_coon" && !breedsUnlocked.maine_coon) {
-        label += `<span class="breed-lock">🔒 (Unlock by earning 3 achievements)</span>`;
-      }
-      div.innerHTML = `
-        <div style="font-size:20px;margin-bottom:8px;">${label}</div>
-        <img src="${breedImages[breed]}" alt="${breedNames[breed]}" style="width:120px;border-radius: 14px;box-shadow:0 2px 8px #f8bbd0;">
-        <div style="margin-top:7px;">
-          <button class="breed-select-btn${selectedBreed===breed?" selected":""}"
-            onclick="selectBreed('${breed}')" ${!breedsUnlocked[breed] ? "disabled" : ""}>
-            ${selectedBreed===breed ? "Selected" : "Select"}
-          </button>
-        </div>
-        ${breed === "maine_coon" ? `<div style="font-size:15px;margin-top:4px;color:#ad1457;"><b>Bonus:</b> +5 CPS</div>` : ""}
-      `;
-      list.appendChild(div);
-    });
-  }
+  }function renderBreeds() {
+  const list = document.getElementById('breedsList');
+  list.innerHTML = '';
+
+  // Add all breeds here
+  ["american_shorthair", "maine_coon", "siamese"].forEach(breed => {
+    const div = document.createElement('div');
+    div.style.margin = "28px 0 25px 0";
+    div.style.padding = "12px";
+    div.style.background = "#fff6f6";
+    div.style.borderRadius = "12px";
+    div.style.boxShadow = "0 2px 12px #f8bbd0";
+    div.style.maxWidth = "340px";
+    div.style.marginLeft = "auto";
+    div.style.marginRight = "auto";
+
+    let label = `<b>${breedNames[breed]}</b>`;
+
+    // Lock logic
+    if (!breedsUnlocked[breed]) {
+      label += `<span class="breed-lock">🔒 (Unlock by achievements)</span>`;
+    }
+
+    // Bonus text
+    let bonusText = "";
+    if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
+    if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 Click Value</div>";
+
+    div.innerHTML = `
+      <div style="font-size:20px;margin-bottom:8px;">${label}</div>
+      <img src="${breedImages[breed]}" alt="${breedNames[breed]}" style="width:120px;border-radius:14px;box-shadow:0 2px 8px #f8bbd0;">
+      <div style="margin-top:7px;">
+        <button class="breed-select-btn${selectedBreed===breed?" selected":""}"
+          onclick="selectBreed('${breed}')" ${!breedsUnlocked[breed] ? "disabled" : ""}>
+          ${selectedBreed===breed ? "Selected" : "Select"}
+        </button>
+      </div>
+      ${bonusText}
+    `;
+
+    list.appendChild(div);
+  });
+}
   window.selectBreed = function(breed) {
     if (!breedsUnlocked[breed]) return;
     if (selectedBreed !== breed) {
-      selectedBreed = breed;
-      updateUI();
-      checkAchievements();
-      renderBreeds();
+        selectedBreed = breed;
+        updateUI();
+        checkAchievements();
+        renderBreeds();
+    }
+};window.selectBreed = function(breed) {
+    if (!breedsUnlocked[breed]) return;
+    if (selectedBreed !== breed) {
+        selectedBreed = breed;
+        updateUI();
+        checkAchievements();
+        renderBreeds();
+    }
+};
+    // --- Breed-specific click bonus ---
+    if (breed === 'siamese') {
+      clickValue = 1 + 20; // Base 1 + 20 bonus
+    } else {
+      clickValue = 1; // Reset for other breeds
+    }
+
+    updateUI();
+    checkAchievements();
+    renderBreeds();
+  }
+};
     }
   };
   function exportSave() {
