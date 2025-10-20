@@ -408,7 +408,7 @@ let extraCPSBreed = {
         renderAchievements();
       }
     }
-  const breedUnlocks = [
+ const breedUnlocks = [
   { breed: "maine_coon", requiredAchievements: 3, message: "You unlocked the Maine Coon breed!" },
   { breed: "siamese", requiredAchievements: 6, message: "You unlocked the Siamese breed!" }
 ];
@@ -420,16 +420,19 @@ for (const unlock of breedUnlocks) {
     showNotification(unlock.message);
     renderBreeds();
   }
-  function renderAchievements() {
-    const container = document.getElementById('achievementsList');
-    container.innerHTML = '';
-    for (const ach of achievementsData) {
-      const card = document.createElement('div');
-      card.className = 'achievement-card ' + (ach.achieved ? 'achieved' : 'locked');
-      card.innerHTML = `<span class="achievement-icon">${ach.achieved ? '🏆' : '🔒'}</span><span>${ach.text}</span>`;
-      container.appendChild(card);
-    }
+}
+
+// --- Define the function outside the loop ---
+function renderAchievements() {
+  const container = document.getElementById('achievementsList');
+  container.innerHTML = '';
+  for (const ach of achievementsData) {
+    const card = document.createElement('div');
+    card.className = 'achievement-card ' + (ach.achieved ? 'achieved' : 'locked');
+    card.innerHTML = `<span class="achievement-icon">${ach.achieved ? '🏆' : '🔒'}</span><span>${ach.text}</span>`;
+    container.appendChild(card);
   }
+}
   function showNotification(text) {
     const notif = document.createElement('div');
     notif.textContent = text;
