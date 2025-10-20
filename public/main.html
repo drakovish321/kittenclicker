@@ -353,7 +353,12 @@ let extraCPSBreed = {
             label += `<span class="breed-lock">🔒 (100k score & 15 achievements required)</span>`;
           }
         } else {
-          label += `<span class="breed-lock">🔒 (Unlock by achievements)</span>`;
+          // Show exact requirements for Maine Coon and Siamese
+          if (breed === "maine_coon") {
+            label += `<span class="breed-lock">🔒 (3 achievements required)</span>`;
+          } else if (breed === "siamese") {
+            label += `<span class="breed-lock">🔒 (6 achievements required)</span>`;
+          }
         }
       }
 
