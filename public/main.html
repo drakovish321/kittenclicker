@@ -237,22 +237,26 @@
  let breedsUnlocked = { 
     american_shorthair: true, 
     maine_coon: false, 
-    siamese: false 
+    siamese: false,
+    halloween_cat: false
 };
 let breedImages = {
     american_shorthair: "https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg",
     maine_coon: "https://cdn.pixabay.com/photo/2021/12/17/19/15/pet-6877246_1280.jpg",
-    siamese: "https://cdn.pixabay.com/photo/2017/02/15/12/12/cat-2068462_1280.jpg"
+    siamese: "https://cdn.pixabay.com/photo/2017/02/15/12/12/cat-2068462_1280.jpg",
+    halloween_cat: "https://cdn.pixabay.com/photo/2022/08/06/15/46/halloween-7368864_1280.jpg"
 };
 let breedNames = {
     american_shorthair: "American Shorthair",
     maine_coon: "Maine Coon",
-    siamese: "Siamese"
+    siamese: "Siamese",
+    halloween_cat: "Halloween Cat"
 };
 let extraCPSBreed = {
     american_shorthair: 0,
     maine_coon: 5,
-    siamese: 20
+    siamese: 20,
+    halloween_cat: 100
 };
   let achievementsData = [
   { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
@@ -264,8 +268,10 @@ let extraCPSBreed = {
   { id: 'truepower', text: 'True Power: Select a new kitten breed!', achieved: false, condition: () => selectedBreed !== "american_shorthair" },
   { id: 'tenk', text: '10k: Get 10000 kittens!', achieved: false, condition: () => score >= 10000 },
   { id: 'mystery1', text: 'Take a chance: Try the Mystery Kitten!', achieved: false, condition: () => window.usedMysteryKitten },
-  { id: 'click100k', text: 'Dedicated Paw-sion: Reach 100,000 clicks!', achieved: false, condition: () => score >= 100000 }
+  { id: 'click100k', text: 'Dedicated Paw-sion: Reach 100,000 clicks!', achieved: false, condition: () => score >= 100000 },
+  { id: 'halloween_unlock', text: 'Spooky Surprise: Unlock the Halloween Cat!', achieved: false, condition: () => breedsUnlocked.halloween_cat }
 ];
+
   window.usedMysteryKitten = false;
 
   // Settings State
@@ -321,7 +327,7 @@ let extraCPSBreed = {
     list.innerHTML = '';
 
     // Add all breeds here
-    ["american_shorthair", "maine_coon", "siamese"].forEach(breed => {
+    ["american_shorthair", "maine_coon", "siamese", "halloween_cat"].forEach(breed => {
       const div = document.createElement('div');
       div.style.margin = "28px 0 25px 0";
       div.style.padding = "12px";
@@ -336,13 +342,26 @@ let extraCPSBreed = {
 
       // Lock logic
       if (!breedsUnlocked[breed]) {
-        label += `<span class="breed-lock">🔒 (Unlock by achievements)</span>`;
+        if (breed === "halloween_cat") {
+          const now = new Date();
+          const isHalloween = (now.getMonth() === 9 && now.getDate() >= 24 && now.getDate() <= 31) || 
+                              (now.getMonth() === 10 && now.getDate() <= 1);
+          
+          if (!isHalloween) {
+            label += `<span class="breed-lock">🔒 (Only available Oct 24-31)</span>`;
+          } else {
+            label += `<span class="breed-lock">🔒 (100k score & 15 achievements required)</span>`;
+          }
+        } else {
+          label += `<span class="breed-lock">🔒 (Unlock by achievements)</span>`;
+        }
       }
 
       // Bonus text
       let bonusText = "";
       if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
       if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 CPS</div>";
+      if (breed === "halloween_cat") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +100 CPS & +100 Click Value</div>";
 
       div.innerHTML = `
         <div style="font-size:20px;margin-bottom:8px;">${label}</div>
@@ -453,10 +472,25 @@ let extraCPSBreed = {
     let breedCPS = extraCPSBreed[selectedBreed] || 0;
     const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + upgrades.kittenPlanet * 20 + breedCPS;
     
-    scoreEl.textContent = `Score: ${Math.floor(score)}`;
+    // Format large numbers
+    function formatNumber(num) {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+      }
+      return Math.floor(num);
+    }
+    
+    scoreEl.textContent = `Score: ${formatNumber(score)}`;
     
     // --- Breed click bonus ---
-    let breedClickBonus = (selectedBreed === 'siamese') ? 20 : 0;
+    let breedClickBonus = 0;
+    if (selectedBreed === 'siamese') {
+      breedClickBonus = 20;
+    } else if (selectedBreed === 'halloween_cat') {
+      breedClickBonus = 100;
+    }
     clickValueEl.textContent = (clickValue + breedClickBonus).toFixed(1);
     
     autoClickersEl.textContent = totalCPS;
@@ -529,12 +563,39 @@ let extraCPSBreed = {
   window.selectBreed = function(breed) {
     if (!breedsUnlocked[breed]) return; // Do nothing if breed is locked
 
+    // Check if it's halloween cat and requirements are met
+    if (breed === 'halloween_cat') {
+      const now = new Date();
+      const isHalloween = (now.getMonth() === 9 && now.getDate() >= 24 && now.getDate() <= 31) || 
+                          (now.getMonth() === 10 && now.getDate() <= 1);
+      
+      // Check if it's Halloween season and requirements are met
+      if (!isHalloween) {
+        showNotification("Halloween Cat is only available from Oct 24-31!");
+        return;
+      }
+      
+      const achievementCount = achievementsData.filter(a => a.achieved).length;
+      if (score < 100000 || achievementCount < 15) {
+        showNotification("You need 100,000 score and 15 achievements to unlock the Halloween Cat!");
+        return;
+      }
+      
+      // Unlock the breed if requirements are met
+      if (!breedsUnlocked[breed]) {
+        breedsUnlocked[breed] = true;
+        showNotification("You unlocked the Halloween Cat! It will remain unlocked.");
+      }
+    }
+
     if (selectedBreed !== breed) {
         selectedBreed = breed;
 
         // Breed-specific click bonus
         if (breed === 'siamese') {
             clickValue = 1 + 20; // Base 1 + 20 bonus
+        } else if (breed === 'halloween_cat') {
+            clickValue = 1 + 100; // Base 1 + 100 bonus
         } else {
             clickValue = 1; // Reset for other breeds
         }
@@ -628,7 +689,7 @@ let extraCPSBreed = {
       upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
       upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
       selectedBreed = "american_shorthair";
-      breedsUnlocked = { american_shorthair: true, maine_coon: false };
+      breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, halloween_cat: false };
       for(let a of achievementsData) a.achieved = false;
       userSettings = {theme:"pink", floatScore:true, notifVolume:1, disableAnimations:false};
       applyTheme(userSettings.theme);
