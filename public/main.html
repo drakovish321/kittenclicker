@@ -344,11 +344,11 @@ let extraCPSBreed = {
       if (!breedsUnlocked[breed]) {
         if (breed === "halloween_cat") {
           const now = new Date();
-          const isHalloween = (now.getMonth() === 9 && now.getDate() >= 24 && now.getDate() <= 31) || 
+          const isHalloween = (now.getMonth() === 9 && now.getDate() >= 20 && now.getDate() <= 31) || 
                               (now.getMonth() === 10 && now.getDate() <= 1);
           
           if (!isHalloween) {
-            label += `<span class="breed-lock">🔒 (Only available Oct 24-31)</span>`;
+            label += `<span class="breed-lock">🔒 (Only available Oct 20-31)</span>`;
           } else {
             label += `<span class="breed-lock">🔒 (100k score & 15 achievements required)</span>`;
           }
@@ -571,12 +571,12 @@ let extraCPSBreed = {
     // Check if it's halloween cat and requirements are met
     if (breed === 'halloween_cat') {
       const now = new Date();
-      const isHalloween = (now.getMonth() === 9 && now.getDate() >= 24 && now.getDate() <= 31) || 
+      const isHalloween = (now.getMonth() === 9 && now.getDate() >= 20 && now.getDate() <= 31) || 
                           (now.getMonth() === 10 && now.getDate() <= 1);
       
       // Check if it's Halloween season and requirements are met
       if (!isHalloween) {
-        showNotification("Halloween Cat is only available from Oct 24-31!");
+        showNotification("Halloween Cat is only available from Oct 20-31!");
         return;
       }
       
