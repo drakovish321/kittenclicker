@@ -492,36 +492,24 @@ for (const unlock of breedUnlocks) {
   });
 }
 window.selectBreed = function(breed) {
-    if (!breedsUnlocked[breed]) return;
+    if (!breedsUnlocked[breed]) return; // Do nothing if breed is locked
+
     if (selectedBreed !== breed) {
         selectedBreed = breed;
+
+        // Breed-specific click bonus
+        if (breed === 'siamese') {
+            clickValue = 1 + 20; // Base 1 + 20 bonus
+        } else {
+            clickValue = 1; // Reset for other breeds
+        }
+
+        // Update UI and achievements
         updateUI();
         checkAchievements();
         renderBreeds();
-// --- Breed-specific click bonus ---
-if (breed === 'siamese') {
-  clickValue = 1 + 20; // Base 1 + 20 bonus
-} else {
-  clickValue = 1; // Reset for other breeds
-}
-
-updateUI();
-checkAchievements();
-renderBreeds();
-    // --- Breed-specific click bonus ---
-    if (breed === 'siamese') {
-      clickValue = 1 + 20; // Base 1 + 20 bonus
-    } else {
-      clickValue = 1; // Reset for other breeds
     }
-
-    updateUI();
-    checkAchievements();
-    renderBreeds();
-  }
 };
-    }
-  };
   function exportSave() {
     const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings };
     const saveString = btoa(JSON.stringify(saveData));
