@@ -204,6 +204,12 @@
     </label>
   </div>
   <div class="setting-row">
+    <label><span class="setting-title">Console:</span></label>
+    <input type="text" id="consoleInput" placeholder="Type 'qwertycps=number' or 'qwertycv=number'" style="display:none;">
+    <button onclick="executeConsoleCommand()" id="consoleButton" style="display:none;">Execute</button>
+    <div id="consoleOutput" style="margin-top:10px; font-family:monospace; max-height:150px; overflow-y:auto;"></div>
+  </div>
+  <div class="setting-row">
     <button onclick="resetProgress()" style="background:#b71c1c;color:#fff;">Reset Progress</button>
   </div>
 </div>
@@ -236,7 +242,7 @@
 let breedImages = {
     american_shorthair: "https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg",
     maine_coon: "https://cdn.pixabay.com/photo/2021/12/17/19/15/pet-6877246_1280.jpg",
-    siamese: "https://cdn.pixabay.com/photo/2017/09/15/21/41/siamese-2753784_1280.jpg"
+    siamese: "https://cdn.pixabay.com/photo/2017/02/15/12/12/cat-2068462_1280.jpg"
 };
 let breedNames = {
     american_shorthair: "American Shorthair",
@@ -246,7 +252,7 @@ let breedNames = {
 let extraCPSBreed = {
     american_shorthair: 0,
     maine_coon: 5,
-    siamese: 0
+    siamese: 20
 };
   let achievementsData = [
   { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
@@ -336,7 +342,7 @@ let extraCPSBreed = {
       // Bonus text
       let bonusText = "";
       if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
-      if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 Click Value</div>";
+      if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 CPS</div>";
 
       div.innerHTML = `
         <div style="font-size:20px;margin-bottom:8px;">${label}</div>
@@ -372,13 +378,16 @@ let extraCPSBreed = {
   }
   
   function checkAchievements() {
+    let achievementsChanged = false;
+    
     for (const ach of achievementsData) {
       if (!ach.achieved && ach.condition()) {
         ach.achieved = true;
-        showNotification('Achievement unlocked: ' + ach.text);
-        renderAchievements();
+        achievementsChanged = true;
       }
     }
+    
+    // Check breed unlocks after checking all achievements
     const breedUnlocks = [
       { breed: "maine_coon", requiredAchievements: 3, message: "You unlocked the Maine Coon breed!" },
       { breed: "siamese", requiredAchievements: 6, message: "You unlocked the Siamese breed!" }
@@ -389,8 +398,13 @@ let extraCPSBreed = {
       if (!breedsUnlocked[unlock.breed] && achCount >= unlock.requiredAchievements) {
         breedsUnlocked[unlock.breed] = true;
         showNotification(unlock.message);
-        renderBreeds();
+        achievementsChanged = true;
       }
+    }
+    
+    if (achievementsChanged) {
+      renderAchievements();
+      renderBreeds();
     }
   }
   
@@ -711,6 +725,87 @@ let extraCPSBreed = {
     this.style.display = 'none';
     if (mysteryKittenTimeout) clearTimeout(mysteryKittenTimeout);
     scheduleMysteryKitten();
+  });
+
+  // --- CONSOLE FUNCTIONALITY ---
+  let developerMode = false;
+  
+  // Developer mode toggle using Ctrl+Shift+D
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+      developerMode = !developerMode;
+      document.getElementById('consoleInput').style.display = developerMode ? 'block' : 'none';
+      document.getElementById('consoleButton').style.display = developerMode ? 'block' : 'none';
+      if (developerMode) {
+        showNotification('Developer mode enabled');
+      } else {
+        showNotification('Developer mode disabled');
+      }
+    }
+  });
+  
+  function executeConsoleCommand() {
+    if (!developerMode) return;
+    
+    const input = document.getElementById('consoleInput');
+    const output = document.getElementById('consoleOutput');
+    const command = input.value.trim().toLowerCase();
+    
+    if (!command) return;
+    
+    // Add command to output
+    const commandLine = document.createElement('div');
+    commandLine.textContent = '> ' + command;
+    commandLine.style.color = '#1565c0';
+    output.appendChild(commandLine);
+    
+    try {
+      if (command.startsWith('qwertycps=')) {
+        const value = parseFloat(command.substring(10));
+        if (isNaN(value) || value < 0) {
+          throw new Error('Invalid CPS value');
+        }
+        // Set CPS to the specified value
+        upgrades.autoClicker = Math.floor(value / 5);
+        upgrades.autoKittenFarm = Math.floor(value / 7);
+        upgrades.kittenPlanet = Math.floor(value / 20);
+        updateUI();
+        output.appendChild(createOutputLine(`CPS set to ${value}`));
+      } else if (command.startsWith('qwertycv=')) {
+        const value = parseFloat(command.substring(9));
+        if (isNaN(value) || value < 0) {
+          throw new Error('Invalid CV value');
+        }
+        // Set click value to the specified value
+        clickValue = value;
+        updateUI();
+        output.appendChild(createOutputLine(`Click Value set to ${value}`));
+      } else {
+        throw new Error('Unknown command. Use qwertycps=number or qwertycv=number');
+      }
+    } catch (error) {
+      output.appendChild(createOutputLine(`Error: ${error.message}`, 'red'));
+    }
+    
+    // Scroll to bottom
+    output.scrollTop = output.scrollHeight;
+    
+    // Clear input
+    input.value = '';
+  }
+
+  function createOutputLine(text, color = '#00796b') {
+    const line = document.createElement('div');
+    line.textContent = text;
+    line.style.color = color;
+    return line;
+  }
+
+  // Add event listener to console input
+  document.getElementById('consoleInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      executeConsoleCommand();
+    }
   });
 </script>
 </body>
