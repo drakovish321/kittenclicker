@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
@@ -18,7 +20,7 @@
     h1 { margin-bottom: 0; font-size: 2.5em; }
     #score { font-size: 1.5em; margin: 5px 0 10px; }
     #stats { margin-bottom: 30px; }
-    img#kitten { width:300px; cursor:pointer; border-radius:20px; transition: transform 0.2s ease; }
+    img#kitten { width:300px; cursor:pointer; border-radius:20px; transition: transform 0.2s ease; position: relative; z-index: 10; }
     .pulse { animation: pulseAnim 0.3s ease forwards; }
     @keyframes pulseAnim { 0% {transform:scale(1);} 50% {transform:scale(1.2);} 100% {transform:scale(1);} }
 
@@ -80,6 +82,7 @@
       transition: transform 0.15s, box-shadow 0.15s, background 0.3s; border:2px solid #f8bbd0; opacity:0.92; position:relative; box-sizing:border-box;
     }
     .achievement-card:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 24px rgba(180,40,130,0.13); opacity:1; z-index:2; }
+    .achievement-card.locked { opacity:0.6; }
     .achievement-icon { font-size:2em; margin-right:5px; filter: drop-shadow(0 1px 1px #fff5); text-shadow:0 2px 10px #fff8; width:40px; text-align:center; }
 
     /* --- Breeds --- */
@@ -87,7 +90,7 @@
     .breed-lock { color:#aaa; font-size:20px; margin-left:6px; vertical-align:middle; }
 
     /* --- Mystery Kitten --- */
-    #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; }
+    #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; z-index: 1001; position: relative; }
     #mysteryKittenBtn:hover { transform: scale(1.05); }
 
     /* --- Themes --- */
@@ -220,6 +223,7 @@
 </div>
 
 <script>
+  // All your JavaScript code here (same as before)
   let score = 0, clickValue = 1;
   let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
   let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
@@ -274,6 +278,122 @@ let extraCPSBreed = {
   const clickSound = document.getElementById('clickSound');
   const mysteryKittenBtn = document.getElementById('mysteryKittenBtn');
 
+  // Define all functions at the top to avoid scope issues
+  function openOverlay(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+    if(id === 'achievementsOverlay') renderAchievements();
+    if(id === 'breedsOverlay') renderBreeds();
+    if(id === 'settingsOverlay') updateSettingsUI();
+  }
+  
+  function closeOverlay(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  }
+  
+  function showTab(tabName) {
+    document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
+    document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
+    document.getElementById('tabClickUpgrades').classList.toggle('active', tabName === 'clickUpgrades');
+    document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
+  }
+  
+  function renderAchievements() {
+    const container = document.getElementById('achievementsList');
+    container.innerHTML = '';
+    for (const ach of achievementsData) {
+      const card = document.createElement('div');
+      card.className = 'achievement-card ' + (ach.achieved ? 'achieved' : 'locked');
+      card.innerHTML = `<span class="achievement-icon">${ach.achieved ? '🏆' : '🔒'}</span><span>${ach.text}</span>`;
+      container.appendChild(card);
+    }
+  }
+  
+  function renderBreeds() {
+    const list = document.getElementById('breedsList');
+    list.innerHTML = '';
+
+    // Add all breeds here
+    ["american_shorthair", "maine_coon", "siamese"].forEach(breed => {
+      const div = document.createElement('div');
+      div.style.margin = "28px 0 25px 0";
+      div.style.padding = "12px";
+      div.style.background = "#fff6f6";
+      div.style.borderRadius = "12px";
+      div.style.boxShadow = "0 2px 12px #f8bbd0";
+      div.style.maxWidth = "340px";
+      div.style.marginLeft = "auto";
+      div.style.marginRight = "auto";
+
+      let label = `<b>${breedNames[breed]}</b>`;
+
+      // Lock logic
+      if (!breedsUnlocked[breed]) {
+        label += `<span class="breed-lock">🔒 (Unlock by achievements)</span>`;
+      }
+
+      // Bonus text
+      let bonusText = "";
+      if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
+      if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 Click Value</div>";
+
+      div.innerHTML = `
+        <div style="font-size:20px;margin-bottom:8px;">${label}</div>
+        <img src="${breedImages[breed]}" alt="${breedNames[breed]}" style="width:120px;border-radius:14px;box-shadow:0 2px 8px #f8bbd0;">
+        <div style="margin-top:7px;">
+          <button class="breed-select-btn${selectedBreed===breed?" selected":""}"
+            onclick="selectBreed('${breed}')">
+            ${selectedBreed===breed ? "Selected" : "Select"}
+          </button>
+        </div>
+        ${bonusText}
+      `;
+
+      list.appendChild(div);
+    });
+  }
+  
+  function showNotification(text) {
+    const notif = document.createElement('div');
+    notif.textContent = text;
+    notif.style.position = 'fixed';
+    notif.style.top = '80px';
+    notif.style.left = '50%';
+    notif.style.transform = 'translateX(-50%)';
+    notif.style.background = '#c2185b';
+    notif.style.color = 'white';
+    notif.style.padding = '10px 20px';
+    notif.style.borderRadius = '8px';
+    notif.style.zIndex = 2000;
+    notif.style.opacity = userSettings.notifVolume;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+  }
+  
+  function checkAchievements() {
+    for (const ach of achievementsData) {
+      if (!ach.achieved && ach.condition()) {
+        ach.achieved = true;
+        showNotification('Achievement unlocked: ' + ach.text);
+        renderAchievements();
+      }
+    }
+    const breedUnlocks = [
+      { breed: "maine_coon", requiredAchievements: 3, message: "You unlocked the Maine Coon breed!" },
+      { breed: "siamese", requiredAchievements: 6, message: "You unlocked the Siamese breed!" }
+    ];
+
+    for (const unlock of breedUnlocks) {
+      let achCount = achievementsData.reduce((acc, a) => acc + (a.achieved ? 1 : 0), 0);
+      if (!breedsUnlocked[unlock.breed] && achCount >= unlock.requiredAchievements) {
+        breedsUnlocked[unlock.breed] = true;
+        showNotification(unlock.message);
+        renderBreeds();
+      }
+    }
+  }
+  
   kittenImg.addEventListener('click', () => {
     clickSound.currentTime = 0;
     clickSound.volume = userSettings.notifVolume;
@@ -284,6 +404,7 @@ let extraCPSBreed = {
       setTimeout(() => kittenImg.classList.remove('pulse'), 300);
     }
   });
+  
   function addScore(amount) {
     score += amount;
     if(userSettings.floatScore)
@@ -291,6 +412,7 @@ let extraCPSBreed = {
     updateUI();
     checkAchievements();
   }
+  
   function showFloatingScore(amount) {
     const floatEl = document.createElement('div');
     floatEl.textContent = (amount >= 0 ? '+' : '') + Math.floor(amount);
@@ -312,7 +434,8 @@ let extraCPSBreed = {
       if (opacity <= 0) { clearInterval(anim); floatEl.remove(); }
     }, 16);
   }
- function updateUI() {
+  
+  function updateUI() {
     let breedCPS = extraCPSBreed[selectedBreed] || 0;
     const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + upgrades.kittenPlanet * 20 + breedCPS;
     
@@ -344,7 +467,8 @@ let extraCPSBreed = {
     if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetBtn')) document.getElementById('kittenPlanetBtn').disabled = score < upgradeCosts.kittenPlanet;
-}
+  }
+  
   function buyUpgrade(name, increment) {
     if (score >= upgradeCosts[name]) {
       score -= upgradeCosts[name];
@@ -354,6 +478,7 @@ let extraCPSBreed = {
       updateUI();
     }
   }
+  
   function buyAutoClicker() {
     if (score >= upgradeCosts.autoClicker) {
       score -= upgradeCosts.autoClicker;
@@ -362,6 +487,7 @@ let extraCPSBreed = {
       updateUI();
     }
   }
+  
   function buyAutoKittenFarm() {
     if (score >= upgradeCosts.autoKittenFarm) {
       score -= upgradeCosts.autoKittenFarm;
@@ -370,6 +496,7 @@ let extraCPSBreed = {
       updateUI();
     }
   }
+  
   function buyKittenPlanet() {
     if (score >= upgradeCosts.kittenPlanet) {
       score -= upgradeCosts.kittenPlanet;
@@ -378,120 +505,14 @@ let extraCPSBreed = {
       updateUI();
     }
   }
+  
   setInterval(() => {
     let breedCPS = extraCPSBreed[selectedBreed] || 0;
     const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + upgrades.kittenPlanet * 20 + breedCPS;
     if (totalCPS > 0) { addScore(totalCPS); }
   }, 1000);
-  function openOverlay(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'block';
-    if(id === 'achievementsOverlay') renderAchievements();
-    if(id === 'breedsOverlay') renderBreeds();
-    if(id === 'settingsOverlay') updateSettingsUI();
-  }
-  function closeOverlay(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  }
-  function showTab(tabName) {
-    document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
-    document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
-    document.getElementById('tabClickUpgrades').classList.toggle('active', tabName === 'clickUpgrades');
-    document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
-  }
-  function checkAchievements() {
-    for (const ach of achievementsData) {
-      if (!ach.achieved && ach.condition()) {
-        ach.achieved = true;
-        showNotification('Achievement unlocked: ' + ach.text);
-        renderAchievements();
-      }
-    }
- const breedUnlocks = [
-  { breed: "maine_coon", requiredAchievements: 3, message: "You unlocked the Maine Coon breed!" },
-  { breed: "siamese", requiredAchievements: 6, message: "You unlocked the Siamese breed!" }
-];
-
-for (const unlock of breedUnlocks) {
-  let achCount = achievementsData.reduce((acc, a) => acc + (a.achieved ? 1 : 0), 0);
-  if (!breedsUnlocked[unlock.breed] && achCount >= unlock.requiredAchievements) {
-    breedsUnlocked[unlock.breed] = true;
-    showNotification(unlock.message);
-    renderBreeds();
-  }
-}
-
-// --- Define the function outside the loop ---
-function renderAchievements() {
-  const container = document.getElementById('achievementsList');
-  container.innerHTML = '';
-  for (const ach of achievementsData) {
-    const card = document.createElement('div');
-    card.className = 'achievement-card ' + (ach.achieved ? 'achieved' : 'locked');
-    card.innerHTML = `<span class="achievement-icon">${ach.achieved ? '🏆' : '🔒'}</span><span>${ach.text}</span>`;
-    container.appendChild(card);
-  }
-}
-  function showNotification(text) {
-    const notif = document.createElement('div');
-    notif.textContent = text;
-    notif.style.position = 'fixed';
-    notif.style.top = '80px';
-    notif.style.left = '50%';
-    notif.style.transform = 'translateX(-50%)';
-    notif.style.background = '#c2185b';
-    notif.style.color = 'white';
-    notif.style.padding = '10px 20px';
-    notif.style.borderRadius = '8px';
-    notif.style.zIndex = 2000;
-    notif.style.opacity = userSettings.notifVolume;
-    document.body.appendChild(notif);
-    setTimeout(() => notif.remove(), 3000);
-  }function renderBreeds() {
-  const list = document.getElementById('breedsList');
-  list.innerHTML = '';
-
-  // Add all breeds here
-  ["american_shorthair", "maine_coon", "siamese"].forEach(breed => {
-    const div = document.createElement('div');
-    div.style.margin = "28px 0 25px 0";
-    div.style.padding = "12px";
-    div.style.background = "#fff6f6";
-    div.style.borderRadius = "12px";
-    div.style.boxShadow = "0 2px 12px #f8bbd0";
-    div.style.maxWidth = "340px";
-    div.style.marginLeft = "auto";
-    div.style.marginRight = "auto";
-
-    let label = `<b>${breedNames[breed]}</b>`;
-
-    // Lock logic
-    if (!breedsUnlocked[breed]) {
-      label += `<span class="breed-lock">🔒 (Unlock by achievements)</span>`;
-    }
-
-    // Bonus text
-    let bonusText = "";
-    if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
-    if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 Click Value</div>";
-
-    div.innerHTML = `
-      <div style="font-size:20px;margin-bottom:8px;">${label}</div>
-      <img src="${breedImages[breed]}" alt="${breedNames[breed]}" style="width:120px;border-radius:14px;box-shadow:0 2px 8px #f8bbd0;">
-      <div style="margin-top:7px;">
-        <button class="breed-select-btn${selectedBreed===breed?" selected":""}"
-          onclick="selectBreed('${breed}')" ${!breedsUnlocked[breed] ? "disabled" : ""}>
-          ${selectedBreed===breed ? "Selected" : "Select"}
-        </button>
-      </div>
-      ${bonusText}
-    `;
-
-    list.appendChild(div);
-  });
-}
-window.selectBreed = function(breed) {
+  
+  window.selectBreed = function(breed) {
     if (!breedsUnlocked[breed]) return; // Do nothing if breed is locked
 
     if (selectedBreed !== breed) {
@@ -509,7 +530,8 @@ window.selectBreed = function(breed) {
         checkAchievements();
         renderBreeds();
     }
-};
+  };
+  
   function exportSave() {
     const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings };
     const saveString = btoa(JSON.stringify(saveData));
@@ -517,6 +539,7 @@ window.selectBreed = function(breed) {
     textarea.value = saveString;
     textarea.select();
   }
+  
   function loadSave() {
     const input = document.getElementById('loadSaveCode').value;
     try {
@@ -545,6 +568,7 @@ window.selectBreed = function(breed) {
       alert('Invalid save code.');
     }
   }
+  
   document.getElementById('saveCodeBox').addEventListener('click', function() {
     this.select();
   });
@@ -556,27 +580,33 @@ window.selectBreed = function(breed) {
     document.getElementById('notifVolume').value = userSettings.notifVolume;
     document.getElementById('disableAnimations').checked = userSettings.disableAnimations;
   }
+  
   document.getElementById('themeSelect').addEventListener('change', function() {
     userSettings.theme = this.value;
     applyTheme(userSettings.theme);
     try { localStorage.setItem('kittenTheme', userSettings.theme); } catch (e) {}
   });
+  
   function applyTheme(theme) {
     document.body.className = '';
     document.body.classList.add('theme-' + theme);
   }
+  
   // Floating Score toggle
   document.getElementById('floatScoreToggle').addEventListener('change', function() {
     userSettings.floatScore = this.checked;
   });
+  
   // Notification volume
   document.getElementById('notifVolume').addEventListener('input', function() {
     userSettings.notifVolume = parseFloat(this.value);
   });
+  
   // Disable animations
   document.getElementById('disableAnimations').addEventListener('change', function() {
     userSettings.disableAnimations = this.checked;
   });
+  
   // Reset
   function resetProgress() {
     if(confirm('Are you sure you want to reset all progress?')) {
@@ -628,6 +658,7 @@ window.selectBreed = function(breed) {
     renderAchievements();
     renderBreeds();
   });
+  
   setInterval(() => {
     try {
       const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings };
@@ -639,10 +670,12 @@ window.selectBreed = function(breed) {
   let mysteryKittenTimeout = null;
   function scheduleMysteryKitten() {
     const randomDelay = Math.floor(Math.random() * 1000); // 0-999 ms
+    // For debug: const randomDelay = (10 + Math.random()*20)*1000;
     mysteryKittenTimeout = setTimeout(() => {
       mysteryKittenBtn.style.display = '';
     }, randomDelay);
-}
+  }
+  
   // Hide the button & schedule first appearance on page load
   window.addEventListener('load', () => {
     mysteryKittenBtn.style.display = 'none';
