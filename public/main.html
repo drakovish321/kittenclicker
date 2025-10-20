@@ -635,7 +635,7 @@ window.selectBreed = function(breed) {
   // --- MYSTERY KITTEN RANDOM SPAWN ---
   let mysteryKittenTimeout = null;
   function scheduleMysteryKitten() {
-    const randomDelay = Math.floor(Math.random() * 1800 * 1000); // 0-30min
+    const randomDelay = Math.floor(Math.random() * 1000); // 0-999 ms
     // For debug: const randomDelay = (10 + Math.random()*20)*1000;
     mysteryKittenTimeout = setTimeout(() => {
       mysteryKittenBtn.style.display = '';
