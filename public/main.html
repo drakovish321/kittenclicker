@@ -128,7 +128,7 @@
 
 <!-- Footer with player count and version -->
 <div id="footer">
-  <div>Players: <span id="playerCount">Loading...</span></div>
+  <div>Players: <span id="currentPlayers">Loading...</span> | Total: <span id="totalPlayers">Loading...</span></div>
   <div>Version: V1.32</div>
 </div>
 
@@ -332,17 +332,18 @@ let extraCPSBreed = {
   const kittenImg = document.getElementById('kitten');
   const clickSound = document.getElementById('clickSound');
   const mysteryKittenBtn = document.getElementById('mysteryKittenBtn');
-  const playerCountEl = document.getElementById('playerCount');
 
   // Update player count from server
   async function updatePlayerCount() {
     try {
       const response = await fetch('/player-count');
       const data = await response.json();
-      playerCountEl.textContent = data.count.toLocaleString();
+      document.getElementById('currentPlayers').textContent = data.current.toLocaleString();
+      document.getElementById('totalPlayers').textContent = data.total.toLocaleString();
     } catch (error) {
       console.error('Error fetching player count:', error);
-      playerCountEl.textContent = 'Error';
+      document.getElementById('currentPlayers').textContent = 'Error';
+      document.getElementById('totalPlayers').textContent = 'Error';
     }
   }
 
@@ -353,7 +354,8 @@ let extraCPSBreed = {
     eventSource.onmessage = function(event) {
       try {
         const data = JSON.parse(event.data);
-        playerCountEl.textContent = data.count.toLocaleString();
+        document.getElementById('currentPlayers').textContent = data.current.toLocaleString();
+        document.getElementById('totalPlayers').textContent = data.total.toLocaleString();
       } catch (e) {
         console.error('Error parsing player count:', e);
       }
