@@ -92,7 +92,6 @@
 
     /* --- Mystery Kitten --- */
     #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; z-index: 1001; position: relative; }
-    #mysteryKittenBtn:hover { transform: scale(1.05); }
 
     /* --- Themes --- */
     body.theme-pink { background:#fce4ec; color:#880e4f; }
@@ -140,6 +139,7 @@
   <div class="shop-tabs">
     <div class="shop-tab active" id="tabClickUpgrades" onclick="showTab('clickUpgrades')">Click Upgrades</div>
     <div class="shop-tab" id="tabCPSUpgrades" onclick="showTab('cpsUpgrades')">CPS Upgrades</div>
+    <div class="shop-tab" id="tabBonusUpgrades" onclick="showTab('bonusUpgrades')">Bonus Upgrades</div>
   </div>
   <div id="clickUpgrades" class="shop-content">
     <div class="shop-item"><strong>Milk Bowl</strong><br />+0.5 click value<br />
@@ -170,6 +170,17 @@
     </div>
     <div class="shop-item"><strong>Kitten Planet</strong><br />+20 CPS<br />
       <button onclick="buyKittenPlanet()" id="kittenPlanetBtn">Buy for <span id="kittenPlanetCost">1000000</span></button>
+    </div>
+  </div>
+  <div id="bonusUpgrades" class="shop-content" style="display:none;">
+    <div class="shop-item"><strong>Speed Boost</strong><br />+5% click value<br />
+      <button onclick="buyBonusUpgrade('speedBoost', 0.05)" id="speedBoostBtn">Buy for <span id="speedBoostCost">5000</span></button>
+    </div>
+    <div class="shop-item"><strong>Double Points</strong><br />+10% score multiplier<br />
+      <button onclick="buyBonusUpgrade('doublePoints', 0.1)" id="doublePointsBtn">Buy for <span id="doublePointsCost">15000</span></button>
+    </div>
+    <div class="shop-item"><strong>Golden Paws</strong><br />+20% CPS<br />
+      <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span id="goldenPawsCost">50000</span></button>
     </div>
   </div>
 </div>
@@ -235,7 +246,16 @@
 <div id="breedsOverlay" class="overlay">
   <button class="closeOverlay" onclick="closeOverlay('breedsOverlay')">X</button>
   <h2>Cat Breeds</h2>
-  <div id="breedsList"></div>
+  <div class="shop-tabs">
+    <div class="shop-tab active" id="tabBreeds" onclick="showBreedsTab('breeds')">Breeds</div>
+    <div class="shop-tab" id="tabEvents" onclick="showBreedsTab('events')">Events</div>
+  </div>
+  <div id="breedsContent" class="shop-content">
+    <div id="breedsList"></div>
+  </div>
+  <div id="eventsContent" class="shop-content" style="display:none;">
+    <!-- Halloween cat section removed -->
+  </div>
 </div>
 
 <script>
@@ -292,6 +312,19 @@ let extraCPSBreed = {
     disableAnimations: false
   };
 
+  // Bonus upgrades data
+  let bonusUpgrades = {
+    speedBoost: 0,
+    doublePoints: 0,
+    goldenPaws: 0
+  };
+  
+  let bonusUpgradeCosts = {
+    speedBoost: 5000,
+    doublePoints: 15000,
+    goldenPaws: 50000
+  };
+
   // -- UI elements --
   const scoreEl = document.getElementById('score');
   const clickValueEl = document.getElementById('clickValue');
@@ -313,6 +346,26 @@ let extraCPSBreed = {
     }
   }
 
+  // Real-time player count using Server-Sent Events
+  function startPlayerCountStream() {
+    const eventSource = new EventSource('/player-count-stream');
+    
+    eventSource.onmessage = function(event) {
+      try {
+        const data = JSON.parse(event.data);
+        playerCountEl.textContent = data.count.toLocaleString();
+      } catch (e) {
+        console.error('Error parsing player count:', e);
+      }
+    };
+    
+    eventSource.onerror = function(err) {
+      console.error('Player count stream error:', err);
+      // Attempt to reconnect after 5 seconds
+      setTimeout(startPlayerCountStream, 5000);
+    };
+  }
+
   // Define all functions at the top to avoid scope issues
   function openOverlay(id) {
     const el = document.getElementById(id);
@@ -330,8 +383,18 @@ let extraCPSBreed = {
   function showTab(tabName) {
     document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
     document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
+    document.getElementById('bonusUpgrades').style.display = (tabName === 'bonusUpgrades') ? 'block' : 'none';
     document.getElementById('tabClickUpgrades').classList.toggle('active', tabName === 'clickUpgrades');
     document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
+    document.getElementById('tabBonusUpgrades').classList.toggle('active', tabName === 'bonusUpgrades');
+  }
+  
+  // Breeds tab switching
+  function showBreedsTab(tabName) {
+    document.getElementById('breedsContent').style.display = (tabName === 'breeds') ? 'block' : 'none';
+    document.getElementById('eventsContent').style.display = (tabName === 'events') ? 'block' : 'none';
+    document.getElementById('tabBreeds').classList.toggle('active', tabName === 'breeds');
+    document.getElementById('tabEvents').classList.toggle('active', tabName === 'events');
   }
   
   function renderAchievements() {
@@ -349,8 +412,8 @@ let extraCPSBreed = {
     const list = document.getElementById('breedsList');
     list.innerHTML = '';
 
-    // Add all breeds here
-    ["american_shorthair", "maine_coon", "siamese", "halloween_cat"].forEach(breed => {
+    // Add all breeds here (excluding halloween_cat)
+    ["american_shorthair", "maine_coon", "siamese"].forEach(breed => {
       const div = document.createElement('div');
       div.style.margin = "28px 0 25px 0";
       div.style.padding = "12px";
@@ -363,35 +426,12 @@ let extraCPSBreed = {
 
       let label = `<b>${breedNames[breed]}</b>`;
 
-      // Add event tag for Halloween cat
-      if (breed === "halloween_cat") {
-        const now = new Date();
-        const isHalloween = (now.getMonth() === 9 && now.getDate() >= 20 && now.getDate() <= 31) || 
-                            (now.getMonth() === 10 && now.getDate() <= 1);
-        if (isHalloween) {
-          label += `<span class="breed-event-tag">EVENT</span>`;
-        }
-      }
-
       // Lock logic
       if (!breedsUnlocked[breed]) {
-        if (breed === "halloween_cat") {
-          const now = new Date();
-          const isHalloween = (now.getMonth() === 9 && now.getDate() >= 20 && now.getDate() <= 31) || 
-                              (now.getMonth() === 10 && now.getDate() <= 1);
-          
-          if (!isHalloween) {
-            label += `<span class="breed-lock">🔒 (Only available Oct 20-31)</span>`;
-          } else {
-            label += `<span class="breed-lock">🔒 (100k score & 15 achievements required)</span>`;
-          }
-        } else {
-          // Show exact requirements for Maine Coon and Siamese
-          if (breed === "maine_coon") {
-            label += `<span class="breed-lock">🔒 (3 achievements required)</span>`;
-          } else if (breed === "siamese") {
-            label += `<span class="breed-lock">🔒 (6 achievements required)</span>`;
-          }
+        if (breed === "maine_coon") {
+          label += `<span class="breed-lock">🔒 (3 achievements required)</span>`;
+        } else if (breed === "siamese") {
+          label += `<span class="breed-lock">🔒 (6 achievements required)</span>`;
         }
       }
 
@@ -399,7 +439,6 @@ let extraCPSBreed = {
       let bonusText = "";
       if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
       if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 CPS</div>";
-      if (breed === "halloween_cat") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +100 CPS & +100 Click Value</div>";
 
       div.innerHTML = `
         <div style="font-size:20px;margin-bottom:8px;">${label}</div>
@@ -415,6 +454,62 @@ let extraCPSBreed = {
 
       list.appendChild(div);
     });
+
+    // Add Halloween Cat in the events section only (but we'll only show it during Halloween)
+    const halloweenDiv = document.createElement('div');
+    halloweenDiv.style.margin = "28px 0 25px 0";
+    halloweenDiv.style.padding = "12px";
+    halloweenDiv.style.background = "#fff6f6";
+    halloweenDiv.style.borderRadius = "12px";
+    halloweenDiv.style.boxShadow = "0 2px 12px #f8bbd0";
+    halloweenDiv.style.maxWidth = "340px";
+    halloweenDiv.style.marginLeft = "auto";
+    halloweenDiv.style.marginRight = "auto";
+
+    let halloweenLabel = `<b>${breedNames.halloween_cat}</b>`;
+    
+    // Add event tag for Halloween cat
+    const now = new Date();
+    const isHalloween = (now.getMonth() === 9 && now.getDate() >= 20 && now.getDate() <= 31) || 
+                        (now.getMonth() === 10 && now.getDate() <= 1);
+    
+    if (isHalloween) {
+      halloweenLabel += `<span class="breed-event-tag">EVENT</span>`;
+    }
+
+    // Lock logic for Halloween cat
+    if (!breedsUnlocked.halloween_cat) {
+      if (isHalloween) {
+        halloweenLabel += `<span class="breed-lock">🔒 (100k score & 15 achievements required)</span>`;
+      } else {
+        halloweenLabel += `<span class="breed-lock">🔒 (Only available Oct 20-31)</span>`;
+      }
+    }
+
+    // Only show Halloween cat during Halloween season
+    if (isHalloween) {
+      halloweenDiv.innerHTML = `
+        <div style="font-size:20px;margin-bottom:8px;">${halloweenLabel}</div>
+        <img src="${breedImages.halloween_cat}" alt="${breedNames.halloween_cat}" style="width:120px;border-radius:14px;box-shadow:0 2px 8px #f8bbd0;">
+        <div style="margin-top:7px;">
+          <button class="breed-select-btn${selectedBreed==='halloween_cat'?" selected":""}"
+            onclick="selectBreed('halloween_cat')">
+            ${selectedBreed==='halloween_cat' ? "Selected" : "Select"}
+          </button>
+        </div>
+        <div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +100 CPS & +100 Click Value</div>
+      `;
+      
+      // Add to breedsList instead of eventsContent
+      list.appendChild(halloweenDiv);
+    }
+
+    // Hide the events tab if there's nothing to show
+    if (!isHalloween) {
+      document.getElementById('tabEvents').style.display = 'none';
+    } else {
+      document.getElementById('tabEvents').style.display = 'inline-block';
+    }
   }
   
   function showNotification(text) {
@@ -506,9 +601,37 @@ let extraCPSBreed = {
     }, 16);
   }
   
+  // Calculate bonus multipliers
+  function calculateBonusMultipliers() {
+    let clickMultiplier = 1;
+    let scoreMultiplier = 1;
+    let cpsMultiplier = 1;
+    
+    if (bonusUpgrades.speedBoost > 0) {
+      clickMultiplier += bonusUpgrades.speedBoost * 0.05;
+    }
+    
+    if (bonusUpgrades.doublePoints > 0) {
+      scoreMultiplier += bonusUpgrades.doublePoints * 0.1;
+    }
+    
+    if (bonusUpgrades.goldenPaws > 0) {
+      cpsMultiplier += bonusUpgrades.goldenPaws * 0.2;
+    }
+    
+    return { clickMultiplier, scoreMultiplier, cpsMultiplier };
+  }
+  
   function updateUI() {
     let breedCPS = extraCPSBreed[selectedBreed] || 0;
-    const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + upgrades.kittenPlanet * 20 + breedCPS;
+    
+    // Calculate bonus multipliers
+    const bonuses = calculateBonusMultipliers();
+    
+    const totalCPS = (upgrades.autoClicker * 5 + 
+                      upgrades.autoKittenFarm * 7 + 
+                      upgrades.kittenPlanet * 20 + 
+                      breedCPS) * bonuses.cpsMultiplier;
     
     // Format large numbers
     function formatNumber(num) {
@@ -520,7 +643,7 @@ let extraCPSBreed = {
       return Math.floor(num);
     }
     
-    scoreEl.textContent = `Score: ${formatNumber(score)}`;
+    scoreEl.textContent = `Score: ${formatNumber(score * bonuses.scoreMultiplier)}`;
     
     // --- Breed click bonus ---
     let breedClickBonus = 0;
@@ -529,11 +652,15 @@ let extraCPSBreed = {
     } else if (selectedBreed === 'halloween_cat') {
       breedClickBonus = 100;
     }
-    clickValueEl.textContent = (clickValue + breedClickBonus).toFixed(1);
     
-    autoClickersEl.textContent = totalCPS;
+    // Apply click bonus multiplier
+    const finalClickValue = (clickValue + breedClickBonus) * bonuses.clickMultiplier;
+    clickValueEl.textContent = finalClickValue.toFixed(1);
+    
+    autoClickersEl.textContent = totalCPS.toFixed(1);
     kittenImg.src = breedImages[selectedBreed];
     
+    // Update upgrade costs
     if(document.getElementById('milkBowlCost')) document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
     if(document.getElementById('catFoodCost')) document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
     if(document.getElementById('scratcherCost')) document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
@@ -543,7 +670,11 @@ let extraCPSBreed = {
     if(document.getElementById('autoClickerCost')) document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmCost')) document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetCost')) document.getElementById('kittenPlanetCost').textContent = upgradeCosts.kittenPlanet;
+    if(document.getElementById('speedBoostCost')) document.getElementById('speedBoostCost').textContent = bonusUpgradeCosts.speedBoost;
+    if(document.getElementById('doublePointsCost')) document.getElementById('doublePointsCost').textContent = bonusUpgradeCosts.doublePoints;
+    if(document.getElementById('goldenPawsCost')) document.getElementById('goldenPawsCost').textContent = bonusUpgradeCosts.goldenPaws;
     
+    // Update button states
     if(document.getElementById('milkBowlBtn')) document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
     if(document.getElementById('catFoodBtn')) document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
     if(document.getElementById('scratcherBtn')) document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
@@ -553,6 +684,9 @@ let extraCPSBreed = {
     if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetBtn')) document.getElementById('kittenPlanetBtn').disabled = score < upgradeCosts.kittenPlanet;
+    if(document.getElementById('speedBoostBtn')) document.getElementById('speedBoostBtn').disabled = score < bonusUpgradeCosts.speedBoost;
+    if(document.getElementById('doublePointsBtn')) document.getElementById('doublePointsBtn').disabled = score < bonusUpgradeCosts.doublePoints;
+    if(document.getElementById('goldenPawsBtn')) document.getElementById('goldenPawsBtn').disabled = score < bonusUpgradeCosts.goldenPaws;
   }
   
   function buyUpgrade(name, increment) {
@@ -588,6 +722,16 @@ let extraCPSBreed = {
       score -= upgradeCosts.kittenPlanet;
       upgrades.kittenPlanet++;
       upgradeCosts.kittenPlanet = Math.ceil(upgradeCosts.kittenPlanet * 1.2);
+      updateUI();
+    }
+  }
+  
+  // Bonus upgrade purchase function
+  function buyBonusUpgrade(name, multiplier) {
+    if (score >= bonusUpgradeCosts[name]) {
+      score -= bonusUpgradeCosts[name];
+      bonusUpgrades[name]++;
+      bonusUpgradeCosts[name] = Math.ceil(bonusUpgradeCosts[name] * 1.2);
       updateUI();
     }
   }
@@ -645,8 +789,10 @@ let extraCPSBreed = {
     }
   };
   
+  // Halloween cat unlock function removed - now only available during Halloween season
+  
   function exportSave() {
-    const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings };
+    const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts };
     const saveString = btoa(JSON.stringify(saveData));
     const textarea = document.getElementById('saveCodeBox');
     textarea.value = saveString;
@@ -673,6 +819,8 @@ let extraCPSBreed = {
         userSettings = data.userSettings;
         applyTheme(userSettings.theme);
       }
+      if (data.bonusUpgrades) bonusUpgrades = data.bonusUpgrades;
+      if (data.bonusUpgradeCosts) bonusUpgradeCosts = data.bonusUpgradeCosts;
       updateUI();
       renderAchievements();
       renderBreeds();
@@ -729,6 +877,8 @@ let extraCPSBreed = {
       selectedBreed = "american_shorthair";
       breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, halloween_cat: false };
       for(let a of achievementsData) a.achieved = false;
+      bonusUpgrades = { speedBoost: 0, doublePoints: 0, goldenPaws: 0 };
+      bonusUpgradeCosts = { speedBoost: 5000, doublePoints: 15000, goldenPaws: 50000 };
       userSettings = {theme:"pink", floatScore:true, notifVolume:1, disableAnimations:false};
       applyTheme(userSettings.theme);
       updateUI(); renderAchievements(); renderBreeds();
@@ -757,6 +907,8 @@ let extraCPSBreed = {
         if (data.userSettings) {
           userSettings = data.userSettings;
         }
+        if (data.bonusUpgrades) bonusUpgrades = data.bonusUpgrades;
+        if (data.bonusUpgradeCosts) bonusUpgradeCosts = data.bonusUpgradeCosts;
       }
     } catch (e) {}
     try {
@@ -771,11 +923,12 @@ let extraCPSBreed = {
     renderAchievements();
     renderBreeds();
     updatePlayerCount();
+    startPlayerCountStream(); // Start real-time updates
   });
   
   setInterval(() => {
     try {
-      const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings };
+      const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts };
       localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
     } catch (e) {}
   }, 5000);
@@ -908,7 +1061,7 @@ let extraCPSBreed = {
     }
   });
 
-  // Update player count periodically
+  // Update player count periodically (fallback)
   setInterval(updatePlayerCount, 30000);
 </script>
 </body>
