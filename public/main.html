@@ -88,6 +88,7 @@
     /* --- Breeds --- */
     .breed-select-btn { padding:8px 22px; border-radius:12px; border:none; margin:10px 8px 0 8px; font-size:18px; font-weight:bold; cursor:pointer; transition: background 0.2s; }
     .breed-lock { color:#aaa; font-size:20px; margin-left:6px; vertical-align:middle; }
+    .breed-event-tag { background:#ff5252; color:white; padding:3px 8px; border-radius:12px; font-size:12px; margin-left:8px; }
 
     /* --- Mystery Kitten --- */
     #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; z-index: 1001; position: relative; }
@@ -106,6 +107,10 @@
       .achievement-card { min-width:0; width:98%; max-width:99vw; }
       img#kitten { width:80%; max-width:300px; }
     }
+
+    /* --- Footer --- */
+    #footer { position:fixed; bottom:10px; left:10px; font-size:12px; color:#880e4f; }
+    #playerCountReset { font-size:10px; margin-top:2px; }
   </style>
 </head>
 <body class="theme-pink">
@@ -121,6 +126,13 @@
   <button onclick="openOverlay('settingsOverlay')">Settings</button>
   <button onclick="openOverlay('achievementsOverlay')">Achievements</button>
   <button onclick="openOverlay('breedsOverlay')">Breeds</button>
+</div>
+
+<!-- Footer with player count and version -->
+<div id="footer">
+  <div>Players: <span id="playerCount">Loading...</span></div>
+  <div>Version: V1.32</div>
+  <div id="playerCountReset"><button onclick="resetPlayerCount()">Reset Count</button></div>
 </div>
 
 <!-- Shop Overlay -->
@@ -289,6 +301,33 @@ let extraCPSBreed = {
   const kittenImg = document.getElementById('kitten');
   const clickSound = document.getElementById('clickSound');
   const mysteryKittenBtn = document.getElementById('mysteryKittenBtn');
+  const playerCountEl = document.getElementById('playerCount');
+
+  // Update player count from server
+  async function updatePlayerCount() {
+    try {
+      const response = await fetch('/player-count');
+      const data = await response.json();
+      playerCountEl.textContent = data.count.toLocaleString();
+    } catch (error) {
+      console.error('Error fetching player count:', error);
+      playerCountEl.textContent = 'Error';
+    }
+  }
+
+  // Reset player count to a fixed value
+  function resetPlayerCount() {
+    fetch('/reset-player-count', { method: 'POST' })
+      .then(response => response.json())
+      .then(data => {
+        playerCountEl.textContent = data.count.toLocaleString();
+        showNotification("Player count reset to 1,234");
+      })
+      .catch(error => {
+        console.error('Error resetting player count:', error);
+        showNotification("Error resetting player count");
+      });
+  }
 
   // Define all functions at the top to avoid scope issues
   function openOverlay(id) {
@@ -339,6 +378,16 @@ let extraCPSBreed = {
       div.style.marginRight = "auto";
 
       let label = `<b>${breedNames[breed]}</b>`;
+
+      // Add event tag for Halloween cat
+      if (breed === "halloween_cat") {
+        const now = new Date();
+        const isHalloween = (now.getMonth() === 9 && now.getDate() >= 20 && now.getDate() <= 31) || 
+                            (now.getMonth() === 10 && now.getDate() <= 1);
+        if (isHalloween) {
+          label += `<span class="breed-event-tag">EVENT</span>`;
+        }
+      }
 
       // Lock logic
       if (!breedsUnlocked[breed]) {
@@ -648,7 +697,7 @@ let extraCPSBreed = {
       alert('Invalid save code.');
     }
   }
-  
+
   document.getElementById('saveCodeBox').addEventListener('click', function() {
     this.select();
   });
@@ -737,6 +786,7 @@ let extraCPSBreed = {
     updateUI();
     renderAchievements();
     renderBreeds();
+    updatePlayerCount();
   });
   
   setInterval(() => {
@@ -873,6 +923,9 @@ let extraCPSBreed = {
       executeConsoleCommand();
     }
   });
+
+  // Update player count periodically
+  setInterval(updatePlayerCount, 30000);
 </script>
 </body>
 </html>
