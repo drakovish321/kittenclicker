@@ -321,7 +321,7 @@ let extraCPSBreed = {
       .then(response => response.json())
       .then(data => {
         playerCountEl.textContent = data.count.toLocaleString();
-        showNotification("Player count reset to 1,234");
+        showNotification("Player count reset to 0");
       })
       .catch(error => {
         console.error('Error resetting player count:', error);
