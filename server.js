@@ -28,11 +28,11 @@ app.use((req, res, next) => {
 
 app.use(express.static('public'));
 
-// Serve index.html at root
+// Serve main.html at root
 app.get('/', (req, res) => {
   // Increment total player count on each visit
   totalPlayers++;
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'main.html'));
 });
 
 // Endpoint to get current player count
