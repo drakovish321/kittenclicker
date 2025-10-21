@@ -12,7 +12,7 @@ app.use(express.static('public'));
 app.get('/', (req, res) => {
   // Increment player count on each visit
   playerCount++;
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'main.html'));
 });
 
 // Endpoint to get current player count
