@@ -10,7 +10,7 @@ app.use(express.static('public'));
 
 // Serve main.html at root
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'main.html'));
 });
 
 // Endpoint to get current player count
