@@ -110,7 +110,6 @@
 
     /* --- Footer --- */
     #footer { position:fixed; bottom:10px; left:10px; font-size:12px; color:#880e4f; }
-    #playerCountReset { font-size:10px; margin-top:2px; }
   </style>
 </head>
 <body class="theme-pink">
@@ -132,7 +131,6 @@
 <div id="footer">
   <div>Players: <span id="playerCount">Loading...</span></div>
   <div>Version: V1.32</div>
-  <div id="playerCountReset"><button onclick="resetPlayerCount()">Reset Count</button></div>
 </div>
 
 <!-- Shop Overlay -->
@@ -313,20 +311,6 @@ let extraCPSBreed = {
       console.error('Error fetching player count:', error);
       playerCountEl.textContent = 'Error';
     }
-  }
-
-  // Reset player count to a fixed value
-  function resetPlayerCount() {
-    fetch('/reset-player-count', { method: 'POST' })
-      .then(response => response.json())
-      .then(data => {
-        playerCountEl.textContent = data.count.toLocaleString();
-        showNotification("Player count reset to 0");
-      })
-      .catch(error => {
-        console.error('Error resetting player count:', error);
-        showNotification("Error resetting player count");
-      });
   }
 
   // Define all functions at the top to avoid scope issues
