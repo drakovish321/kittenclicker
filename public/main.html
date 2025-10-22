@@ -629,12 +629,13 @@ let extraCPSBreed = {
     
     // Calculate bonus multipliers
     const bonuses = calculateBonusMultipliers();
-    
+
+    // --- Calculate total CPS ---
     const totalCPS = (upgrades.autoClicker * 5 + 
                       upgrades.autoKittenFarm * 7 + 
                       upgrades.kittenPlanet * 20 + 
                       breedCPS) * bonuses.cpsMultiplier;
-    
+
     // Format large numbers
     function formatNumber(num) {
       if (num >= 1000000) {
@@ -654,7 +655,7 @@ let extraCPSBreed = {
     } else if (selectedBreed === 'halloween_cat') {
       breedClickBonus = 100;
     }
-    
+
     // Apply click bonus multiplier
     const finalClickValue = (clickValue + breedClickBonus) * bonuses.clickMultiplier;
     clickValueEl.textContent = finalClickValue.toFixed(1);
@@ -772,19 +773,14 @@ let extraCPSBreed = {
       }
     }
 
+    // Remove the reset of clickValue here
+    // Instead, just update the breed and UI
     if (selectedBreed !== breed) {
         selectedBreed = breed;
 
-        // Breed-specific click bonus
-        if (breed === 'siamese') {
-            clickValue = 1 + 20; // Base 1 + 20 bonus
-        } else if (breed === 'halloween_cat') {
-            clickValue = 1 + 100; // Base 1 + 100 bonus
-        } else {
-            clickValue = 1; // Reset for other breeds
-        }
-
-        // Update UI and achievements
+        // Breed-specific click bonus will be handled in updateUI()
+        // and we do NOT reset clickValue here.
+        // updateUI() will now handle the display with breed bonus.
         updateUI();
         checkAchievements();
         renderBreeds();
