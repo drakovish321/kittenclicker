@@ -43,15 +43,15 @@
     .closeOverlay:hover { background:#b71c1c; }
 
     /* --- Shop --- */
-    .shop-tabs { margin-bottom:20px; }
-    .shop-tab {
-      display:inline-block; padding:10px 20px; margin:0 5px;
-      font-weight:bold; border-radius:8px 8px 0 0; cursor:pointer; transition: background 0.2s;
+    #shopOverlay {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      padding: 20px;
     }
-    .shop-tab.active { box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
-    .shop-content {
-      border-radius:0 8px 8px 8px; padding:15px; max-width:600px; margin:0 auto; box-shadow:0 4px 8px rgba(0,0,0,0.2);
-      background:#f8bbd0;
+    #shopContent {
+      flex: 1;
+      padding: 20px;
     }
     .shop-item {
       margin:15px auto; padding:15px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);
@@ -109,6 +109,77 @@
 
     /* --- Footer --- */
     #footer { position:fixed; bottom:10px; left:10px; font-size:12px; color:#880e4f; }
+    
+    /* --- Shop positioning --- */
+    #shopOverlay .shop-content {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    #shopOverlay .shop-item {
+      margin: 15px 0;
+    }
+    
+    /* --- Additional styling for shop items --- */
+    #shopOverlay .shop-item {
+      background: #f8bbd0;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    #shopOverlay .shop-item strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    #shopOverlay .shop-item button {
+      margin-top: 10px;
+      background: #c2185b;
+      color: white;
+      font-weight: bold;
+    }
+    
+    #shopOverlay .shop-item button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    
+    /* --- Shop Tabs --- */
+    .shop-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f8bbd0;
+    }
+
+    .shop-tab {
+      padding: 12px 20px;
+      background: #f8bbd0;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 5px;
+      transition: background 0.2s;
+    }
+
+    .shop-tab:hover {
+      background: #e91e63;
+    }
+
+    .shop-tab.active {
+      background: #c2185b;
+      color: white;
+    }
+
+    .shop-tab-content {
+      display: none;
+    }
+
+    .shop-tab-content.active {
+      display: block;
+    }
   </style>
 </head>
 <body class="theme-pink">
@@ -137,50 +208,54 @@
   <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">X</button>
   <h2>Kitten Shop</h2>
   <div class="shop-tabs">
-    <div class="shop-tab active" id="tabClickUpgrades" onclick="showTab('clickUpgrades')">Click Upgrades</div>
-    <div class="shop-tab" id="tabCPSUpgrades" onclick="showTab('cpsUpgrades')">CPS Upgrades</div>
-    <div class="shop-tab" id="tabBonusUpgrades" onclick="showTab('bonusUpgrades')">Bonus Upgrades</div>
+    <div class="shop-tab active" id="tabClickValue" onclick="showShopTab('clickValue')">Click Value</div>
+    <div class="shop-tab" id="tabAuto" onclick="showShopTab('auto')">Auto Upgrades</div>
+    <div class="shop-tab" id="tabBonus" onclick="showShopTab('bonus')">Bonus Upgrades</div>
   </div>
-  <div id="clickUpgrades" class="shop-content">
-    <div class="shop-item"><strong>Milk Bowl</strong><br />+0.5 click value<br />
-      <button onclick="buyUpgrade('milkBowl', 0.5)" id="milkBowlBtn">Buy for <span id="milkBowlCost">25</span></button>
+  <div id="shopContent" class="shop-content">
+    <div id="clickValueContent" class="shop-tab-content active">
+      <div class="shop-item"><strong>Milk Bowl</strong><br />+0.5 click value<br />
+        <button onclick="buyUpgrade('milkBowl', 0.5)" id="milkBowlBtn">Buy for <span id="milkBowlCost">25</span></button>
+      </div>
+      <div class="shop-item"><strong>Cat Food</strong><br />+2 click value<br />
+        <button onclick="buyUpgrade('catFood', 2)" id="catFoodBtn">Buy for <span id="catFoodCost">115</span></button>
+      </div>
+      <div class="shop-item"><strong>Scratcher</strong><br />+7 click value<br />
+        <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span id="scratcherCost">700</span></button>
+      </div>
+      <div class="shop-item"><strong>Kitten Factory</strong><br />+15 click value<br />
+        <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
+      </div>
+      <div class="shop-item"><strong>City of Kittens</strong><br />+30 click value<br />
+        <button onclick="buyUpgrade('cityOfKittens', 30)" id="cityOfKittensBtn">Buy for <span id="cityOfKittensCost">30000</span></button>
+      </div>
+      <div class="shop-item"><strong>A World of Meows</strong><br />+80 click value<br />
+        <button onclick="buyUpgrade('worldOfMeows', 80)" id="worldOfMeowsBtn">Buy for <span id="worldOfMeowsCost">200000</span></button>
+      </div>
     </div>
-    <div class="shop-item"><strong>Cat Food</strong><br />+2 click value<br />
-      <button onclick="buyUpgrade('catFood', 2)" id="catFoodBtn">Buy for <span id="catFoodCost">115</span></button>
+    
+    <div id="autoContent" class="shop-tab-content">
+      <div class="shop-item"><strong>Auto-Mouse</strong><br />+5 CPS<br />
+        <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span id="autoClickerCost">2000</span></button>
+      </div>
+      <div class="shop-item"><strong>Auto-Kitten Farm</strong><br />+7 CPS<br />
+        <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span id="autoKittenFarmCost">15000</span></button>
+      </div>
+      <div class="shop-item"><strong>Kitten Planet</strong><br />+20 CPS<br />
+        <button onclick="buyKittenPlanet()" id="kittenPlanetBtn">Buy for <span id="kittenPlanetCost">1000000</span></button>
+      </div>
     </div>
-    <div class="shop-item"><strong>Scratcher</strong><br />+7 click value<br />
-      <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span id="scratcherCost">700</span></button>
-    </div>
-    <div class="shop-item"><strong>Kitten Factory</strong><br />+15 click value<br />
-      <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
-    </div>
-    <div class="shop-item"><strong>City of Kittens</strong><br />+30 click value<br />
-      <button onclick="buyUpgrade('cityOfKittens', 30)" id="cityOfKittensBtn">Buy for <span id="cityOfKittensCost">30000</span></button>
-    </div>
-    <div class="shop-item"><strong>A World of Meows</strong><br />+80 click value<br />
-      <button onclick="buyUpgrade('worldOfMeows', 80)" id="worldOfMeowsBtn">Buy for <span id="worldOfMeowsCost">200000</span></button>
-    </div>
-  </div>
-  <div id="cpsUpgrades" class="shop-content" style="display:none;">
-    <div class="shop-item"><strong>Auto-Mouse</strong><br />+5 CPS<br />
-      <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span id="autoClickerCost">2000</span></button>
-    </div>
-    <div class="shop-item"><strong>Auto-Kitten Farm</strong><br />+7 CPS<br />
-      <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span id="autoKittenFarmCost">15000</span></button>
-    </div>
-    <div class="shop-item"><strong>Kitten Planet</strong><br />+20 CPS<br />
-      <button onclick="buyKittenPlanet()" id="kittenPlanetBtn">Buy for <span id="kittenPlanetCost">1000000</span></button>
-    </div>
-  </div>
-  <div id="bonusUpgrades" class="shop-content" style="display:none;">
-    <div class="shop-item"><strong>Speed Boost</strong><br />+5% click value<br />
-      <button onclick="buyBonusUpgrade('speedBoost', 0.05)" id="speedBoostBtn">Buy for <span id="speedBoostCost">5000</span></button>
-    </div>
-    <div class="shop-item"><strong>Double Points</strong><br />+10% score multiplier<br />
-      <button onclick="buyBonusUpgrade('doublePoints', 0.1)" id="doublePointsBtn">Buy for <span id="doublePointsCost">15000</span></button>
-    </div>
-    <div class="shop-item"><strong>Golden Paws</strong><br />+20% CPS<br />
-      <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span id="goldenPawsCost">50000</span></button>
+    
+    <div id="bonusContent" class="shop-tab-content">
+      <div class="shop-item"><strong>Speed Boost</strong><br />+5% click value<br />
+        <button onclick="buyBonusUpgrade('speedBoost', 0.05)" id="speedBoostBtn">Buy for <span id="speedBoostCost">5000</span></button>
+      </div>
+      <div class="shop-item"><strong>Double Points</strong><br />+10% score multiplier<br />
+        <button onclick="buyBonusUpgrade('doublePoints', 0.1)" id="doublePointsBtn">Buy for <span id="doublePointsCost">15000</span></button>
+      </div>
+      <div class="shop-item"><strong>Golden Paws</strong><br />+20% CPS<br />
+        <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span id="goldenPawsCost">50000</span></button>
+      </div>
     </div>
   </div>
 </div>
@@ -299,7 +374,13 @@ let extraCPSBreed = {
   { id: 'tenk', text: '10k: Get 10000 kittens!', achieved: false, condition: () => score >= 10000 },
   { id: 'mystery1', text: 'Take a chance: Try the Mystery Kitten!', achieved: false, condition: () => window.usedMysteryKitten },
   { id: 'click100k', text: 'Dedicated Paw-sion: Reach 100,000 clicks!', achieved: false, condition: () => score >= 100000 },
-  { id: 'halloween_unlock', text: 'Spooky Surprise: Unlock the Halloween Cat!', achieved: false, condition: () => breedsUnlocked.halloween_cat }
+  { id: 'halloween_unlock', text: 'Spooky Surprise: Unlock the Halloween Cat!', achieved: false, condition: () => breedsUnlocked.halloween_cat },
+  { id: 'click500', text: 'Click Master: Reach 500 clicks', achieved: false, condition: () => score >= 500 },
+  { id: 'click5000', text: 'Click Expert: Reach 5000 clicks', achieved: false, condition: () => score >= 5000 },
+  { id: 'click25000', text: 'Click Pro: Reach 25000 clicks', achieved: false, condition: () => score >= 25000 },
+  { id: 'auto5', text: 'Auto Enthusiast: Buy 5 Auto-Mouses', achieved: false, condition: () => upgrades.autoClicker >= 5 },
+  { id: 'auto10', text: 'Auto Fan: Buy 10 Auto-Mouses', achieved: false, condition: () => upgrades.autoClicker >= 10 },
+  { id: 'auto20', text: 'Auto Master: Buy 20 Auto-Mouses', achieved: false, condition: () => upgrades.autoClicker >= 20 }
 ];
 
   window.usedMysteryKitten = false;
@@ -382,21 +463,38 @@ let extraCPSBreed = {
     if (el) el.style.display = 'none';
   }
   
-  function showTab(tabName) {
-    document.getElementById('clickUpgrades').style.display = (tabName === 'clickUpgrades') ? 'block' : 'none';
-    document.getElementById('cpsUpgrades').style.display = (tabName === 'cpsUpgrades') ? 'block' : 'none';
-    document.getElementById('bonusUpgrades').style.display = (tabName === 'bonusUpgrades') ? 'block' : 'none';
-    document.getElementById('tabClickUpgrades').classList.toggle('active', tabName === 'clickUpgrades');
-    document.getElementById('tabCPSUpgrades').classList.toggle('active', tabName === 'cpsUpgrades');
-    document.getElementById('tabBonusUpgrades').classList.toggle('active', tabName === 'bonusUpgrades');
+  function showBreedsTab(tabName) {
+    // Hide all content
+    document.getElementById('breedsContent').classList.remove('active');
+    document.getElementById('eventsContent').classList.remove('active');
+    
+    // Remove active class from all tabs
+    document.getElementById('tabBreeds').classList.remove('active');
+    document.getElementById('tabEvents').classList.remove('active');
+    
+    // Show selected content
+    document.getElementById(tabName + 'Content').classList.add('active');
+    
+    // Add active class to selected tab
+    document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
   }
   
-  // Breeds tab switching
-  function showBreedsTab(tabName) {
-    document.getElementById('breedsContent').style.display = (tabName === 'breeds') ? 'block' : 'none';
-    document.getElementById('eventsContent').style.display = (tabName === 'events') ? 'block' : 'none';
-    document.getElementById('tabBreeds').classList.toggle('active', tabName === 'breeds');
-    document.getElementById('tabEvents').classList.toggle('active', tabName === 'events');
+  function showShopTab(tabName) {
+    // Hide all content
+    document.getElementById('clickValueContent').classList.remove('active');
+    document.getElementById('autoContent').classList.remove('active');
+    document.getElementById('bonusContent').classList.remove('active');
+    
+    // Remove active class from all tabs
+    document.getElementById('tabClickValue').classList.remove('active');
+    document.getElementById('tabAuto').classList.remove('active');
+    document.getElementById('tabBonus').classList.remove('active');
+    
+    // Show selected content
+    document.getElementById(tabName + 'Content').classList.add('active');
+    
+    // Add active class to selected tab
+    document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
   }
   
   function renderAchievements() {
@@ -553,6 +651,23 @@ let extraCPSBreed = {
         breedsUnlocked[unlock.breed] = true;
         showNotification(unlock.message);
         achievementsChanged = true;
+      }
+    }
+    
+    // Check if we can unlock Halloween cat
+    if (!breedsUnlocked.halloween_cat) {
+      const achievementCount = achievementsData.filter(a => a.achieved).length;
+      if (achievementCount >= 15) {
+        // Unlock Halloween cat if it's Halloween season
+        const now = new Date();
+        const isHalloween = (now.getMonth() === 9 && now.getDate() >= 20 && now.getDate() <= 31) || 
+                            (now.getMonth() === 10 && now.getDate() <= 1);
+        
+        if (isHalloween) {
+          breedsUnlocked.halloween_cat = true;
+          showNotification("You unlocked the Halloween Cat! It will remain unlocked.");
+          achievementsChanged = true;
+        }
       }
     }
     
