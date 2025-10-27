@@ -109,6 +109,8 @@
 
     /* --- Footer --- */
     #footer { position:fixed; bottom:10px; left:10px; font-size:12px; color:#880e4f; }
+    #footer a { color:#880e4f; text-decoration:none; }
+    #footer a:hover { text-decoration:underline; }
     
     /* --- Shop positioning --- */
     #shopOverlay .shop-content {
@@ -200,12 +202,12 @@
 <!-- Footer with player count and version -->
 <div id="footer">
   <div>Players: <span id="currentPlayers">Loading...</span> | Total: <span id="totalPlayers">Loading...</span></div>
-  <div>Version: V1.32</div>
+  <div>Version: V1.32 | <a href="https://kittenclicker.onrender.com/about.html" target="_blank">About</a></div>
 </div>
 
 <!-- Shop Overlay -->
 <div id="shopOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">X</button>
+  <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">×</button>
   <h2>Kitten Shop</h2>
   <div class="shop-tabs">
     <div class="shop-tab active" id="tabClickValue" onclick="showShopTab('clickValue')">Click Value</div>
@@ -262,7 +264,7 @@
 
 <!-- Progress Overlay -->
 <div id="progressOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('progressOverlay')">X</button>
+  <button class="closeOverlay" onclick="closeOverlay('progressOverlay')">×</button>
   <h2>Save / Load Progress</h2>
   <button onclick="exportSave()">Get Save Code</button><br />
   <textarea id="saveCodeBox" readonly placeholder="Your save code will appear here after clicking 'Get Save Code'"></textarea><br />
@@ -272,7 +274,7 @@
 
 <!-- Settings Overlay -->
 <div id="settingsOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('settingsOverlay')">X</button>
+  <button class="closeOverlay" onclick="closeOverlay('settingsOverlay')">×</button>
   <h2>Settings</h2>
   <div class="setting-row">
     <label for="themeSelect"><span class="setting-title">Color Theme:</span></label>
@@ -312,14 +314,14 @@
 
 <!-- Achievements Overlay -->
 <div id="achievementsOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('achievementsOverlay')">X</button>
+  <button class="closeOverlay" onclick="closeOverlay('achievementsOverlay')">×</button>
   <h2>Achievements</h2>
   <div id="achievementsList"></div>
 </div>
 
 <!-- Breeds Overlay -->
 <div id="breedsOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('breedsOverlay')">X</button>
+  <button class="closeOverlay" onclick="closeOverlay('breedsOverlay')">×</button>
   <h2>Cat Breeds</h2>
   <div class="shop-tabs">
     <div class="shop-tab active" id="tabBreeds" onclick="showBreedsTab('breeds')">Breeds</div>
