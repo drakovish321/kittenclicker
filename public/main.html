@@ -209,6 +209,71 @@
     /* --- Mystery Kitten --- */
     #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; z-index: 1001; position: relative; }
 
+    /* --- Prestige --- */
+    #prestigeOverlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 350px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+      padding: 25px;
+      z-index: 1001;
+      display: none;
+      text-align: center;
+    }
+    
+    #prestigeOverlay.active {
+      display: block;
+    }
+    
+    #prestigeOverlay h2 {
+      margin-top: 0;
+      color: #c2185b;
+    }
+    
+    #prestigeInfo {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8bbd0;
+      border-radius: 10px;
+      font-size: 18px;
+    }
+    
+    #prestigeButton {
+      background: #c2185b;
+      color: white;
+      font-weight: bold;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 20px;
+      margin: 20px 0;
+      transition: transform 0.2s;
+    }
+    
+    #prestigeButton:hover {
+      transform: scale(1.05);
+    }
+    
+    #prestigeButton:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .prestige-bonus {
+      background: #e91e63;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
     /* --- Themes --- */
     body.theme-pink { background:#fce4ec; color:#880e4f; }
     body.theme-blue { background:#e3f2fd; color:#1565c0; }
@@ -225,6 +290,11 @@
         left: 10px;
         width: calc(100% - 20px);
         height: 70vh;
+      }
+      #prestigeOverlay {
+        width: 90%;
+        left: 5%;
+        transform: translateY(-50%);
       }
     }
 
@@ -323,6 +393,23 @@
 <!-- Open Shop Button -->
 <button id="openShopBtn">🛒 Shop</button>
 
+<!-- Prestige Overlay -->
+<div id="prestigeOverlay">
+  <h2>Prestige</h2>
+  <div id="prestigeInfo">
+    <p>Reset your progress for permanent bonuses!</p>
+    <p>Current Prestige Level: <span id="prestigeLevel">0</span></p>
+    <p>Required Score: <span id="prestigeRequirement">1000000</span></p>
+  </div>
+  <div id="prestigeBonuses">
+    <div class="prestige-bonus">+10% Click Value</div>
+    <div class="prestige-bonus">+5% CPS</div>
+    <div class="prestige-bonus">+20% Score Multiplier</div>
+  </div>
+  <button id="prestigeButton">Prestige Now!</button>
+  <button class="closeOverlay" onclick="closeOverlay('prestigeOverlay')">×</button>
+</div>
+
 <!-- Shop Overlay -->
 <div id="shopOverlay">
   <div class="shop-header">
@@ -401,6 +488,7 @@
   <button onclick="openOverlay('settingsOverlay')">Settings</button>
   <button onclick="openOverlay('achievementsOverlay')">Achievements</button>
   <button onclick="openOverlay('breedsOverlay')">Breeds</button>
+  <button onclick="openOverlay('prestigeOverlay')">Prestige</button>
 </div>
 
 <!-- Footer with player count and version -->
@@ -555,6 +643,14 @@ let extraCPSBreed = {
     goldenPaws: 50000
   };
 
+  // Prestige system
+  let prestigeLevel = 0;
+  let prestigeBonuses = {
+    clickValue: 0.10,   // +10% click value
+    cps: 0.05,         // +5% CPS
+    scoreMultiplier: 0.20 // +20% score multiplier
+  };
+
   // -- UI elements --
   const scoreEl = document.getElementById('score');
   const clickValueEl = document.getElementById('clickValue');
@@ -564,6 +660,10 @@ let extraCPSBreed = {
   const mysteryKittenBtn = document.getElementById('mysteryKittenBtn');
   const openShopBtn = document.getElementById('openShopBtn');
   const shopOverlay = document.getElementById('shopOverlay');
+  const prestigeOverlay = document.getElementById('prestigeOverlay');
+  const prestigeButton = document.getElementById('prestigeButton');
+  const prestigeLevelEl = document.getElementById('prestigeLevel');
+  const prestigeRequirementEl = document.getElementById('prestigeRequirement');
 
   // Update player count from server
   async function updatePlayerCount() {
@@ -607,6 +707,7 @@ let extraCPSBreed = {
     if(id === 'achievementsOverlay') renderAchievements();
     if(id === 'breedsOverlay') renderBreeds();
     if(id === 'settingsOverlay') updateSettingsUI();
+    if(id === 'prestigeOverlay') updatePrestigeInfo();
   }
   
   function closeOverlay(id) {
@@ -878,6 +979,11 @@ let extraCPSBreed = {
     let scoreMultiplier = 1;
     let cpsMultiplier = 1;
     
+    // Apply prestige bonuses
+    clickMultiplier += prestigeBonuses.clickValue * prestigeLevel;
+    scoreMultiplier += prestigeBonuses.scoreMultiplier * prestigeLevel;
+    cpsMultiplier += prestigeBonuses.cps * prestigeLevel;
+    
     if (bonusUpgrades.speedBoost > 0) {
       clickMultiplier += bonusUpgrades.speedBoost * 0.05;
     }
@@ -973,6 +1079,25 @@ let extraCPSBreed = {
     if(document.getElementById('speedBoostCount')) document.getElementById('speedBoostCount').textContent = bonusUpgrades.speedBoost;
     if(document.getElementById('doublePointsCount')) document.getElementById('doublePointsCount').textContent = bonusUpgrades.doublePoints;
     if(document.getElementById('goldenPawsCount')) document.getElementById('goldenPawsCount').textContent = bonusUpgrades.goldenPaws;
+    
+    // Update prestige button state
+    const requirement = Math.pow(10, 6 + prestigeLevel);
+    prestigeButton.disabled = score < requirement;
+    prestigeRequirementEl.textContent = requirement.toLocaleString();
+  }
+  
+  function updatePrestigeInfo() {
+    prestigeLevelEl.textContent = prestigeLevel;
+    const requirement = Math.pow(10, 6 + prestigeLevel);
+    prestigeRequirementEl.textContent = requirement.toLocaleString();
+    
+    // Update prestige bonuses display
+    const bonusesContainer = document.getElementById('prestigeBonuses');
+    bonusesContainer.innerHTML = `
+      <div class="prestige-bonus">+${(prestigeBonuses.clickValue * 100 * (prestigeLevel + 1)).toFixed(0)}% Click Value</div>
+      <div class="prestige-bonus">+${(prestigeBonuses.cps * 100 * (prestigeLevel + 1)).toFixed(0)}% CPS</div>
+      <div class="prestige-bonus">+${(prestigeBonuses.scoreMultiplier * 100 * (prestigeLevel + 1)).toFixed(0)}% Score Multiplier</div>
+    `;
   }
   
   function buyUpgrade(name, increment) {
@@ -1073,7 +1198,7 @@ let extraCPSBreed = {
   // Halloween cat unlock function removed - now only available during Halloween season
   
   function exportSave() {
-    const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts };
+    const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts, prestigeLevel };
     const saveString = btoa(JSON.stringify(saveData));
     const textarea = document.getElementById('saveCodeBox');
     textarea.value = saveString;
@@ -1102,9 +1227,11 @@ let extraCPSBreed = {
       }
       if (data.bonusUpgrades) bonusUpgrades = data.bonusUpgrades;
       if (data.bonusUpgradeCosts) bonusUpgradeCosts = data.bonusUpgradeCosts;
+      if (data.prestigeLevel !== undefined) prestigeLevel = data.prestigeLevel;
       updateUI();
       renderAchievements();
       renderBreeds();
+      updatePrestigeInfo();
       alert('Save loaded!');
     } catch (e) {
       alert('Invalid save code.');
@@ -1160,9 +1287,10 @@ let extraCPSBreed = {
       for(let a of achievementsData) a.achieved = false;
       bonusUpgrades = { speedBoost: 0, doublePoints: 0, goldenPaws: 0 };
       bonusUpgradeCosts = { speedBoost: 5000, doublePoints: 15000, goldenPaws: 50000 };
+      prestigeLevel = 0;
       userSettings = {theme:"pink", floatScore:true, notifVolume:1, disableAnimations:false};
       applyTheme(userSettings.theme);
-      updateUI(); renderAchievements(); renderBreeds();
+      updateUI(); renderAchievements(); renderBreeds(); updatePrestigeInfo();
       try { localStorage.removeItem('kittenSave'); } catch(e){}
     }
   }
@@ -1190,6 +1318,7 @@ let extraCPSBreed = {
         }
         if (data.bonusUpgrades) bonusUpgrades = data.bonusUpgrades;
         if (data.bonusUpgradeCosts) bonusUpgradeCosts = data.bonusUpgradeCosts;
+        if (data.prestigeLevel !== undefined) prestigeLevel = data.prestigeLevel;
       }
     } catch (e) {}
     try {
@@ -1203,13 +1332,14 @@ let extraCPSBreed = {
     updateUI();
     renderAchievements();
     renderBreeds();
+    updatePrestigeInfo();
     updatePlayerCount();
     startPlayerCountStream(); // Start real-time updates
   });
   
   setInterval(() => {
     try {
-      const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts };
+      const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts, prestigeLevel };
       localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
     } catch (e) {}
   }, 5000);
@@ -1351,15 +1481,27 @@ let extraCPSBreed = {
     openShopBtn.style.display = 'none';
   });
 
-  function closeOverlay(id) {
-    const el = document.getElementById(id);
-    if (el) {
-      el.style.display = 'none';
-      if (id === 'shopOverlay') {
-        openShopBtn.style.display = 'block';
-      }
+  // --- PRESTIGE LOGIC ---
+  prestigeButton.addEventListener('click', function() {
+    const requirement = Math.pow(10, 6 + prestigeLevel);
+    if (score >= requirement) {
+      // Apply prestige bonuses
+      prestigeLevel++;
+      
+      // Reset score and upgrades but keep prestige bonuses
+      score = 0;
+      clickValue = 1;
+      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
+      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
+      
+      // Show notification
+      showNotification(`Prestige Level ${prestigeLevel}! Bonuses applied.`);
+      
+      // Update UI
+      updateUI();
+      updatePrestigeInfo();
     }
-  }
+  });
 </script>
 </body>
 </html>
