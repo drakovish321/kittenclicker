@@ -29,38 +29,137 @@
     .top-buttons button { padding:10px 20px; font-size:16px; border:none; border-radius:8px; cursor:pointer; transition: transform 0.15s; }
     .top-buttons button:hover { transform: scale(1.05); }
 
+    /* --- Shop positioning --- */
+    #shopOverlay {
+      position: fixed;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      width: 300px;
+      height: 80vh;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      padding: 20px;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    
+    #shopOverlay.active {
+      display: flex;
+    }
+
+    .shop-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .closeOverlay {
+      position: absolute; 
+      top: 15px; 
+      right: 15px; 
+      background: #b71c1c; 
+      color: white;
+      border: none; 
+      padding: 5px 10px; 
+      font-size: 18px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      z-index: 1001;
+      transition: background 0.2s;
+    }
+    
+    .closeOverlay:hover { 
+      background: #d32f2f; 
+    }
+
+    /* --- Shop Tabs --- */
+    .shop-tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f8bbd0;
+      padding-bottom: 10px;
+    }
+
+    .shop-tab {
+      padding: 8px 16px;
+      background: #f8bbd0;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 0 5px;
+      transition: background 0.2s;
+    }
+
+    .shop-tab:hover {
+      background: #e91e63;
+    }
+
+    .shop-tab.active {
+      background: #c2185b;
+      color: white;
+    }
+
+    .shop-tab-content {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .shop-tab-content.active {
+      display: block;
+    }
+
+    /* --- Shop Items --- */
+    .shop-item {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: #f8bbd0;
+    }
+    
+    .shop-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    
+    .shop-item button {
+      margin-top: 10px;
+      background: #c2185b;
+      color: white;
+      font-weight: bold;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    
+    .shop-item button:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+    
+    .shop-item button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
     /* --- Overlays --- */
     .overlay {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(255,255,255,0.95); z-index:1000; padding:60px 20px 20px; overflow-y:auto; box-sizing:border-box; transition: opacity 0.3s;
     }
+    
     .overlay h2 { margin-bottom:30px; }
-    .closeOverlay {
-      position:absolute; top:20px; left:20px; background:red; color:white;
-      border:none; padding:5px 15px; font-size:20px; border-radius:8px; cursor:pointer; z-index:1001;
-      transition: background 0.2s;
-    }
-    .closeOverlay:hover { background:#b71c1c; }
-
-    /* --- Shop --- */
-    #shopOverlay {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      padding: 20px;
-    }
-    #shopContent {
-      flex: 1;
-      padding: 20px;
-    }
-    .shop-item {
-      margin:15px auto; padding:15px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);
-    }
-    .shop-item strong { font-size:18px; }
-    .shop-item button { padding:10px 20px; border:none; border-radius:6px; cursor:pointer; margin-top:8px; transition: transform 0.15s; }
-    .shop-item button:disabled { cursor:not-allowed; opacity:0.6; }
-    .shop-item button:hover:not(:disabled) { transform:scale(1.05); }
-
+    
     /* --- Progress --- */
     #progressOverlay textarea { width:90%; height:150px; margin-top:10px; font-family: monospace; font-size:14px; resize:none; }
     #progressOverlay input { width:90%; padding:8px; font-size:16px; margin-top:10px; }
@@ -105,23 +204,17 @@
       #achievementsList { flex-direction:column; align-items:center; }
       .achievement-card { min-width:0; width:98%; max-width:99vw; }
       img#kitten { width:80%; max-width:300px; }
+      #shopOverlay {
+        left: 10px;
+        width: calc(100% - 20px);
+        height: 70vh;
+      }
     }
 
     /* --- Footer --- */
     #footer { position:fixed; bottom:10px; left:10px; font-size:12px; color:#880e4f; }
     #footer a { color:#880e4f; text-decoration:none; }
     #footer a:hover { text-decoration:underline; }
-    
-    /* --- Shop positioning --- */
-    #shopOverlay .shop-content {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    #shopOverlay .shop-item {
-      margin: 15px 0;
-    }
     
     /* --- Additional styling for shop items --- */
     #shopOverlay .shop-item {
@@ -151,6 +244,7 @@
     /* --- Shop Tabs --- */
     .shop-tabs {
       display: flex;
+      justify-content: center;
       margin-bottom: 20px;
       border-bottom: 2px solid #f8bbd0;
     }
@@ -182,6 +276,23 @@
     .shop-tab-content.active {
       display: block;
     }
+    
+    /* --- Open Shop Button --- */
+    #openShopBtn {
+      position: fixed;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      padding: 10px 15px;
+      background: #c2185b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 999;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body class="theme-pink">
@@ -191,29 +302,23 @@
 <p id="stats">Click Value: <span id="clickValue">1</span> | CPS: <span id="autoClickers">0</span></p>
 <img id="kitten" src="https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg" alt="American Shorthair Kitten" />
 <button id="mysteryKittenBtn">🐾 Mystery Kitten</button>
-<div class="top-buttons">
-  <button onclick="openOverlay('shopOverlay')">Shop</button>
-  <button onclick="openOverlay('progressOverlay')">Progress</button>
-  <button onclick="openOverlay('settingsOverlay')">Settings</button>
-  <button onclick="openOverlay('achievementsOverlay')">Achievements</button>
-  <button onclick="openOverlay('breedsOverlay')">Breeds</button>
-</div>
 
-<!-- Footer with player count and version -->
-<div id="footer">
-  <div>Players: <span id="currentPlayers">Loading...</span> | Total: <span id="totalPlayers">Loading...</span></div>
-  <div>Version: V1.32 | <a href="https://kittenclicker.onrender.com/about.html" target="_blank">About</a></div>
-</div>
+<!-- Open Shop Button -->
+<button id="openShopBtn">🛒 Shop</button>
 
 <!-- Shop Overlay -->
-<div id="shopOverlay" class="overlay">
-  <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">×</button>
-  <h2>Kitten Shop</h2>
+<div id="shopOverlay">
+  <div class="shop-header">
+    <h2>Kitten Shop</h2>
+    <button class="closeOverlay" onclick="closeOverlay('shopOverlay')">×</button>
+  </div>
+  
   <div class="shop-tabs">
     <div class="shop-tab active" id="tabClickValue" onclick="showShopTab('clickValue')">Click Value</div>
     <div class="shop-tab" id="tabAuto" onclick="showShopTab('auto')">Auto Upgrades</div>
     <div class="shop-tab" id="tabBonus" onclick="showShopTab('bonus')">Bonus Upgrades</div>
   </div>
+  
   <div id="shopContent" class="shop-content">
     <div id="clickValueContent" class="shop-tab-content active">
       <div class="shop-item"><strong>Milk Bowl</strong><br />+0.5 click value<br />
@@ -260,6 +365,19 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="top-buttons">
+  <button onclick="openOverlay('progressOverlay')">Progress</button>
+  <button onclick="openOverlay('settingsOverlay')">Settings</button>
+  <button onclick="openOverlay('achievementsOverlay')">Achievements</button>
+  <button onclick="openOverlay('breedsOverlay')">Breeds</button>
+</div>
+
+<!-- Footer with player count and version -->
+<div id="footer">
+  <div>Players: <span id="currentPlayers">Loading...</span> | Total: <span id="totalPlayers">Loading...</span></div>
+  <div>Version: V1.32 | <a href="https://kittenclicker.onrender.com/about.html" target="_blank">About</a></div>
 </div>
 
 <!-- Progress Overlay -->
@@ -415,6 +533,8 @@ let extraCPSBreed = {
   const kittenImg = document.getElementById('kitten');
   const clickSound = document.getElementById('clickSound');
   const mysteryKittenBtn = document.getElementById('mysteryKittenBtn');
+  const openShopBtn = document.getElementById('openShopBtn');
+  const shopOverlay = document.getElementById('shopOverlay');
 
   // Update player count from server
   async function updatePlayerCount() {
@@ -1178,7 +1298,22 @@ let extraCPSBreed = {
 
   // Update player count periodically (fallback)
   setInterval(updatePlayerCount, 30000);
+
+  // --- SHOP OPENING LOGIC ---
+  openShopBtn.addEventListener('click', function() {
+    shopOverlay.classList.add('active');
+    openShopBtn.style.display = 'none';
+  });
+
+  function closeOverlay(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = 'none';
+      if (id === 'shopOverlay') {
+        openShopBtn.style.display = 'block';
+      }
+    }
+  }
 </script>
 </body>
 </html>
-
