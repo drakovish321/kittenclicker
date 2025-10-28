@@ -61,7 +61,7 @@
     .closeOverlay {
       position: absolute; 
       top: 15px; 
-      right: 15px; 
+      left: 15px; 
       background: #b71c1c; 
       color: white;
       border: none; 
@@ -123,6 +123,7 @@
       border-radius: 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       background: #f8bbd0;
+      position: relative;
     }
     
     .shop-item strong {
@@ -150,6 +151,22 @@
     .shop-item button:disabled {
       background: #ccc;
       cursor: not-allowed;
+    }
+    
+    .upgrade-count {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #c2185b;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
     }
 
     /* --- Overlays --- */
@@ -323,45 +340,57 @@
     <div id="clickValueContent" class="shop-tab-content active">
       <div class="shop-item"><strong>Milk Bowl</strong><br />+0.5 click value<br />
         <button onclick="buyUpgrade('milkBowl', 0.5)" id="milkBowlBtn">Buy for <span id="milkBowlCost">25</span></button>
+        <div class="upgrade-count" id="milkBowlCount">0</div>
       </div>
       <div class="shop-item"><strong>Cat Food</strong><br />+2 click value<br />
         <button onclick="buyUpgrade('catFood', 2)" id="catFoodBtn">Buy for <span id="catFoodCost">115</span></button>
+        <div class="upgrade-count" id="catFoodCount">0</div>
       </div>
       <div class="shop-item"><strong>Scratcher</strong><br />+7 click value<br />
         <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span id="scratcherCost">700</span></button>
+        <div class="upgrade-count" id="scratcherCount">0</div>
       </div>
       <div class="shop-item"><strong>Kitten Factory</strong><br />+15 click value<br />
         <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
+        <div class="upgrade-count" id="kittenFactoryCount">0</div>
       </div>
       <div class="shop-item"><strong>City of Kittens</strong><br />+30 click value<br />
         <button onclick="buyUpgrade('cityOfKittens', 30)" id="cityOfKittensBtn">Buy for <span id="cityOfKittensCost">30000</span></button>
+        <div class="upgrade-count" id="cityOfKittensCount">0</div>
       </div>
       <div class="shop-item"><strong>A World of Meows</strong><br />+80 click value<br />
         <button onclick="buyUpgrade('worldOfMeows', 80)" id="worldOfMeowsBtn">Buy for <span id="worldOfMeowsCost">200000</span></button>
+        <div class="upgrade-count" id="worldOfMeowsCount">0</div>
       </div>
     </div>
     
     <div id="autoContent" class="shop-tab-content">
       <div class="shop-item"><strong>Auto-Mouse</strong><br />+5 CPS<br />
         <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span id="autoClickerCost">2000</span></button>
+        <div class="upgrade-count" id="autoClickerCount">0</div>
       </div>
       <div class="shop-item"><strong>Auto-Kitten Farm</strong><br />+7 CPS<br />
         <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span id="autoKittenFarmCost">15000</span></button>
+        <div class="upgrade-count" id="autoKittenFarmCount">0</div>
       </div>
       <div class="shop-item"><strong>Kitten Planet</strong><br />+20 CPS<br />
         <button onclick="buyKittenPlanet()" id="kittenPlanetBtn">Buy for <span id="kittenPlanetCost">1000000</span></button>
+        <div class="upgrade-count" id="kittenPlanetCount">0</div>
       </div>
     </div>
     
     <div id="bonusContent" class="shop-tab-content">
       <div class="shop-item"><strong>Speed Boost</strong><br />+5% click value<br />
         <button onclick="buyBonusUpgrade('speedBoost', 0.05)" id="speedBoostBtn">Buy for <span id="speedBoostCost">5000</span></button>
+        <div class="upgrade-count" id="speedBoostCount">0</div>
       </div>
       <div class="shop-item"><strong>Double Points</strong><br />+10% score multiplier<br />
         <button onclick="buyBonusUpgrade('doublePoints', 0.1)" id="doublePointsBtn">Buy for <span id="doublePointsCost">15000</span></button>
+        <div class="upgrade-count" id="doublePointsCount">0</div>
       </div>
       <div class="shop-item"><strong>Golden Paws</strong><br />+20% CPS<br />
         <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span id="goldenPawsCost">50000</span></button>
+        <div class="upgrade-count" id="goldenPawsCount">0</div>
       </div>
     </div>
   </div>
@@ -583,6 +612,9 @@ let extraCPSBreed = {
   function closeOverlay(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
+    if (id === 'shopOverlay') {
+      openShopBtn.style.display = 'block';
+    }
   }
   
   function showBreedsTab(tabName) {
@@ -927,6 +959,20 @@ let extraCPSBreed = {
     if(document.getElementById('speedBoostBtn')) document.getElementById('speedBoostBtn').disabled = score < bonusUpgradeCosts.speedBoost;
     if(document.getElementById('doublePointsBtn')) document.getElementById('doublePointsBtn').disabled = score < bonusUpgradeCosts.doublePoints;
     if(document.getElementById('goldenPawsBtn')) document.getElementById('goldenPawsBtn').disabled = score < bonusUpgradeCosts.goldenPaws;
+    
+    // Update upgrade counts
+    if(document.getElementById('milkBowlCount')) document.getElementById('milkBowlCount').textContent = upgrades.milkBowl;
+    if(document.getElementById('catFoodCount')) document.getElementById('catFoodCount').textContent = upgrades.catFood;
+    if(document.getElementById('scratcherCount')) document.getElementById('scratcherCount').textContent = upgrades.scratcher;
+    if(document.getElementById('kittenFactoryCount')) document.getElementById('kittenFactoryCount').textContent = upgrades.kittenFactory;
+    if(document.getElementById('cityOfKittensCount')) document.getElementById('cityOfKittensCount').textContent = upgrades.cityOfKittens;
+    if(document.getElementById('worldOfMeowsCount')) document.getElementById('worldOfMeowsCount').textContent = upgrades.worldOfMeows;
+    if(document.getElementById('autoClickerCount')) document.getElementById('autoClickerCount').textContent = upgrades.autoClicker;
+    if(document.getElementById('autoKittenFarmCount')) document.getElementById('autoKittenFarmCount').textContent = upgrades.autoKittenFarm;
+    if(document.getElementById('kittenPlanetCount')) document.getElementById('kittenPlanetCount').textContent = upgrades.kittenPlanet;
+    if(document.getElementById('speedBoostCount')) document.getElementById('speedBoostCount').textContent = bonusUpgrades.speedBoost;
+    if(document.getElementById('doublePointsCount')) document.getElementById('doublePointsCount').textContent = bonusUpgrades.doublePoints;
+    if(document.getElementById('goldenPawsCount')) document.getElementById('goldenPawsCount').textContent = bonusUpgrades.goldenPaws;
   }
   
   function buyUpgrade(name, increment) {
