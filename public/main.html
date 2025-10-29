@@ -421,6 +421,7 @@
     <div class="shop-tab active" id="tabClickValue" onclick="showShopTab('clickValue')">Click Value</div>
     <div class="shop-tab" id="tabAuto" onclick="showShopTab('auto')">Auto Upgrades</div>
     <div class="shop-tab" id="tabBonus" onclick="showShopTab('bonus')">Bonus Upgrades</div>
+    <div class="shop-tab" id="tabReviews" onclick="showShopTab('reviews')">Reviews</div>
   </div>
   
   <div id="shopContent" class="shop-content">
@@ -478,6 +479,17 @@
       <div class="shop-item"><strong>Golden Paws</strong><br />+20% CPS<br />
         <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span id="goldenPawsCost">50000</span></button>
         <div class="upgrade-count" id="goldenPawsCount">0</div>
+      </div>
+    </div>
+    
+    <div id="reviewsContent" class="shop-tab-content">
+      <div style="padding: 15px;">
+        <h3 style="margin-top: 0;">Leave a Review</h3>
+        <textarea id="reviewText" placeholder="Share your thoughts about Kitten Clicker..." style="width: 100%; height: 100px; margin-bottom: 10px;"></textarea>
+        <button onclick="submitReview()" style="background: #c2185b; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Submit Review</button>
+        
+        <h3 style="margin-top: 30px;">Recent Reviews</h3>
+        <div id="reviewsList"></div>
       </div>
     </div>
   </div>
@@ -720,9 +732,11 @@ let extraCPSBreed = {
     { id: 'quick_kitty', text: 'Quick Kitty | Unlock 1 kitten within 5 minutes', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'quick_prestige_ii', text: 'Quick Prestige II | Prestige 3 times in one hour', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'persistent_saver', text: 'Persistent Saver | Save 10 times while offline', achieved: false, condition: () => false }, // Will be tracked separately
-    { id: 'true_purrfection', text: 'True Purrfection | Unlock 50 achievements (action-based only) and give full achievements section', achieved: false, condition: () => achievementsData.filter(a => a.achieved).length >= 50 }
+    { id: 'true_purrfection', text: 'True Purrfection | Unlock 50 achievements (action-based only) and give full achievements section', achieved: false, condition: () => achievementsData.filter(a => a.achieved).length >= 50 },
+    { id: 'reviewer', text: 'Reviewer | Leave your first review', achieved: false, condition: () => window.userHasReviewed }
   ];
   window.usedMysteryKitten = false;
+  window.userHasReviewed = false;
 
   // Settings State
   let userSettings = {
@@ -841,17 +855,24 @@ let extraCPSBreed = {
     document.getElementById('clickValueContent').classList.remove('active');
     document.getElementById('autoContent').classList.remove('active');
     document.getElementById('bonusContent').classList.remove('active');
+    document.getElementById('reviewsContent').classList.remove('active');
     
     // Remove active class from all tabs
     document.getElementById('tabClickValue').classList.remove('active');
     document.getElementById('tabAuto').classList.remove('active');
     document.getElementById('tabBonus').classList.remove('active');
+    document.getElementById('tabReviews').classList.remove('active');
     
     // Show selected content
     document.getElementById(tabName + 'Content').classList.add('active');
     
     // Add active class to selected tab
     document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+    
+    // Load reviews when reviews tab is selected
+    if (tabName === 'reviews') {
+      loadReviews();
+    }
   }
   
   function renderAchievements() {
@@ -1613,6 +1634,78 @@ let extraCPSBreed = {
       updatePrestigeInfo();
     }
   });
+
+  // --- REVIEW SYSTEM ---
+  function submitReview() {
+    const reviewText = document.getElementById('reviewText').value.trim();
+    if (!reviewText) {
+      showNotification('Please enter a review');
+      return;
+    }
+    
+    // Send review to server
+    fetch('/submit-review', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        text: reviewText,
+        timestamp: Date.now()
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('reviewText').value = '';
+        window.userHasReviewed = true;
+        showNotification('Review submitted successfully!');
+        loadReviews();
+        checkAchievements();
+      } else {
+        showNotification('Error submitting review');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      showNotification('Error submitting review');
+    });
+  }
+
+  function loadReviews() {
+    fetch('/get-reviews')
+      .then(response => response.json())
+      .then(data => {
+        const reviewsList = document.getElementById('reviewsList');
+        reviewsList.innerHTML = '';
+        
+        if (data.reviews && data.reviews.length > 0) {
+          data.reviews.slice(0, 10).forEach(review => {
+            const reviewEl = document.createElement('div');
+            reviewEl.style.border = '1px solid #f8bbd0';
+            reviewEl.style.borderRadius = '8px';
+            reviewEl.style.padding = '12px';
+            reviewEl.style.marginBottom = '10px';
+            reviewEl.innerHTML = `
+              <div style="font-weight: bold; margin-bottom: 5px;">Player Review</div>
+              <div style="margin-bottom: 5px;">${review.text}</div>
+              <div style="font-size: 12px; color: #880e4f;">${formatTime(review.timestamp)}</div>
+            `;
+            reviewsList.appendChild(reviewEl);
+          });
+        } else {
+          reviewsList.innerHTML = '<p>No reviews yet. Be the first to leave one!</p>';
+        }
+      })
+      .catch(error => {
+        console.error('Error loading reviews:', error);
+      });
+  }
+
+  function formatTime(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  }
 </script>
 </body>
 </html>
