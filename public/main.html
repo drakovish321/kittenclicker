@@ -385,7 +385,7 @@
 <body class="theme-pink">
 <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa6e3e.mp3" preload="auto"></audio>
 <h1>Kitten Clicker</h1>
-<p id="score">Score: 0</p>
+<p id="score">Kittens: 0</p>
 <p id="stats">Click Value: <span id="clickValue">1</span> | CPS: <span id="autoClickers">0</span></p>
 <img id="kitten" src="https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg" alt="American Shorthair Kitten" />
 <button id="mysteryKittenBtn">🐾 Mystery Kitten</button>
@@ -399,7 +399,7 @@
   <div id="prestigeInfo">
     <p>Reset your progress for permanent bonuses!</p>
     <p>Current Prestige Level: <span id="prestigeLevel">0</span></p>
-    <p>Required Score: <span id="prestigeRequirement">1000000</span></p>
+    <p>Required Kittens: <span id="prestigeRequirement">1000000</span></p>
   </div>
   <div id="prestigeBonuses">
     <div class="prestige-bonus">+10% Click Value</div>
@@ -572,7 +572,7 @@
 
 <script>
   // All your JavaScript code here (same as before)
-  let score = 0, clickValue = 1;
+  let kittens = 0, clickValue = 1;
   let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
   let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
   let selectedBreed = "american_shorthair";
@@ -605,26 +605,26 @@ let extraCPSBreed = {
     halloween_cat: 100
 };
   let achievementsData = [
-    { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => score > 0 },
+    { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => kittens > 0 },
     { id: 'milkBowl1', text: 'You have to start somewhere: Buy your first Milk Bowl', achieved: false, condition: () => upgrades.milkBowl >= 1 },
-    { id: 'score100', text: 'Score 100 points', achieved: false, condition: () => score >= 100 },
-    { id: 'score1000', text: 'Score 1000 points', achieved: false, condition: () => score >= 1000 },
+    { id: 'score100', text: 'Kittens: 100 points', achieved: false, condition: () => kittens >= 100 },
+    { id: 'score1000', text: 'Kittens: 1000 points', achieved: false, condition: () => kittens >= 1000 },
     { id: 'click10', text: 'Get 10 click value', achieved: false, condition: () => clickValue >= 10 },
     { id: 'auto1', text: 'Buy your first Auto-Mouse', achieved: false, condition: () => upgrades.autoClicker >= 1 },
     { id: 'truepower', text: 'True Power: Select a new kitten breed!', achieved: false, condition: () => selectedBreed !== "american_shorthair" },
-    { id: 'tenk', text: '10k: Get 10000 kittens!', achieved: false, condition: () => score >= 10000 },
+    { id: 'tenk', text: '10k: Get 10000 kittens!', achieved: false, condition: () => kittens >= 10000 },
     { id: 'mystery1', text: 'Take a chance: Try the Mystery Kitten!', achieved: false, condition: () => window.usedMysteryKitten },
-    { id: 'click100k', text: 'Dedicated Paw-sion: Reach 100,000 clicks!', achieved: false, condition: () => score >= 100000 },
+    { id: 'click100k', text: 'Dedicated Paw-sion: Reach 100,000 clicks!', achieved: false, condition: () => kittens >= 100000 },
     { id: 'halloween_unlock', text: 'Spooky Surprise: Unlock the Halloween Cat!', achieved: false, condition: () => breedsUnlocked.halloween_cat },
-    { id: 'click500', text: 'Click Master: Reach 500 clicks', achieved: false, condition: () => score >= 500 },
-    { id: 'click5000', text: 'Click Expert: Reach 5000 clicks', achieved: false, condition: () => score >= 5000 },
-    { id: 'click25000', text: 'Click Pro: Reach 25000 clicks', achieved: false, condition: () => score >= 25000 },
+    { id: 'click500', text: 'Click Master: Reach 500 clicks', achieved: false, condition: () => kittens >= 500 },
+    { id: 'click5000', text: 'Click Expert: Reach 5000 clicks', achieved: false, condition: () => kittens >= 5000 },
+    { id: 'click25000', text: 'Click Pro: Reach 25000 clicks', achieved: false, condition: () => kittens >= 25000 },
     { id: 'auto5', text: 'Auto Enthusiast: Buy 5 Auto-Mouses', achieved: false, condition: () => upgrades.autoClicker >= 5 },
     { id: 'auto10', text: 'Auto Fan: Buy 10 Auto-Mouses', achieved: false, condition: () => upgrades.autoClicker >= 10 },
     { id: 'auto20', text: 'Auto Master: Buy 20 Auto-Mouses', achieved: false, condition: () => upgrades.autoClicker >= 20 },
     
     // New achievements
-    { id: 'million_paw', text: 'Million Paw | 1,000,000 clicks', achieved: false, condition: () => score >= 1000000 },
+    { id: 'million_paw', text: 'Million Paw | 1,000,000 clicks', achieved: false, condition: () => kittens >= 1000000 },
     { id: 'lazy_cat', text: 'Lazy Cat | Stay idle for 1 minute', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'deep_sleeper', text: 'Deep Sleeper | Stay idle for 10 minutes', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'sleep_champion', text: 'Sleep Champion | Stay idle for 1 hour', achieved: false, condition: () => false }, // Will be tracked separately
@@ -655,7 +655,7 @@ let extraCPSBreed = {
     { id: 'fortune_feline', text: 'Fortune Feline | Trigger 10 bonus events', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'toy_master', text: 'Toy Master | Buy 5 of the same upgrade', achieved: false, condition: () => Object.values(upgrades).some(u => u >= 5) },
     { id: 'big_spender', text: 'Big Spender | Spend 10,000 coins in shop', achieved: false, condition: () => false }, // Will be tracked separately
-    { id: 'rich_kitty', text: 'Rich Kitty | Reach 100,000 coins', achieved: false, condition: () => score >= 100000 },
+    { id: 'rich_kitty', text: 'Rich Kitty | Reach 100,000 coins', achieved: false, condition: () => kittens >= 100000 },
     { id: 'quick_buyer', text: 'Quick Buyer | Buy 5 upgrades in 10 seconds', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'shopping_spree', text: 'Shopping Spree | Buy 25 upgrades in 1 minute', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'mega_shopper', text: 'Mega Shopper | Buy 50 upgrades in 5 minutes', achieved: false, condition: () => false }, // Will be tracked separately
@@ -1053,7 +1053,7 @@ let extraCPSBreed = {
   });
   
   function addScore(amount) {
-    score += amount;
+    kittens += amount;
     if(userSettings.floatScore)
       showFloatingScore(amount);
     updateUI();
@@ -1130,7 +1130,7 @@ let extraCPSBreed = {
       return Math.floor(num);
     }
     
-    scoreEl.textContent = `Score: ${formatNumber(score * bonuses.scoreMultiplier)}`;
+    scoreEl.textContent = `Kittens: ${formatNumber(kittens * bonuses.scoreMultiplier)}`;
     
     // --- Breed click bonus ---
     let breedClickBonus = 0;
@@ -1164,18 +1164,18 @@ let extraCPSBreed = {
     if(document.getElementById('goldenPawsCost')) document.getElementById('goldenPawsCost').textContent = bonusUpgradeCosts.goldenPaws;
     
     // Update button states
-    if(document.getElementById('milkBowlBtn')) document.getElementById('milkBowlBtn').disabled = score < upgradeCosts.milkBowl;
-    if(document.getElementById('catFoodBtn')) document.getElementById('catFoodBtn').disabled = score < upgradeCosts.catFood;
-    if(document.getElementById('scratcherBtn')) document.getElementById('scratcherBtn').disabled = score < upgradeCosts.scratcher;
-    if(document.getElementById('kittenFactoryBtn')) document.getElementById('kittenFactoryBtn').disabled = score < upgradeCosts.kittenFactory;
-    if(document.getElementById('cityOfKittensBtn')) document.getElementById('cityOfKittensBtn').disabled = score < upgradeCosts.cityOfKittens;
-    if(document.getElementById('worldOfMeowsBtn')) document.getElementById('worldOfMeowsBtn').disabled = score < upgradeCosts.worldOfMeows;
-    if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = score < upgradeCosts.autoClicker;
-    if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = score < upgradeCosts.autoKittenFarm;
-    if(document.getElementById('kittenPlanetBtn')) document.getElementById('kittenPlanetBtn').disabled = score < upgradeCosts.kittenPlanet;
-    if(document.getElementById('speedBoostBtn')) document.getElementById('speedBoostBtn').disabled = score < bonusUpgradeCosts.speedBoost;
-    if(document.getElementById('doublePointsBtn')) document.getElementById('doublePointsBtn').disabled = score < bonusUpgradeCosts.doublePoints;
-    if(document.getElementById('goldenPawsBtn')) document.getElementById('goldenPawsBtn').disabled = score < bonusUpgradeCosts.goldenPaws;
+    if(document.getElementById('milkBowlBtn')) document.getElementById('milkBowlBtn').disabled = kittens < upgradeCosts.milkBowl;
+    if(document.getElementById('catFoodBtn')) document.getElementById('catFoodBtn').disabled = kittens < upgradeCosts.catFood;
+    if(document.getElementById('scratcherBtn')) document.getElementById('scratcherBtn').disabled = kittens < upgradeCosts.scratcher;
+    if(document.getElementById('kittenFactoryBtn')) document.getElementById('kittenFactoryBtn').disabled = kittens < upgradeCosts.kittenFactory;
+    if(document.getElementById('cityOfKittensBtn')) document.getElementById('cityOfKittensBtn').disabled = kittens < upgradeCosts.cityOfKittens;
+    if(document.getElementById('worldOfMeowsBtn')) document.getElementById('worldOfMeowsBtn').disabled = kittens < upgradeCosts.worldOfMeows;
+    if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = kittens < upgradeCosts.autoClicker;
+    if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = kittens < upgradeCosts.autoKittenFarm;
+    if(document.getElementById('kittenPlanetBtn')) document.getElementById('kittenPlanetBtn').disabled = kittens < upgradeCosts.kittenPlanet;
+    if(document.getElementById('speedBoostBtn')) document.getElementById('speedBoostBtn').disabled = kittens < bonusUpgradeCosts.speedBoost;
+    if(document.getElementById('doublePointsBtn')) document.getElementById('doublePointsBtn').disabled = kittens < bonusUpgradeCosts.doublePoints;
+    if(document.getElementById('goldenPawsBtn')) document.getElementById('goldenPawsBtn').disabled = kittens < bonusUpgradeCosts.goldenPaws;
     
     // Update upgrade counts
     if(document.getElementById('milkBowlCount')) document.getElementById('milkBowlCount').textContent = upgrades.milkBowl;
@@ -1193,7 +1193,7 @@ let extraCPSBreed = {
     
     // Update prestige button state
     const requirement = Math.pow(10, 6 + prestigeLevel);
-    prestigeButton.disabled = score < requirement;
+    prestigeButton.disabled = kittens < requirement;
     prestigeRequirementEl.textContent = requirement.toLocaleString();
   }
   
@@ -1212,8 +1212,8 @@ let extraCPSBreed = {
   }
   
   function buyUpgrade(name, increment) {
-    if (score >= upgradeCosts[name]) {
-      score -= upgradeCosts[name];
+    if (kittens >= upgradeCosts[name]) {
+      kittens -= upgradeCosts[name];
       clickValue += increment;
       upgrades[name]++;
       upgradeCosts[name] = Math.ceil(upgradeCosts[name] * 1.2);
@@ -1222,8 +1222,8 @@ let extraCPSBreed = {
   }
   
   function buyAutoClicker() {
-    if (score >= upgradeCosts.autoClicker) {
-      score -= upgradeCosts.autoClicker;
+    if (kittens >= upgradeCosts.autoClicker) {
+      kittens -= upgradeCosts.autoClicker;
       upgrades.autoClicker++;
       upgradeCosts.autoClicker = Math.ceil(upgradeCosts.autoClicker * 1.2);
       updateUI();
@@ -1231,8 +1231,8 @@ let extraCPSBreed = {
   }
   
   function buyAutoKittenFarm() {
-    if (score >= upgradeCosts.autoKittenFarm) {
-      score -= upgradeCosts.autoKittenFarm;
+    if (kittens >= upgradeCosts.autoKittenFarm) {
+      kittens -= upgradeCosts.autoKittenFarm;
       upgrades.autoKittenFarm++;
       upgradeCosts.autoKittenFarm = Math.ceil(upgradeCosts.autoKittenFarm * 1.2);
       updateUI();
@@ -1240,8 +1240,8 @@ let extraCPSBreed = {
   }
   
   function buyKittenPlanet() {
-    if (score >= upgradeCosts.kittenPlanet) {
-      score -= upgradeCosts.kittenPlanet;
+    if (kittens >= upgradeCosts.kittenPlanet) {
+      kittens -= upgradeCosts.kittenPlanet;
       upgrades.kittenPlanet++;
       upgradeCosts.kittenPlanet = Math.ceil(upgradeCosts.kittenPlanet * 1.2);
       updateUI();
@@ -1250,8 +1250,8 @@ let extraCPSBreed = {
   
   // Bonus upgrade purchase function
   function buyBonusUpgrade(name, multiplier) {
-    if (score >= bonusUpgradeCosts[name]) {
-      score -= bonusUpgradeCosts[name];
+    if (kittens >= bonusUpgradeCosts[name]) {
+      kittens -= bonusUpgradeCosts[name];
       bonusUpgrades[name]++;
       bonusUpgradeCosts[name] = Math.ceil(bonusUpgradeCosts[name] * 1.2);
       updateUI();
@@ -1280,8 +1280,8 @@ let extraCPSBreed = {
       }
       
       const achievementCount = achievementsData.filter(a => a.achieved).length;
-      if (score < 100000 || achievementCount < 15) {
-        showNotification("You need 100,000 score and 15 achievements to unlock the Halloween Cat!");
+      if (kittens < 100000 || achievementCount < 15) {
+        showNotification("You need 100,000 kittens and 15 achievements to unlock the Halloween Cat!");
         return;
       }
       
@@ -1309,7 +1309,7 @@ let extraCPSBreed = {
   // Halloween cat unlock function removed - now only available during Halloween season
   
   function exportSave() {
-    const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts, prestigeLevel };
+    const saveData = { kittens, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts, prestigeLevel };
     const saveString = btoa(JSON.stringify(saveData));
     const textarea = document.getElementById('saveCodeBox');
     textarea.value = saveString;
@@ -1320,7 +1320,7 @@ let extraCPSBreed = {
     const input = document.getElementById('loadSaveCode').value;
     try {
       const data = JSON.parse(atob(input));
-      score = data.score || 0;
+      kittens = data.kittens || 0;
       clickValue = data.clickValue || 1;
       upgrades = data.upgrades || upgrades;
       upgradeCosts = data.upgradeCosts || upgradeCosts;
@@ -1390,7 +1390,7 @@ let extraCPSBreed = {
   // Reset
   function resetProgress() {
     if(confirm('Are you sure you want to reset all progress?')) {
-      score = 0; clickValue = 1;
+      kittens = 0; clickValue = 1;
       upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
       upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
       selectedBreed = "american_shorthair";
@@ -1412,7 +1412,7 @@ let extraCPSBreed = {
       const saved = localStorage.getItem('kittenSave');
       if (saved) {
         const data = JSON.parse(atob(saved));
-        score = data.score || 0;
+        kittens = data.kittens || 0;
         clickValue = data.clickValue || 1;
         upgrades = data.upgrades || upgrades;
         upgradeCosts = data.upgradeCosts || upgradeCosts;
@@ -1450,7 +1450,7 @@ let extraCPSBreed = {
   
   setInterval(() => {
     try {
-      const saveData = { score, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts, prestigeLevel };
+      const saveData = { kittens, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts, prestigeLevel };
       localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
     } catch (e) {}
   }, 5000);
@@ -1474,21 +1474,21 @@ let extraCPSBreed = {
 
   // MYSTERY KITTEN BUTTON LOGIC
   mysteryKittenBtn.addEventListener('click', function() {
-    if (score < 1) {
+    if (kittens < 1) {
       showNotification('You need some kittens to risk!');
       return;
     }
     window.usedMysteryKitten = true;
     const rand = Math.random();
     if (rand < 0.5) {
-      const gain = Math.floor(score * 0.17);
-      score += gain;
+      const gain = Math.floor(kittens * 0.17);
+      kittens += gain;
       if(userSettings.floatScore) showFloatingScore(gain);
       showNotification(`Mystery Kitten! You gained +${gain} kittens!`);
     } else if (rand < 0.67) {
-      const loss = Math.floor(score * 0.17);
-      score -= loss;
-      if (score < 0) score = 0;
+      const loss = Math.floor(kittens * 0.17);
+      kittens -= loss;
+      if (kittens < 0) kittens = 0;
       if(userSettings.floatScore) showFloatingScore(-loss);
       showNotification(`Oh no! Mystery Kitten took -${loss} kittens!`);
     } else {
@@ -1595,12 +1595,12 @@ let extraCPSBreed = {
   // --- PRESTIGE LOGIC ---
   prestigeButton.addEventListener('click', function() {
     const requirement = Math.pow(10, 6 + prestigeLevel);
-    if (score >= requirement) {
+    if (kittens >= requirement) {
       // Apply prestige bonuses
       prestigeLevel++;
       
-      // Reset score and upgrades but keep prestige bonuses
-      score = 0;
+      // Reset kittens and upgrades but keep prestige bonuses
+      kittens = 0;
       clickValue = 1;
       upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
       upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
