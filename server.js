@@ -8,6 +8,9 @@ let currentPlayers = 0; // Players currently connected
 let totalPlayers = 0;   // Total players who have ever played
 let activePlayers = new Set(); // Track active players
 
+// In-memory storage for reviews
+let reviews = [];
+
 // Middleware to track active players
 app.use((req, res, next) => {
   const clientId = req.headers['x-client-id'] || Date.now() + Math.random();
@@ -26,6 +29,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.json());
 app.use(express.static('public'));
 
 // Serve main.html at root
@@ -53,16 +57,46 @@ app.get('/player-count-stream', (req, res) => {
   });
   
   // Send initial count
-  res.write(`data: ${JSON.stringify({ current: currentPlayers, total: totalPlayers })}\n\n`);
+  res.write(`data: ${JSON.stringify({ current: currentPlayers, total: totalPlayers })}\\n\\n`);
   
   // Send updates every 5 seconds
   const interval = setInterval(() => {
-    res.write(`data: ${JSON.stringify({ current: currentPlayers, total: totalPlayers })}\n\n`);
+    res.write(`data: ${JSON.stringify({ current: currentPlayers, total: totalPlayers })}\\n\\n`);
   }, 5000);
   
   // Clean up on connection close
   req.on('close', () => {
     clearInterval(interval);
+  });
+});
+
+// Endpoint to submit a review
+app.post('/submit-review', (req, res) => {
+  const { text, timestamp } = req.body;
+  
+  if (!text || !timestamp) {
+    return res.json({ success: false, error: 'Missing required fields' });
+  }
+  
+  // Add review to storage
+  reviews.push({
+    text: text,
+    timestamp: timestamp
+  });
+  
+  // Keep only the last 100 reviews
+  if (reviews.length > 100) {
+    reviews = reviews.slice(-100);
+  }
+  
+  res.json({ success: true });
+});
+
+// Endpoint to get reviews
+app.get('/get-reviews', (req, res) => {
+  // Return the last 10 reviews
+  res.json({ 
+    reviews: reviews.slice(-10).reverse() 
   });
 });
 
