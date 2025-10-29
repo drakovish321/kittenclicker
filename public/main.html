@@ -580,24 +580,28 @@
     american_shorthair: true, 
     maine_coon: false, 
     siamese: false,
+    himalayan: false,
     halloween_cat: false
 };
 let breedImages = {
     american_shorthair: "https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg",
     maine_coon: "https://cdn.pixabay.com/photo/2021/12/17/19/15/pet-6877246_1280.jpg",
     siamese: "https://cdn.pixabay.com/photo/2017/02/15/12/12/cat-2068462_1280.jpg",
+    himalayan: "https://cdn.pixabay.com/photo/2016/03/24/21/21/cat-1277665_1280.jpg",
     halloween_cat: "https://cdn.pixabay.com/photo/2022/08/06/15/46/halloween-7368864_1280.jpg"
 };
 let breedNames = {
     american_shorthair: "American Shorthair",
     maine_coon: "Maine Coon",
     siamese: "Siamese",
+    himalayan: "Himalayan",
     halloween_cat: "Halloween Cat"
 };
 let extraCPSBreed = {
     american_shorthair: 0,
     maine_coon: 5,
     siamese: 20,
+    himalayan: 7,
     halloween_cat: 100
 };
   let achievementsData = [
@@ -768,7 +772,7 @@ let extraCPSBreed = {
     list.innerHTML = '';
 
     // Add all breeds here (excluding halloween_cat)
-    ["american_shorthair", "maine_coon", "siamese"].forEach(breed => {
+    ["american_shorthair", "maine_coon", "siamese", "himalayan"].forEach(breed => {
       const div = document.createElement('div');
       div.style.margin = "28px 0 25px 0";
       div.style.padding = "12px";
@@ -786,7 +790,9 @@ let extraCPSBreed = {
         if (breed === "maine_coon") {
           label += `<span class="breed-lock">🔒 (3 achievements required)</span>`;
         } else if (breed === "siamese") {
-          label += `<span class="breed-lock">🔒 (6 achievements required)</span>`;
+          label += `<span class="breed-lock">🔒 (10 achievements required)</span>`;
+        } else if (breed === "himalayan") {
+          label += `<span class="breed-lock">🔒 (13 achievements required)</span>`;
         }
       }
 
@@ -794,6 +800,7 @@ let extraCPSBreed = {
       let bonusText = "";
       if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
       if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 CPS</div>";
+      if (breed === "himalayan") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +30 Click Value & +7 CPS</div>";
 
       div.innerHTML = `
         <div style="font-size:20px;margin-bottom:8px;">${label}</div>
@@ -897,7 +904,8 @@ let extraCPSBreed = {
     // Check breed unlocks after checking all achievements
     const breedUnlocks = [
       { breed: "maine_coon", requiredAchievements: 3, message: "You unlocked the Maine Coon breed!" },
-      { breed: "siamese", requiredAchievements: 6, message: "You unlocked the Siamese breed!" }
+      { breed: "siamese", requiredAchievements: 10, message: "You unlocked the Siamese breed!" },
+      { breed: "himalayan", requiredAchievements: 13, message: "You unlocked the Himalayan breed!" }
     ];
 
     for (const unlock of breedUnlocks) {
@@ -932,15 +940,18 @@ let extraCPSBreed = {
     }
   }
   
-  kittenImg.addEventListener('click', () => {
-    clickSound.currentTime = 0;
-    clickSound.volume = userSettings.notifVolume;
-    clickSound.play();
-    addScore(clickValue);
-    if(!userSettings.disableAnimations){
-      kittenImg.classList.add('pulse');
-      setTimeout(() => kittenImg.classList.remove('pulse'), 300);
-    }
+  // Ensure kitten click event is attached after DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    kittenImg.addEventListener('click', () => {
+      clickSound.currentTime = 0;
+      clickSound.volume = userSettings.notifVolume;
+      clickSound.play();
+      addScore(clickValue);
+      if(!userSettings.disableAnimations){
+        kittenImg.classList.add('pulse');
+        setTimeout(() => kittenImg.classList.remove('pulse'), 300);
+      }
+    });
   });
   
   function addScore(amount) {
@@ -1027,6 +1038,8 @@ let extraCPSBreed = {
     let breedClickBonus = 0;
     if (selectedBreed === 'siamese') {
       breedClickBonus = 20;
+    } else if (selectedBreed === 'himalayan') {
+      breedClickBonus = 30;
     } else if (selectedBreed === 'halloween_cat') {
       breedClickBonus = 100;
     }
@@ -1283,7 +1296,7 @@ let extraCPSBreed = {
       upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
       upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
       selectedBreed = "american_shorthair";
-      breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, halloween_cat: false };
+      breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, himalayan: false, halloween_cat: false };
       for(let a of achievementsData) a.achieved = false;
       bonusUpgrades = { speedBoost: 0, doublePoints: 0, goldenPaws: 0 };
       bonusUpgradeCosts = { speedBoost: 5000, doublePoints: 15000, goldenPaws: 50000 };
