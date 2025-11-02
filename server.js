@@ -11,12 +11,12 @@ const OFFLINE_SAVE_INTERVAL = 5000; // Save offline data every 5 seconds
 const POINTS_PER_SECOND_OFFLINE = 1; // Points earned per second offline
 
 // --- In-memory storage ---
-let currentPlayers = 0; // Players currently connected
-let totalPlayers = 0;   // Total unique players ever connected
-let activePlayers = new Set(); // Track currently active players
-let reviews = [];               // Last 100 reviews
-let offlineData = new Map();    // Offline player data keyed by playerId or IP
-let seenPlayers = new Set();    // Keep track of unique players for totalPlayers
+let currentPlayers = 0;          // Players currently connected
+let totalUniquePlayers = 0;      // Total unique players
+let totalViews = 0;              // Total page loads
+let activePlayers = new Set();   // Track active players
+let reviews = [];                // Last 100 reviews
+let offlineData = new Map();     // Offline player data keyed by playerId or IP
 
 // --- Load persistent offlineData ---
 if (fs.existsSync(OFFLINE_FILE)) {
@@ -70,13 +70,14 @@ app.use(express.json());
 app.use(express.static('public'));
 
 app.use((req, res, next) => {
-  const clientId = req.headers['x-client-id'] || getClientIp(req) || (Date.now() + Math.random()).toString();
+  const clientId = req.headers['x-client-id'] || getClientIp(req) || Date.now() + Math.random();
   const now = Date.now();
 
   // Update offline points
   let stored = offlineData.get(clientId);
   if (!stored) {
     stored = { points: 0, lastSeen: now };
+    totalUniquePlayers++; // new unique player
   } else {
     stored = awardOfflinePoints(stored, now);
   }
@@ -85,12 +86,6 @@ app.use((req, res, next) => {
   // Track active players
   activePlayers.add(clientId);
   currentPlayers = activePlayers.size;
-
-  // Track unique players for totalPlayers
-  if (!seenPlayers.has(clientId)) {
-    seenPlayers.add(clientId);
-    totalPlayers++;
-  }
 
   req.on('close', () => {
     activePlayers.delete(clientId);
@@ -102,12 +97,17 @@ app.use((req, res, next) => {
 
 // --- Serve main.html ---
 app.get('/', (req, res) => {
+  totalViews++; // count every page load
   res.sendFile(path.join(__dirname, 'public', 'main.html'));
 });
 
 // --- Player count endpoints ---
 app.get('/player-count', (req, res) => {
-  res.json({ current: currentPlayers, total: totalPlayers });
+  res.json({
+    currentPlayers,
+    totalUniquePlayers,
+    totalViews
+  });
 });
 
 app.get('/player-count-stream', (req, res) => {
@@ -117,9 +117,9 @@ app.get('/player-count-stream', (req, res) => {
     'Connection': 'keep-alive',
     'Access-Control-Allow-Origin': '*'
   });
-  res.write(`data: ${JSON.stringify({ current: currentPlayers, total: totalPlayers })}\n\n`);
+  res.write(`data: ${JSON.stringify({ currentPlayers, totalUniquePlayers, totalViews })}\n\n`);
   const interval = setInterval(() => {
-    res.write(`data: ${JSON.stringify({ current: currentPlayers, total: totalPlayers })}\n\n`);
+    res.write(`data: ${JSON.stringify({ currentPlayers, totalUniquePlayers, totalViews })}\n\n`);
   }, 5000);
   req.on('close', () => clearInterval(interval));
 });
