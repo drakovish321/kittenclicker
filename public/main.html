@@ -543,6 +543,73 @@
     background: #ccc;
     cursor: not-allowed;
   }
+
+  /* --- Enhanced blur effect based on proximity --- */
+  .proximity-blur {
+    filter: blur(5px);
+    transition: filter 0.5s ease;
+  }
+  
+  .proximity-blur.visible {
+    filter: blur(0);
+  }
+  
+  .proximity-blur .item-text {
+    filter: blur(3px);
+    transition: filter 0.5s ease;
+  }
+  
+  .proximity-blur.visible .item-text {
+    filter: blur(0);
+  }
+  
+  .proximity-blur .item-cost {
+    filter: blur(2px);
+    transition: filter 0.5s ease;
+  }
+  
+  .proximity-blur.visible .item-cost {
+    filter: blur(0);
+  }
+  
+  /* --- Improved shop layout --- */
+  #shopOverlay {
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .shop-item {
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .shop-item-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .shop-item-content .item-text {
+    margin-bottom: 8px;
+  }
+  
+  .shop-item-content .item-cost {
+    margin-top: auto;
+  }
+  
+  /* --- Better visibility for unlocked items --- */
+  .shop-item.can-afford {
+    filter: blur(0) brightness(1.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border: 2px solid #c2185b;
+  }
+  
+  .shop-item.can-afford:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    border: 2px solid #e91e63;
+  }
   </style>
 </head>
 <body class="theme-pink">
@@ -590,75 +657,75 @@
   
   <div id="shopContent" class="shop-content">
     <div id="clickValueContent" class="shop-tab-content active">
-      <div class="shop-item"><strong>Milk Bowl</strong><br />+0.5 click value<br />
-        <button onclick="buyUpgrade('milkBowl', 0.5)" id="milkBowlBtn">Buy for <span id="milkBowlCost">25</span></button>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Milk Bowl</strong><br /><span class="item-text">+0.5 click value</span><br />
+        <button onclick="buyUpgrade('milkBowl', 0.5)" id="milkBowlBtn">Buy for <span class="item-cost" id="milkBowlCost">25</span></button>
         <div class="upgrade-count" id="milkBowlCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Cat Food</strong><br />+2 click value<br />
-        <button onclick="buyUpgrade('catFood', 2)" id="catFoodBtn">Buy for <span id="catFoodCost">115</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Cat Food</strong><br /><span class="item-text">+2 click value</span><br />
+        <button onclick="buyUpgrade('catFood', 2)" id="catFoodBtn">Buy for <span class="item-cost" id="catFoodCost">115</span></button>
         <div class="upgrade-count" id="catFoodCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Scratcher</strong><br />+7 click value<br />
-        <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span id="scratcherCost">700</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Scratcher</strong><br /><span class="item-text">+7 click value</span><br />
+        <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span class="item-cost" id="scratcherCost">700</span></button>
         <div class="upgrade-count" id="scratcherCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Kitten Factory</strong><br />+15 click value<br />
-        <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span id="kittenFactoryCost">5000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Kitten Factory</strong><br /><span class="item-text">+15 click value</span><br />
+        <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span class="item-cost" id="kittenFactoryCost">5000</span></button>
         <div class="upgrade-count" id="kittenFactoryCount">0</div>
-      </div>
-      <div class="shop-item"><strong>City of Kittens</strong><br />+30 click value<br />
-        <button onclick="buyUpgrade('cityOfKittens', 30)" id="cityOfKittensBtn">Buy for <span id="cityOfKittensCost">30000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">City of Kittens</strong><br /><span class="item-text">+30 click value</span><br />
+        <button onclick="buyUpgrade('cityOfKittens', 30)" id="cityOfKittensBtn">Buy for <span class="item-cost" id="cityOfKittensCost">30000</span></button>
         <div class="upgrade-count" id="cityOfKittensCount">0</div>
-      </div>
-      <div class="shop-item"><strong>A World of Meows</strong><br />+80 click value<br />
-        <button onclick="buyUpgrade('worldOfMeows', 80)" id="worldOfMeowsBtn">Buy for <span id="worldOfMeowsCost">200000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">A World of Meows</strong><br /><span class="item-text">+80 click value</span><br />
+        <button onclick="buyUpgrade('worldOfMeows', 80)" id="worldOfMeowsBtn">Buy for <span class="item-cost" id="worldOfMeowsCost">200000</span></button>
         <div class="upgrade-count" id="worldOfMeowsCount">0</div>
-      </div>
+      </div></div>
     </div>
     
     <div id="autoContent" class="shop-tab-content">
-      <div class="shop-item"><strong>Auto-Mouse</strong><br />+5 CPS<br />
-        <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span id="autoClickerCost">2000</span></button>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Auto-Mouse</strong><br /><span class="item-text">+5 CPS</span><br />
+        <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span class="item-cost" id="autoClickerCost">2000</span></button>
         <div class="upgrade-count" id="autoClickerCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Auto-Kitten Farm</strong><br />+7 CPS<br />
-        <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span id="autoKittenFarmCost">15000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Auto-Kitten Farm</strong><br /><span class="item-text">+7 CPS</span><br />
+        <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span class="item-cost" id="autoKittenFarmCost">15000</span></button>
         <div class="upgrade-count" id="autoKittenFarmCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Kitten Planet</strong><br />+20 CPS<br />
-        <button onclick="buyKittenPlanet()" id="kittenPlanetBtn">Buy for <span id="kittenPlanetCost">1000000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Kitten Planet</strong><br /><span class="item-text">+20 CPS</span><br />
+        <button onclick="buyKittenPlanet()" id="kittenPlanetBtn">Buy for <span class="item-cost" id="kittenPlanetCost">1000000</span></button>
         <div class="upgrade-count" id="kittenPlanetCount">0</div>
-      </div>
+      </div></div>
     </div>
     
     <div id="bonusContent" class="shop-tab-content">
-      <div class="shop-item"><strong>Speed Boost</strong><br />+5% click value<br />
-        <button onclick="buyBonusUpgrade('speedBoost', 0.05)" id="speedBoostBtn">Buy for <span id="speedBoostCost">5000</span></button>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Speed Boost</strong><br /><span class="item-text">+5% click value</span><br />
+        <button onclick="buyBonusUpgrade('speedBoost', 0.05)" id="speedBoostBtn">Buy for <span class="item-cost" id="speedBoostCost">5000</span></button>
         <div class="upgrade-count" id="speedBoostCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Double Points</strong><br />+10% score multiplier<br />
-        <button onclick="buyBonusUpgrade('doublePoints', 0.1)" id="doublePointsBtn">Buy for <span id="doublePointsCost">15000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Double Points</strong><br /><span class="item-text">+10% score multiplier</span><br />
+        <button onclick="buyBonusUpgrade('doublePoints', 0.1)" id="doublePointsBtn">Buy for <span class="item-cost" id="doublePointsCost">15000</span></button>
         <div class="upgrade-count" id="doublePointsCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Golden Paws</strong><br />+20% CPS<br />
-        <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span id="goldenPawsCost">50000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Golden Paws</strong><br /><span class="item-text">+20% CPS</span><br />
+        <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span class="item-cost" id="goldenPawsCost">50000</span></button>
         <div class="upgrade-count" id="goldenPawsCount">0</div>
-      </div>
+      </div></div>
     </div>
     
     <div id="offlineContent" class="shop-tab-content">
-      <div class="shop-item"><strong>Offline Clicks</strong><br />+1 offline click/sec<br />
-        <button onclick="buyOfflineClick()" id="offlineClickBtn">Buy for <span id="offlineClickCost">1000</span></button>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Offline Clicks</strong><br /><span class="item-text">+1 offline click/sec</span><br />
+        <button onclick="buyOfflineClick()" id="offlineClickBtn">Buy for <span class="item-cost" id="offlineClickCost">1000</span></button>
         <div class="upgrade-count" id="offlineClickCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Offline Boost</strong><br />+50% offline bonus<br />
-        <button onclick="buyOfflineBoost()" id="offlineBoostBtn">Buy for <span id="offlineBoostCost">5000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Offline Boost</strong><br /><span class="item-text">+50% offline bonus</span><br />
+        <button onclick="buyOfflineBoost()" id="offlineBoostBtn">Buy for <span class="item-cost" id="offlineBoostCost">5000</span></button>
         <div class="upgrade-count" id="offlineBoostCount">0</div>
-      </div>
-      <div class="shop-item"><strong>Offline Empire</strong><br />+100% offline bonus<br />
-        <button onclick="buyOfflineEmpire()" id="offlineEmpireBtn">Buy for <span id="offlineEmpireCost">25000</span></button>
+      </div></div>
+      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Offline Empire</strong><br /><span class="item-text">+100% offline bonus</span><br />
+        <button onclick="buyOfflineEmpire()" id="offlineEmpireBtn">Buy for <span class="item-cost" id="offlineEmpireCost">25000</span></button>
         <div class="upgrade-count" id="offlineEmpireCount">0</div>
-      </div>
+      </div></div>
     </div>
     
     <div id="reviewsContent" class="shop-tab-content">
