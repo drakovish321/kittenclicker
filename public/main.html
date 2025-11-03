@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -101,6 +101,21 @@
     0% { transform: scale(1); }
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
+  }
+
+  /* Falling kitten emojis */
+  .falling-kitten {
+    position: fixed;
+    font-size: 24px;
+    z-index: 1;
+    pointer-events: none;
+    animation: fall linear forwards;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+    }
   }
 
   /* Top buttons */
@@ -223,6 +238,11 @@
     background: #f8bbd0;
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
+    filter: blur(2px); /* Blur by default */
+  }
+
+  .shop-item.can-afford {
+    filter: blur(0); /* Remove blur when affordable */
   }
 
   .shop-item:hover {
@@ -257,233 +277,272 @@
     cursor: not-allowed;
   }
     
-    .upgrade-count {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #c2185b;
-      color: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-    }
+  .upgrade-count {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #c2185b;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
 
-    /* --- Overlays --- */
-    .overlay {
-      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(255,255,255,0.95); z-index:1000; padding:60px 20px 20px; overflow-y:auto; box-sizing:border-box; transition: opacity 0.3s;
-    }
-    
-    .overlay h2 { margin-bottom:30px; }
-    
-    /* --- Progress --- */
-    #progressOverlay textarea { width:90%; height:150px; margin-top:10px; font-family: monospace; font-size:14px; resize:none; }
-    #progressOverlay input { width:90%; padding:8px; font-size:16px; margin-top:10px; }
-    #progressOverlay button { margin-top:10px; padding:8px 16px; border-radius:6px; border:none; cursor:pointer; font-size:16px; }
+  /* --- Overlays --- */
+  .overlay {
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(255,255,255,0.95); z-index:1000; padding:60px 20px 20px; overflow-y:auto; box-sizing:border-box; transition: opacity 0.3s;
+  }
+  
+  .overlay h2 { margin-bottom:30px; }
+  
+  /* --- Progress --- */
+  #progressOverlay textarea { width:90%; height:150px; margin-top:10px; font-family: monospace; font-size:14px; resize:none; }
+  #progressOverlay input { width:90%; padding:8px; font-size:16px; margin-top:10px; }
+  #progressOverlay button { margin-top:10px; padding:8px 16px; border-radius:6px; border:none; cursor:pointer; font-size:16px; }
 
-    /* --- Settings --- */
-    #settingsOverlay label, #settingsOverlay select, #settingsOverlay input, #settingsOverlay button { font-size:18px; }
-    #settingsOverlay select, #settingsOverlay input[type="range"] { margin-top:10px; padding:8px 12px; border-radius:6px; border:1px solid #880e4f; background:white; cursor:pointer; }
-    #settingsOverlay label { display:block; margin-top:16px; }
-    #settingsOverlay input[type="checkbox"] { margin-left:10px; margin-right:6px; }
-    #settingsOverlay .setting-row { margin-bottom:16px; }
-    #settingsOverlay .setting-title { font-weight:bold; display:inline-block; width:180px; text-align:left; }
+  /* --- Settings --- */
+  #settingsOverlay label, #settingsOverlay select, #settingsOverlay input, #settingsOverlay button { font-size:18px; }
+  #settingsOverlay select, #settingsOverlay input[type="range"] { margin-top:10px; padding:8px 12px; border-radius:6px; border:1px solid #880e4f; background:white; cursor:pointer; }
+  #settingsOverlay label { display:block; margin-top:16px; }
+  #settingsOverlay input[type="checkbox"] { margin-left:10px; margin-right:6px; }
+  #settingsOverlay .setting-row { margin-bottom:16px; }
+  #settingsOverlay .setting-title { font-weight:bold; display:inline-block; width:180px; text-align:left; }
 
-    /* --- Achievements --- */
-    #achievementsList { display:flex; flex-wrap:wrap; justify-content:center; gap:18px; max-width:700px; margin:0 auto; }
-    .achievement-card {
-      display:flex; align-items:center; gap:14px; width:320px; min-width:320px; max-width:320px; min-height:72px; max-height:72px;
-      padding:18px 20px; margin:8px 0; border-radius:15px; box-shadow:0 4px 12px rgba(140,0,70,0.12); font-size:18px; font-weight:500;
-      transition: transform 0.15s, box-shadow 0.15s, background 0.3s; border:2px solid #f8bbd0; opacity:0.92; position:relative; box-sizing:border-box;
-    }
-    .achievement-card:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 24px rgba(180,40,130,0.13); opacity:1; z-index:2; }
-    .achievement-card.locked { opacity:0.6; }
-    .achievement-icon { font-size:2em; margin-right:5px; filter: drop-shadow(0 1px 1px #fff5); text-shadow:0 2px 10px #fff8; width:40px; text-align:center; }
+  /* --- Achievements --- */
+  #achievementsList { display:flex; flex-wrap:wrap; justify-content:center; gap:18px; max-width:700px; margin:0 auto; }
+  .achievement-card {
+    display:flex; align-items:center; gap:14px; width:320px; min-width:320px; max-width:320px; min-height:72px; max-height:72px;
+    padding:18px 20px; margin:8px 0; border-radius:15px; box-shadow:0 4px 12px rgba(140,0,70,0.12); font-size:18px; font-weight:500;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.3s; border:2px solid #f8bbd0; opacity:0.92; position:relative; box-sizing:border-box;
+  }
+  .achievement-card:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 24px rgba(180,40,130,0.13); opacity:1; z-index:2; }
+  .achievement-card.locked { opacity:0.6; }
+  .achievement-icon { font-size:2em; margin-right:5px; filter: drop-shadow(0 1px 1px #fff5); text-shadow:0 2px 10px #fff8; width:40px; text-align:center; }
 
-    /* --- Breeds --- */
-    .breed-select-btn { padding:8px 22px; border-radius:12px; border:none; margin:10px 8px 0 8px; font-size:18px; font-weight:bold; cursor:pointer; transition: background 0.2s; }
-    .breed-lock { color:#aaa; font-size:20px; margin-left:6px; vertical-align:middle; }
-    .breed-event-tag { background:#ff5252; color:white; padding:3px 8px; border-radius:12px; font-size:12px; margin-left:8px; }
+  /* --- Breeds --- */
+  .breed-select-btn { padding:8px 22px; border-radius:12px; border:none; margin:10px 8px 0 8px; font-size:18px; font-weight:bold; cursor:pointer; transition: background 0.2s; }
+  .breed-lock { color:#aaa; font-size:20px; margin-left:6px; vertical-align:middle; }
+  .breed-event-tag { background:#ff5252; color:white; padding:3px 8px; border-radius:12px; font-size:12px; margin-left:8px; }
 
-    /* --- Mystery Kitten --- */
-    #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; z-index: 1001; position: relative; }
+  /* --- Mystery Kitten --- */
+  #mysteryKittenBtn { display:none; margin:20px 0 0 0; padding:14px 34px; font-size:20px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition: transform 0.2s; z-index: 1001; position: relative; }
 
-    /* --- Prestige --- */
-    #prestigeOverlay {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 350px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 15px;
-      box-shadow: 0 5px 25px rgba(0,0,0,0.3);
-      padding: 25px;
-      z-index: 1001;
-      display: none;
-      text-align: center;
-    }
-    
-    #prestigeOverlay.active {
-      display: block;
-    }
-    
-    #prestigeOverlay h2 {
-      margin-top: 0;
-      color: #c2185b;
-    }
-    
-    #prestigeInfo {
-      margin: 20px 0;
-      padding: 15px;
-      background: #f8bbd0;
-      border-radius: 10px;
-      font-size: 18px;
-    }
-    
-    #prestigeButton {
-      background: #c2185b;
-      color: white;
-      font-weight: bold;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 20px;
-      margin: 20px 0;
-      transition: transform 0.2s;
-    }
-    
-    #prestigeButton:hover {
-      transform: scale(1.05);
-    }
-    
-    #prestigeButton:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    .prestige-bonus {
-      background: #e91e63;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin: 10px 0;
-      font-weight: bold;
-    }
+  /* --- Prestige --- */
+  #prestigeOverlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 350px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+    padding: 25px;
+    z-index: 1001;
+    display: none;
+    text-align: center;
+  }
+  
+  #prestigeOverlay.active {
+    display: block;
+  }
+  
+  #prestigeOverlay h2 {
+    margin-top: 0;
+    color: #c2185b;
+  }
+  
+  #prestigeInfo {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8bbd0;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+  
+  #prestigeButton {
+    background: #c2185b;
+    color: white;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    margin: 20px 0;
+    transition: transform 0.2s;
+  }
+  
+  #prestigeButton:hover {
+    transform: scale(1.05);
+  }
+  
+  #prestigeButton:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .prestige-bonus {
+    background: #e91e63;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 10px 0;
+    font-weight: bold;
+  }
 
-    /* --- Themes --- */
-    body.theme-pink { background:#fce4ec; color:#880e4f; }
-    body.theme-blue { background:#e3f2fd; color:#1565c0; }
-    body.theme-dark { background:#121212; color:#bb86fc; }
-    body.theme-mint { background:#e0fdfa; color:#00796b; }
-    body.theme-orange { background:#fff3e0; color:#e65100; }
+  /* --- Themes --- */
+  body.theme-pink { background:#fce4ec; color:#880e4f; }
+  body.theme-blue { background:#e3f2fd; color:#1565c0; }
+  body.theme-dark { background:#121212; color:#bb86fc; }
+  body.theme-mint { background:#e0fdfa; color:#00796b; }
+  body.theme-orange { background:#fff3e0; color:#e65100; }
 
-    /* --- Responsive --- */
-    @media (max-width:600px){
-      #achievementsList { flex-direction:column; align-items:center; }
-      .achievement-card { min-width:0; width:98%; max-width:99vw; }
-      img#kitten { width:80%; max-width:300px; }
-      #shopOverlay {
-        left: 10px;
-        width: calc(100% - 20px);
-        height: 70vh;
-      }
-      #prestigeOverlay {
-        width: 90%;
-        left: 5%;
-        transform: translateY(-50%);
-      }
-    }
-
-    /* --- Footer --- */
-    #footer { position:fixed; bottom:10px; left:10px; font-size:12px; color:#880e4f; }
-    #footer a { color:#880e4f; text-decoration:none; }
-    #footer a:hover { text-decoration:underline; }
-    
-    /* --- Additional styling for shop items --- */
-    #shopOverlay .shop-item {
-      background: #f8bbd0;
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    
-    #shopOverlay .shop-item strong {
-      display: block;
-      margin-bottom: 8px;
-    }
-    
-    #shopOverlay .shop-item button {
-      margin-top: 10px;
-      background: #c2185b;
-      color: white;
-      font-weight: bold;
-    }
-    
-    #shopOverlay .shop-item button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    
-    /* --- Shop Tabs --- */
-    .shop-tabs {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #f8bbd0;
-    }
-
-    .shop-tab {
-      padding: 12px 20px;
-      background: #f8bbd0;
-      border: none;
-      border-radius: 8px 8px 0 0;
-      cursor: pointer;
-      font-weight: bold;
-      margin-right: 5px;
-      transition: background 0.2s;
-    }
-
-    .shop-tab:hover {
-      background: #e91e63;
-    }
-
-    .shop-tab.active {
-      background: #c2185b;
-      color: white;
-    }
-
-    .shop-tab-content {
-      display: none;
-    }
-
-    .shop-tab-content.active {
-      display: block;
-    }
-    
-    /* --- Open Shop Button --- */
-    #openShopBtn {
-      position: fixed;
-      top: 50%;
+  /* --- Responsive --- */
+  @media (max-width:600px){
+    #achievementsList { flex-direction:column; align-items:center; }
+    .achievement-card { min-width:0; width:98%; max-width:99vw; }
+    img#kitten { width:80%; max-width:300px; }
+    #shopOverlay {
       left: 10px;
-      transform: translateY(-50%);
-      padding: 10px 15px;
-      background: #c2185b;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 999;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      width: calc(100% - 20px);
+      height: 70vh;
     }
+    #prestigeOverlay {
+      width: 90%;
+      left: 5%;
+      transform: translateY(-50%);
+    }
+  }
+
+  /* --- Footer --- */
+  #footer { position:fixed; bottom:10px; left:10px; font-size:12px; color:#880e4f; }
+  #footer a { color:#880e4f; text-decoration:none; }
+  #footer a:hover { text-decoration:underline; }
+  
+  /* --- Additional styling for shop items --- */
+  #shopOverlay .shop-item {
+    background: #f8bbd0;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  #shopOverlay .shop-item strong {
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  #shopOverlay .shop-item button {
+    margin-top: 10px;
+    background: #c2185b;
+    color: white;
+    font-weight: bold;
+  }
+  
+  #shopOverlay .shop-item button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* --- Shop Tabs --- */
+  .shop-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f8bbd0;
+  }
+
+  .shop-tab {
+    padding: 12px 20px;
+    background: #f8bbd0;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 5px;
+    transition: background 0.2s;
+  }
+
+  .shop-tab:hover {
+    background: #e91e63;
+  }
+
+  .shop-tab.active {
+    background: #c2185b;
+    color: white;
+  }
+
+  .shop-tab-content {
+    display: none;
+  }
+
+  .shop-tab-content.active {
+    display: block;
+  }
+  
+  /* --- Open Shop Button --- */
+  #openShopBtn {
+    position: fixed;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    padding: 10px 15px;
+    background: #c2185b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 999;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  /* --- Additive upgrade effects --- */
+  .shop-item {
+    transition: all 0.3s ease;
+  }
+  
+  .shop-item:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+  }
+  
+  .shop-item.can-afford:hover {
+    box-shadow: 0 10px 20px rgba(233, 30, 99, 0.4);
+  }
+  
+  .shop-item.can-afford {
+    filter: blur(0);
+    background: linear-gradient(145deg, #f8bbd0, #f48fb1);
+  }
+  
+  .shop-item.can-afford strong {
+    color: #c2185b;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  .shop-item.can-afford button {
+    background: linear-gradient(to bottom, #e91e63, #c2185b);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+  }
+  
+  .shop-item.can-afford button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  }
+  
+  .shop-item button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
   </style>
 </head>
 <body class="theme-pink">
@@ -913,6 +972,48 @@ let extraCPSBreed = {
   const prestigeLevelEl = document.getElementById('prestigeLevel');
   const prestigeRequirementEl = document.getElementById('prestigeRequirement');
 
+  // Create falling kitten emoji function
+  function createFallingKitten() {
+    const kitten = document.createElement('div');
+    kitten.className = 'falling-kitten';
+    kitten.textContent = '🐱';
+    kitten.style.left = Math.random() * 100 + 'vw';
+    kitten.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    document.body.appendChild(kitten);
+    
+    // Remove element after animation completes
+    setTimeout(() => {
+      kitten.remove();
+    }, 5000);
+  }
+
+  // Create multiple falling kittens
+  function createMultipleKittens(count) {
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        createFallingKitten();
+      }, i * 100);
+    }
+  }
+
+  // Update shop item affordability status
+  function updateShopAffordability() {
+    // Get all shop items
+    const shopItems = document.querySelectorAll('.shop-item');
+    
+    shopItems.forEach(item => {
+      const costElement = item.querySelector('button').textContent.match(/Buy for (\d+)/);
+      if (costElement) {
+        const cost = parseInt(costElement[1]);
+        if (kittens >= cost) {
+          item.classList.add('can-afford');
+        } else {
+          item.classList.remove('can-afford');
+        }
+      }
+    });
+  }
+
   // Update player count from server
   async function updatePlayerCount() {
     try {
@@ -1200,6 +1301,10 @@ let extraCPSBreed = {
       clickSound.volume = userSettings.notifVolume;
       clickSound.play();
       addScore(clickValue);
+      
+      // Create falling kittens on click
+      createMultipleKittens(5);
+      
       if(!userSettings.disableAnimations){
         kittenImg.classList.add('pulse');
         setTimeout(() => kittenImg.classList.remove('pulse'), 300);
@@ -1359,6 +1464,14 @@ let extraCPSBreed = {
     const requirement = Math.pow(10, 6 + prestigeLevel);
     prestigeButton.disabled = kittens < requirement;
     prestigeRequirementEl.textContent = requirement.toLocaleString();
+    
+    // Create falling kittens if CPS > 20
+    if (totalCPS > 20) {
+      createMultipleKittens(3);
+    }
+    
+    // Update shop affordability
+    updateShopAffordability();
   }
   
   function updatePrestigeInfo() {
