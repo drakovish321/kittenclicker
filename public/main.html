@@ -1140,7 +1140,7 @@
 </div>
 
 <script>
-// All your JavaScript code here (same as before)
+// Game state variables
 let kittens = 0, clickValue = 1;
 let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
 let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
@@ -1336,6 +1336,9 @@ let achievementsData = [
   // Store last seen time
   let lastSeenTime = 0;
 
+  // User ID for saving to /userlist
+  let userId = '';
+
   // -- UI elements --
   const scoreEl = document.getElementById('score');
   const clickValueEl = document.getElementById('clickValue');
@@ -1425,6 +1428,63 @@ let achievementsData = [
       // Attempt to reconnect after 5 seconds
       setTimeout(startPlayerCountStream, 5000);
     };
+  }
+
+  // Generate random 10-character ID
+  function generateUserId() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 10; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  }
+
+  // Save user data to /userlist
+  async function saveToUserList() {
+    if (!userId) {
+      userId = generateUserId();
+    }
+    
+    try {
+      const saveData = { 
+        userId, 
+        kittens, 
+        clickValue, 
+        upgrades, 
+        upgradeCosts, 
+        selectedBreed, 
+        breedsUnlocked, 
+        achievementsData, 
+        userSettings, 
+        bonusUpgrades, 
+        bonusUpgradeCosts, 
+        prestigeLevel, 
+        offlineClicks, 
+        offlineClickCost, 
+        offlineBoost, 
+        offlineBoostCost, 
+        offlineEmpire, 
+        offlineEmpireCost, 
+        lastSeenTime 
+      };
+      
+      const response = await fetch('/userlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(saveData)
+      });
+      
+      if (response.ok) {
+        console.log('Saved to user list successfully');
+      } else {
+        console.error('Failed to save to user list');
+      }
+    } catch (error) {
+      console.error('Error saving to user list:', error);
+    }
   }
 
   // Define all functions at the top to avoid scope issues
@@ -2167,10 +2227,10 @@ let achievementsData = [
     lastSeenTime = Date.now();
   });
   
+  // Save to userlist every 5 seconds
   setInterval(() => {
     try {
-      const saveData = { kittens, clickValue, upgrades, upgradeCosts, selectedBreed, breedsUnlocked, achievementsData, userSettings, bonusUpgrades, bonusUpgradeCosts, prestigeLevel, offlineClicks, offlineClickCost, offlineBoost, offlineBoostCost, offlineEmpire, offlineEmpireCost, lastSeenTime };
-      localStorage.setItem('kittenSave', btoa(JSON.stringify(saveData)));
+      saveToUserList();
     } catch (e) {}
   }, 5000);
 
@@ -2326,7 +2386,7 @@ let achievementsData = [
       
       // Show notification
       showNotification(`Prestige Level ${prestigeLevel}! Bonuses applied.`);
-      
+
       // Update UI
       updateUI();
       updatePrestigeInfo();
