@@ -238,7 +238,6 @@
     background: #f8bbd0;
     position: relative;
     transition: transform 0.2s, box-shadow 0.2s;
-    filter: blur(2px); /* Blur by default */
   }
 
   .shop-item.can-afford {
@@ -652,91 +651,83 @@
     <div class="shop-tab" id="tabAuto" onclick="showShopTab('auto')">Auto Upgrades</div>
     <div class="shop-tab" id="tabBonus" onclick="showShopTab('bonus')">Bonus Upgrades</div>
     <div class="shop-tab" id="tabOffline" onclick="showShopTab('offline')">Offline Clicks</div>
-    <div class="shop-tab" id="tabReviews" onclick="showShopTab('reviews')">Reviews</div>
   </div>
   
   <div id="shopContent" class="shop-content">
     <div id="clickValueContent" class="shop-tab-content active">
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Milk Bowl</strong><br /><span class="item-text">+0.5 click value</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Milk Bowl</strong><br /><span class="item-text">+0.5 click value</span><br />
         <button onclick="buyUpgrade('milkBowl', 0.5)" id="milkBowlBtn">Buy for <span class="item-cost" id="milkBowlCost">25</span></button>
         <div class="upgrade-count" id="milkBowlCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Cat Food</strong><br /><span class="item-text">+2 click value</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Cat Food</strong><br /><span class="item-text">+2 click value</span><br />
         <button onclick="buyUpgrade('catFood', 2)" id="catFoodBtn">Buy for <span class="item-cost" id="catFoodCost">115</span></button>
         <div class="upgrade-count" id="catFoodCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Scratcher</strong><br /><span class="item-text">+7 click value</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Scratcher</strong><br /><span class="item-text">+7 click value</span><br />
         <button onclick="buyUpgrade('scratcher', 7)" id="scratcherBtn">Buy for <span class="item-cost" id="scratcherCost">700</span></button>
         <div class="upgrade-count" id="scratcherCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Kitten Factory</strong><br /><span class="item-text">+15 click value</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Kitten Factory</strong><br /><span class="item-text">+15 click value</span><br />
         <button onclick="buyUpgrade('kittenFactory', 15)" id="kittenFactoryBtn">Buy for <span class="item-cost" id="kittenFactoryCost">5000</span></button>
         <div class="upgrade-count" id="kittenFactoryCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">City of Kittens</strong><br /><span class="item-text">+30 click value</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">City of Kittens</strong><br /><span class="item-text">+30 click value</span><br />
         <button onclick="buyUpgrade('cityOfKittens', 30)" id="cityOfKittensBtn">Buy for <span class="item-cost" id="cityOfKittensCost">30000</span></button>
         <div class="upgrade-count" id="cityOfKittensCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">A World of Meows</strong><br /><span class="item-text">+80 click value</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">A World of Meows</strong><br /><span class="item-text">+80 click value</span><br />
         <button onclick="buyUpgrade('worldOfMeows', 80)" id="worldOfMeowsBtn">Buy for <span class="item-cost" id="worldOfMeowsCost">200000</span></button>
         <div class="upgrade-count" id="worldOfMeowsCount">0</div>
+      </div></div>
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Gold Kitty</strong><br /><span class="item-text">+150 click value</span><br />
+        <button onclick="buyUpgrade('goldKitty', 150)" id="goldKittyBtn">Buy for <span class="item-cost" id="goldKittyCost">15000000</span></button>
+        <div class="upgrade-count" id="goldKittyCount">0</div>
       </div></div>
     </div>
     
     <div id="autoContent" class="shop-tab-content">
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Auto-Mouse</strong><br /><span class="item-text">+5 CPS</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Auto-Mouse</strong><br /><span class="item-text">+5 CPS</span><br />
         <button onclick="buyAutoClicker()" id="autoClickerBtn">Buy for <span class="item-cost" id="autoClickerCost">2000</span></button>
         <div class="upgrade-count" id="autoClickerCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Auto-Kitten Farm</strong><br /><span class="item-text">+7 CPS</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Auto-Kitten Farm</strong><br /><span class="item-text">+7 CPS</span><br />
         <button onclick="buyAutoKittenFarm()" id="autoKittenFarmBtn">Buy for <span class="item-cost" id="autoKittenFarmCost">15000</span></button>
         <div class="upgrade-count" id="autoKittenFarmCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Kitten Planet</strong><br /><span class="item-text">+20 CPS</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Kitten Planet</strong><br /><span class="item-text">+20 CPS</span><br />
         <button onclick="buyKittenPlanet()" id="kittenPlanetBtn">Buy for <span class="item-cost" id="kittenPlanetCost">1000000</span></button>
         <div class="upgrade-count" id="kittenPlanetCount">0</div>
       </div></div>
     </div>
     
     <div id="bonusContent" class="shop-tab-content">
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Speed Boost</strong><br /><span class="item-text">+5% click value</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Speed Boost</strong><br /><span class="item-text">+5% click value</span><br />
         <button onclick="buyBonusUpgrade('speedBoost', 0.05)" id="speedBoostBtn">Buy for <span class="item-cost" id="speedBoostCost">5000</span></button>
         <div class="upgrade-count" id="speedBoostCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Double Points</strong><br /><span class="item-text">+10% score multiplier</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Double Points</strong><br /><span class="item-text">+10% score multiplier</span><br />
         <button onclick="buyBonusUpgrade('doublePoints', 0.1)" id="doublePointsBtn">Buy for <span class="item-cost" id="doublePointsCost">15000</span></button>
         <div class="upgrade-count" id="doublePointsCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Golden Paws</strong><br /><span class="item-text">+20% CPS</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Golden Paws</strong><br /><span class="item-text">+20% CPS</span><br />
         <button onclick="buyBonusUpgrade('goldenPaws', 0.2)" id="goldenPawsBtn">Buy for <span class="item-cost" id="goldenPawsCost">50000</span></button>
         <div class="upgrade-count" id="goldenPawsCount">0</div>
       </div></div>
     </div>
     
     <div id="offlineContent" class="shop-tab-content">
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Offline Clicks</strong><br /><span class="item-text">+1 offline click/sec</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Offline Clicks</strong><br /><span class="item-text">+1 offline click/sec</span><br />
         <button onclick="buyOfflineClick()" id="offlineClickBtn">Buy for <span class="item-cost" id="offlineClickCost">1000</span></button>
         <div class="upgrade-count" id="offlineClickCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Offline Boost</strong><br /><span class="item-text">+50% offline bonus</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Offline Boost</strong><br /><span class="item-text">+50% offline bonus</span><br />
         <button onclick="buyOfflineBoost()" id="offlineBoostBtn">Buy for <span class="item-cost" id="offlineBoostCost">5000</span></button>
         <div class="upgrade-count" id="offlineBoostCount">0</div>
       </div></div>
-      <div class="shop-item proximity-blur"><div class="shop-item-content"><strong class="item-text">Offline Empire</strong><br /><span class="item-text">+100% offline bonus</span><br />
+      <div class="shop-item"><div class="shop-item-content"><strong class="item-text">Offline Empire</strong><br /><span class="item-text">+100% offline bonus</span><br />
         <button onclick="buyOfflineEmpire()" id="offlineEmpireBtn">Buy for <span class="item-cost" id="offlineEmpireCost">25000</span></button>
         <div class="upgrade-count" id="offlineEmpireCount">0</div>
       </div></div>
-    </div>
-    
-    <div id="reviewsContent" class="shop-tab-content">
-      <div style="padding: 15px;">
-        <h3 style="margin-top: 0;">Leave a Review</h3>
-        <textarea id="reviewText" placeholder="Share your thoughts about Kitten Clicker..." style="width: 100%; height: 100px; margin-bottom: 10px;"></textarea>
-        <button onclick="submitReview()" style="background: #c2185b; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Submit Review</button>
-        
-        <h3 style="margin-top: 30px;">Recent Reviews</h3>
-        <div id="reviewsList"></div>
-      </div>
     </div>
   </div>
 </div>
@@ -831,8 +822,8 @@
 <script>
   // All your JavaScript code here (same as before)
   let kittens = 0, clickValue = 1;
-  let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
-  let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
+  let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
+  let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
   let selectedBreed = "american_shorthair";
  let breedsUnlocked = { 
     american_shorthair: true, 
@@ -1156,25 +1147,18 @@ let extraCPSBreed = {
     document.getElementById('autoContent').classList.remove('active');
     document.getElementById('bonusContent').classList.remove('active');
     document.getElementById('offlineContent').classList.remove('active');
-    document.getElementById('reviewsContent').classList.remove('active');
     
     // Remove active class from all tabs
     document.getElementById('tabClickValue').classList.remove('active');
     document.getElementById('tabAuto').classList.remove('active');
     document.getElementById('tabBonus').classList.remove('active');
     document.getElementById('tabOffline').classList.remove('active');
-    document.getElementById('tabReviews').classList.remove('active');
     
     // Show selected content
     document.getElementById(tabName + 'Content').classList.add('active');
     
     // Add active class to selected tab
     document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
-    
-    // Load reviews when reviews tab is selected
-    if (tabName === 'reviews') {
-      loadReviews();
-    }
   }
   
   function renderAchievements() {
@@ -1483,6 +1467,7 @@ let extraCPSBreed = {
     if(document.getElementById('kittenFactoryCost')) document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
     if(document.getElementById('cityOfKittensCost')) document.getElementById('cityOfKittensCost').textContent = upgradeCosts.cityOfKittens;
     if(document.getElementById('worldOfMeowsCost')) document.getElementById('worldOfMeowsCost').textContent = upgradeCosts.worldOfMeows;
+    if(document.getElementById('goldKittyCost')) document.getElementById('goldKittyCost').textContent = upgradeCosts.goldKitty;
     if(document.getElementById('autoClickerCost')) document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmCost')) document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetCost')) document.getElementById('kittenPlanetCost').textContent = upgradeCosts.kittenPlanet;
@@ -1500,6 +1485,7 @@ let extraCPSBreed = {
     if(document.getElementById('kittenFactoryBtn')) document.getElementById('kittenFactoryBtn').disabled = kittens < upgradeCosts.kittenFactory;
     if(document.getElementById('cityOfKittensBtn')) document.getElementById('cityOfKittensBtn').disabled = kittens < upgradeCosts.cityOfKittens;
     if(document.getElementById('worldOfMeowsBtn')) document.getElementById('worldOfMeowsBtn').disabled = kittens < upgradeCosts.worldOfMeows;
+    if(document.getElementById('goldKittyBtn')) document.getElementById('goldKittyBtn').disabled = kittens < upgradeCosts.goldKitty;
     if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = kittens < upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = kittens < upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetBtn')) document.getElementById('kittenPlanetBtn').disabled = kittens < upgradeCosts.kittenPlanet;
@@ -1517,6 +1503,7 @@ let extraCPSBreed = {
     if(document.getElementById('kittenFactoryCount')) document.getElementById('kittenFactoryCount').textContent = upgrades.kittenFactory;
     if(document.getElementById('cityOfKittensCount')) document.getElementById('cityOfKittensCount').textContent = upgrades.cityOfKittens;
     if(document.getElementById('worldOfMeowsCount')) document.getElementById('worldOfMeowsCount').textContent = upgrades.worldOfMeows;
+    if(document.getElementById('goldKittyCount')) document.getElementById('goldKittyCount').textContent = upgrades.goldKitty;
     if(document.getElementById('autoClickerCount')) document.getElementById('autoClickerCount').textContent = upgrades.autoClicker;
     if(document.getElementById('autoKittenFarmCount')) document.getElementById('autoKittenFarmCount').textContent = upgrades.autoKittenFarm;
     if(document.getElementById('kittenPlanetCount')) document.getElementById('kittenPlanetCount').textContent = upgrades.kittenPlanet;
@@ -1801,8 +1788,8 @@ let extraCPSBreed = {
   function resetProgress() {
     if(confirm('Are you sure you want to reset all progress?')) {
       kittens = 0; clickValue = 1;
-      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
-      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
+      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
+      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
       selectedBreed = "american_shorthair";
       breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, himalayan: false, halloween_cat: false };
       for(let a of achievementsData) a.achieved = false;
@@ -2034,8 +2021,8 @@ let extraCPSBreed = {
       // Reset kittens and upgrades but keep prestige bonuses
       kittens = 0;
       clickValue = 1;
-      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0};
-      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000};
+      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
+      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
       
       // Show notification
       showNotification(`Prestige Level ${prestigeLevel}! Bonuses applied.`);
@@ -2044,83 +2031,6 @@ let extraCPSBreed = {
       updateUI();
       updatePrestigeInfo();
     }
-  });
-
-  // --- REVIEW SYSTEM ---
-  function submitReview() {
-    const reviewText = document.getElementById('reviewText').value.trim();
-    if (!reviewText) {
-      showNotification('Please enter a review');
-      return;
-    }
-    
-    // Send review to server
-    fetch('/submit-review', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        text: reviewText,
-        timestamp: Date.now()
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        document.getElementById('reviewText').value = '';
-        window.userHasReviewed = true;
-        showNotification('Review submitted successfully!');
-        loadReviews();
-        checkAchievements();
-      } else {
-        showNotification('Error submitting review');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      showNotification('Error submitting review');
-    });
-  }
-
-  function loadReviews() {
-    fetch('/get-reviews')
-      .then(response => response.json())
-      .then(data => {
-        const reviewsList = document.getElementById('reviewsList');
-        reviewsList.innerHTML = '';
-        
-        if (data.reviews && data.reviews.length > 0) {
-          data.reviews.slice(0, 10).forEach(review => {
-            const reviewEl = document.createElement('div');
-            reviewEl.style.border = '1px solid #f8bbd0';
-            reviewEl.style.borderRadius = '8px';
-            reviewEl.style.padding = '12px';
-            reviewEl.style.marginBottom = '10px';
-            reviewEl.innerHTML = `
-              <div style="font-weight: bold; margin-bottom: 5px;">Player Review</div>
-              <div style="margin-bottom: 5px;">${review.text}</div>
-              <div style="font-size: 12px; color: #880e4f;">${formatTime(review.timestamp)}</div>
-            `;
-            reviewsList.appendChild(reviewEl);
-          });
-        } else {
-          reviewsList.innerHTML = '<p>No reviews yet. Be the first to leave one!</p>';
-        }
-      })
-      .catch(error => {
-        console.error('Error loading reviews:', error);
-      });
-  }
-
-  function formatTime(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  }
-  
-  // Save last seen time on page unload
-  window.addEventListener('beforeunload', () => {
-    lastSeenTime = Date.now();
   });
 </script>
 </body>
