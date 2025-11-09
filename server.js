@@ -4,18 +4,33 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Directories
+const DATA_DIR = path.join(__dirname, 'data');
+const PUBLIC_DIR = path.join(__dirname, 'public');
+const USER_DATA_FILE = path.join(DATA_DIR, 'user_data.json');
+
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(PUBLIC_DIR));
 
 // In-memory storage for user data
+// Each user will have { lastUpdated: timestamp, playerCount: number, ...otherData }
 const userData = new Map();
+
+// Ensure data directory exists
+async function ensureDataDir() {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+  } catch (error) {
+    console.error('Error creating data directory:', error);
+  }
+}
 
 // Save user data to file
 async function saveUserData() {
   try {
-    const data = JSON.stringify([...userData.entries()]);
-    await fs.writeFile('user_data.json', data);
+    const data = JSON.stringify([...userData.entries()], null, 2);
+    await fs.writeFile(USER_DATA_FILE, data);
   } catch (error) {
     console.error('Error saving user data:', error);
   }
@@ -24,30 +39,31 @@ async function saveUserData() {
 // Load user data from file
 async function loadUserData() {
   try {
-    const data = await fs.readFile('user_data.json', 'utf8');
+    const data = await fs.readFile(USER_DATA_FILE, 'utf8');
     const parsed = JSON.parse(data);
     userData.clear();
     parsed.forEach(([id, user]) => userData.set(id, user));
     console.log(`Loaded ${userData.size} users from file`);
   } catch (error) {
-    console.log('No existing user data file found');
+    console.log('No existing user data file found, starting fresh');
   }
 }
 
-// Endpoint to save user data
+// Endpoint to save/update user data
 app.post('/userlist', async (req, res) => {
   try {
-    const { userId, ...userDataToSave } = req.body;
-    
-    if (!userId) {
-      return res.status(400).json({ error: 'Missing userId' });
+    const { userId, playerCount, ...otherData } = req.body;
+
+    if (!userId || typeof userId !== 'string') {
+      return res.status(400).json({ error: 'Missing or invalid userId' });
     }
-    
+
     userData.set(userId, {
-      ...userDataToSave,
-      lastUpdated: Date.now()
+      playerCount: typeof playerCount === 'number' ? playerCount : 0,
+      lastUpdated: Date.now(),
+      ...otherData
     });
-    
+
     await saveUserData();
     res.json({ success: true, message: 'Data saved successfully' });
   } catch (error) {
@@ -56,16 +72,22 @@ app.post('/userlist', async (req, res) => {
   }
 });
 
-// Endpoint to get player count
+// Endpoint to get global player counts
 app.get('/player-count', (req, res) => {
-  // Simple mock data - in real implementation, this would come from database
-  res.json({
-    current: Math.floor(Math.random() * 1000) + 500,
-    total: Math.floor(Math.random() * 10000) + 5000
+  let current = 0;
+  let total = 0;
+
+  userData.forEach(user => {
+    if (user.playerCount && typeof user.playerCount === 'number') {
+      current += user.playerCount;
+      total += user.playerCount; // Could also track total separately if needed
+    }
   });
+
+  res.json({ current, total });
 });
 
-// Endpoint for real-time player count updates (Server-Sent Events)
+// SSE endpoint for real-time updates
 app.get('/player-count-stream', (req, res) => {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
@@ -74,35 +96,42 @@ app.get('/player-count-stream', (req, res) => {
     'Access-Control-Allow-Origin': '*'
   });
 
+  // Function to send current counts
+  const sendCounts = () => {
+    let current = 0;
+    let total = 0;
+
+    userData.forEach(user => {
+      if (user.playerCount && typeof user.playerCount === 'number') {
+        current += user.playerCount;
+        total += user.playerCount;
+      }
+    });
+
+    res.write(`data: ${JSON.stringify({ current, total })}\n\n`);
+  };
+
   // Send initial data
-  res.write(`data: ${JSON.stringify({
-    current: Math.floor(Math.random() * 1000) + 500,
-    total: Math.floor(Math.random() * 10000) + 5000
-  })}\n\n`);
+  sendCounts();
 
-  // Send updates every 5 seconds
-  const interval = setInterval(() => {
-    res.write(`data: ${JSON.stringify({
-      current: Math.floor(Math.random() * 1000) + 500,
-      total: Math.floor(Math.random() * 10000) + 5000
-    })}\n\n`);
-  }, 5000);
+  // Update every 5 seconds
+  const interval = setInterval(sendCounts, 5000);
 
-  // Clean up on client disconnect
   req.on('close', () => {
     clearInterval(interval);
   });
 });
 
-// Serve the main HTML file
+// Serve main HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'main.html'));
+  res.sendFile(path.join(PUBLIC_DIR, 'main.html'));
 });
 
-// Initialize the server
+// Initialize server
 async function init() {
+  await ensureDataDir();
   await loadUserData();
-  
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
