@@ -103,13 +103,17 @@
   }
 
   #stats {
-    margin-bottom: 30px;
-    font-size: 1.2rem;
+    margin: 10px 0 15px;
+    font-size: 1.4rem;
     background: rgba(255, 255, 255, 0.7);
     padding: 12px 20px;
     border-radius: 20px;
     display: inline-block;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   img#kitten {
@@ -1962,7 +1966,7 @@ let achievementsData = [
     let baseClicksPerSecond = offlineClicks;
     
     // Apply boosts
-    let boostMultiplier = 1 + (offlineBoost * 0.5) + (offlineEmpire);
+    let boostMultiplier = 1 + (offlineBoost * 0.5) + (offlineEmpire * 0.5);
     
     // Calculate total offline bonus
     const offlineBonus = baseClicksPerSecond * offlineTime * boostMultiplier;
