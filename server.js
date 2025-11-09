@@ -1,115 +1,71 @@
-// server.js
 const express = require('express');
-const app = express();
+const fs = require('fs').promises;
 const path = require('path');
-const fs = require('fs');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// --- Config ---
-const PORT = process.env.PORT || 10000;
-const OFFLINE_FILE = path.join(__dirname, 'offlineData.json');
-const OFFLINE_SAVE_INTERVAL = 5000; // Save offline data every 5 seconds
-const POINTS_PER_SECOND_OFFLINE = 1; // Points earned per second offline
-
-// --- In-memory storage ---
-let currentPlayers = 0;          // Players currently connected
-let totalUniquePlayers = 0;      // Total unique players
-let totalViews = 0;              // Total page loads
-let activePlayers = new Set();   // Track active players
-let reviews = [];                // Last 100 reviews
-let offlineData = new Map();     // Offline player data keyed by playerId or IP
-
-// --- Load persistent offlineData ---
-if (fs.existsSync(OFFLINE_FILE)) {
-  try {
-    const raw = JSON.parse(fs.readFileSync(OFFLINE_FILE, 'utf8') || '{}');
-    offlineData = new Map(Object.entries(raw));
-    // Convert points/lastSeen to numbers
-    for (const [k, v] of offlineData) {
-      v.points = Number(v.points || 0);
-      v.lastSeen = Number(v.lastSeen || Date.now());
-      offlineData.set(k, v);
-    }
-  } catch (err) {
-    console.error('Error loading offlineData.json:', err);
-    offlineData = new Map();
-  }
-}
-
-// --- Helper functions ---
-app.set('trust proxy', true); // For accurate IPs behind reverse proxies
-
-function getClientIp(req) {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return req.ip || req.connection.remoteAddress || '';
-}
-
-function awardOfflinePoints(stored, nowMs) {
-  const elapsedMs = Math.max(0, nowMs - (stored.lastSeen || nowMs));
-  const points = Math.floor(elapsedMs / 1000) * POINTS_PER_SECOND_OFFLINE;
-  stored.points = (stored.points || 0) + points;
-  stored.lastSeen = nowMs;
-  return stored;
-}
-
-// Persist offlineData to file periodically
-function persistOfflineData() {
-  try {
-    const obj = Object.fromEntries([...offlineData.entries()]);
-    fs.writeFileSync(OFFLINE_FILE, JSON.stringify(obj, null, 2));
-  } catch (e) {
-    console.error('Error saving offlineData:', e);
-  }
-}
-setInterval(persistOfflineData, OFFLINE_SAVE_INTERVAL);
-process.on('exit', persistOfflineData);
-process.on('SIGINT', () => { persistOfflineData(); process.exit(); });
-
-// --- Middleware: track active players & offline points ---
+// Middleware
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname)));
 
-app.use((req, res, next) => {
-  const clientId = req.headers['x-client-id'] || getClientIp(req) || Date.now() + Math.random();
-  const now = Date.now();
+// In-memory storage for user data
+const userData = new Map();
 
-  // Update offline points
-  let stored = offlineData.get(clientId);
-  if (!stored) {
-    stored = { points: 0, lastSeen: now };
-    totalUniquePlayers++; // new unique player
-  } else {
-    stored = awardOfflinePoints(stored, now);
+// Save user data to file
+async function saveUserData() {
+  try {
+    const data = JSON.stringify([...userData.entries()]);
+    await fs.writeFile('user_data.json', data);
+  } catch (error) {
+    console.error('Error saving user data:', error);
   }
-  offlineData.set(clientId, stored);
+}
 
-  // Track active players
-  activePlayers.add(clientId);
-  currentPlayers = activePlayers.size;
+// Load user data from file
+async function loadUserData() {
+  try {
+    const data = await fs.readFile('user_data.json', 'utf8');
+    const parsed = JSON.parse(data);
+    userData.clear();
+    parsed.forEach(([id, user]) => userData.set(id, user));
+    console.log(`Loaded ${userData.size} users from file`);
+  } catch (error) {
+    console.log('No existing user data file found');
+  }
+}
 
-  req.on('close', () => {
-    activePlayers.delete(clientId);
-    currentPlayers = activePlayers.size;
-  });
-
-  next();
+// Endpoint to save user data
+app.post('/userlist', async (req, res) => {
+  try {
+    const { userId, ...userDataToSave } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'Missing userId' });
+    }
+    
+    userData.set(userId, {
+      ...userDataToSave,
+      lastUpdated: Date.now()
+    });
+    
+    await saveUserData();
+    res.json({ success: true, message: 'Data saved successfully' });
+  } catch (error) {
+    console.error('Error saving user data:', error);
+    res.status(500).json({ error: 'Failed to save data' });
+  }
 });
 
-// --- Serve main.html ---
-app.get('/', (req, res) => {
-  totalViews++; // count every page load
-  res.sendFile(path.join(__dirname, 'public', 'main.html'));
-});
-
-// --- Player count endpoints ---
+// Endpoint to get player count
 app.get('/player-count', (req, res) => {
+  // Simple mock data - in real implementation, this would come from database
   res.json({
-    currentPlayers,
-    totalUniquePlayers,
-    totalViews
+    current: Math.floor(Math.random() * 1000) + 500,
+    total: Math.floor(Math.random() * 10000) + 5000
   });
 });
 
+// Endpoint for real-time player count updates (Server-Sent Events)
 app.get('/player-count-stream', (req, res) => {
   res.writeHead(200, {
     'Content-Type': 'text/event-stream',
@@ -117,53 +73,39 @@ app.get('/player-count-stream', (req, res) => {
     'Connection': 'keep-alive',
     'Access-Control-Allow-Origin': '*'
   });
-  res.write(`data: ${JSON.stringify({ currentPlayers, totalUniquePlayers, totalViews })}\n\n`);
+
+  // Send initial data
+  res.write(`data: ${JSON.stringify({
+    current: Math.floor(Math.random() * 1000) + 500,
+    total: Math.floor(Math.random() * 10000) + 5000
+  })}\n\n`);
+
+  // Send updates every 5 seconds
   const interval = setInterval(() => {
-    res.write(`data: ${JSON.stringify({ currentPlayers, totalUniquePlayers, totalViews })}\n\n`);
+    res.write(`data: ${JSON.stringify({
+      current: Math.floor(Math.random() * 1000) + 500,
+      total: Math.floor(Math.random() * 10000) + 5000
+    })}\n\n`);
   }, 5000);
-  req.on('close', () => clearInterval(interval));
+
+  // Clean up on client disconnect
+  req.on('close', () => {
+    clearInterval(interval);
+  });
 });
 
-// --- Reviews endpoints ---
-app.post('/submit-review', (req, res) => {
-  const { text, timestamp } = req.body;
-  if (!text || !timestamp) return res.json({ success: false, error: 'Missing required fields' });
-  reviews.push({ text, timestamp });
-  if (reviews.length > 100) reviews = reviews.slice(-100);
-  res.json({ success: true });
+// Serve the main HTML file
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/get-reviews', (req, res) => {
-  res.json({ reviews: reviews.slice(-10).reverse() });
-});
+// Initialize the server
+async function init() {
+  await loadUserData();
+  
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
-// --- Offline data endpoints ---
-app.post('/save-offline-data', (req, res) => {
-  const { playerId, offlineData: data } = req.body;
-  if (!playerId || !data) return res.json({ success: false, error: 'Missing required fields' });
-  offlineData.set(playerId, data);
-  res.json({ success: true });
-});
-
-app.post('/get-offline-data', (req, res) => {
-  const { playerId } = req.body;
-  if (!playerId) return res.json({ success: false, error: 'Missing player ID' });
-  const data = offlineData.get(playerId);
-  if (data) res.json({ success: true, data });
-  else res.json({ success: false, error: 'No offline data found' });
-});
-
-// --- Endpoint to get live points by clientId or IP ---
-app.get('/my-offline', (req, res) => {
-  const clientId = req.headers['x-client-id'] || getClientIp(req);
-  if (!clientId) return res.json({ success: false, error: 'No client ID or IP found' });
-  const now = Date.now();
-  let stored = offlineData.get(clientId);
-  if (!stored) stored = { points: 0, lastSeen: now };
-  else stored = awardOfflinePoints(stored, now);
-  offlineData.set(clientId, stored);
-  res.json({ success: true, points: stored.points, lastSeen: stored.lastSeen });
-});
-
-// --- Start server ---
-app.listen(PORT, () => console.log(`Kitten Clicker server running on port ${PORT}`));
+init().catch(console.error);
