@@ -2460,6 +2460,50 @@ let achievementsData = [
     openShopBtn.style.display = 'none';
   });
 
+  // Close shop properly
+  function closeOverlay(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+    if (id === 'shopOverlay') {
+      // Don't hide the open shop button - allow re-opening
+      // openShopBtn.style.display = 'block';
+    }
+  }
+
+  // Fix for shop overlay closing
+  document.querySelector('#shopOverlay .closeOverlay').addEventListener('click', function() {
+    shopOverlay.classList.remove('active');
+    openShopBtn.style.display = 'block';
+  });
+
+  // --- SAVE TO LOCAL STORAGE EVERY 5 SECONDS ---
+  setInterval(() => {
+    try {
+      const saveData = { 
+        kittens, 
+        clickValue, 
+        upgrades, 
+        upgradeCosts, 
+        selectedBreed, 
+        breedsUnlocked, 
+        achievementsData, 
+        userSettings, 
+        bonusUpgrades, 
+        bonusUpgradeCosts, 
+        prestigeLevel, 
+        offlineClicks, 
+        offlineClickCost, 
+        offlineBoost, 
+        offlineBoostCost, 
+        offlineEmpire, 
+        offlineEmpireCost, 
+        lastSeenTime 
+      };
+      const saveString = btoa(JSON.stringify(saveData));
+      localStorage.setItem('kittenSave', saveString);
+    } catch (e) {}
+  }, 5000);
+
   // --- PRESTIGE LOGIC ---
   prestigeButton.addEventListener('click', function() {
     const requirement = Math.pow(10, 6 + prestigeLevel);
