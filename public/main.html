@@ -938,6 +938,7 @@
 </head>
 <body class="theme-pink">
 <audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa6e3e.mp3" preload="auto"></audio>
+<audio id="meowSound" src="sounds/cat-meow.mp3" preload="auto"></audio>
 <h1>Kitten Clicker</h1>
 <p id="score">Kittens: 0</p>
 <p id="stats">Click Value: <span id="clickValue">1</span> | CPS: <span id="autoClickers">0</span></p>
@@ -1350,6 +1351,7 @@ let achievementsData = [
   const autoClickersEl = document.getElementById('autoClickers');
   const kittenImg = document.getElementById('kitten');
   const clickSound = document.getElementById('clickSound');
+  const meowSound = document.getElementById('meowSound');
   const mysteryKittenBtn = document.getElementById('mysteryKittenBtn');
   const openShopBtn = document.getElementById('openShopBtn');
   const shopOverlay = document.getElementById('shopOverlay');
@@ -1357,6 +1359,9 @@ let achievementsData = [
   const prestigeButton = document.getElementById('prestigeButton');
   const prestigeLevelEl = document.getElementById('prestigeLevel');
   const prestigeRequirementEl = document.getElementById('prestigeRequirement');
+
+  // Track manual clicks
+  let manualClickCount = 0;
 
   // Create falling kitten emoji function
   function createFallingKitten() {
@@ -1727,6 +1732,17 @@ let achievementsData = [
       clickSound.currentTime = 0;
       clickSound.volume = userSettings.notifVolume;
       clickSound.play();
+      
+      // Increment manual click counter
+      manualClickCount++;
+      
+      // Play meow sound every 100 clicks
+      if (manualClickCount % 100 === 0) {
+        meowSound.currentTime = 0;
+        meowSound.volume = userSettings.notifVolume;
+        meowSound.play();
+      }
+      
       addScore(clickValue);
       
       // Create falling kittens on click
