@@ -1001,6 +1001,67 @@
     90% { opacity: 1; transform: translateX(-50%) translateY(0); }
     100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
   }
+
+  /* --- Auth Overlay --- */
+  #authOverlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    padding: 30px;
+    z-index: 1002;
+    display: none;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+  }
+  
+  #authOverlay.active {
+    display: block;
+  }
+  
+  #authOverlay h2 {
+    margin-top: 0;
+    color: #c2185b;
+    font-size: 2rem;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  #authOverlay input {
+    width: 90%;
+    padding: 12px;
+    font-size: 16px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 2px solid #f8bbd0;
+    background: white;
+  }
+  
+  #authOverlay button {
+    margin: 10px 0;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 90%;
+  }
+  
+  #signInButton {
+    background: linear-gradient(to right, #c2185b, #e91e63);
+    color: white;
+  }
+  
+  #signUpButton {
+    background: linear-gradient(to right, #4caf50, #81c784);
+    color: white;
+  }
   </style>
 </head>
 <body class="theme-pink">
@@ -1014,6 +1075,13 @@
 
 <!-- Open Shop Button -->
 <button id="openShopBtn">🛒 Shop</button>
+
+<!-- Auth Button -->
+<div id="authContainer" style="position: fixed; bottom: 20px; right: 20px; z-index: 1002;">
+  <button id="authButton" style="padding: 12px 20px; background: linear-gradient(to right, #c2185b, #e91e63); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+    Sign In
+  </button>
+</div>
 
 <!-- Prestige Overlay -->
 <div id="prestigeOverlay">
@@ -1212,8 +1280,154 @@
   </div>
 </div>
 
+<!-- Auth Overlay -->
+<div id="authOverlay">
+  <button class="closeOverlay" onclick="closeAuthOverlay()">×</button>
+  <h2>Authentication</h2>
+  <div id="authForm">
+    <input type="email" id="authEmail" placeholder="Email" style="width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 2px solid #f8bbd0; background: white;">
+    <input type="password" id="authPassword" placeholder="Password" style="width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 2px solid #f8bbd0; background: white;">
+    <button id="signInButton" onclick="signIn(document.getElementById('authEmail').value, document.getElementById('authPassword').value)" style="margin: 10px 0; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; background: linear-gradient(to right, #c2185b, #e91e63); color: white; font-weight: bold;">Sign In</button>
+    <button id="signUpButton" onclick="signUp(document.getElementById('authEmail').value, document.getElementById('authPassword').value)" style="margin: 10px 0; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; background: linear-gradient(to right, #4caf50, #81c784); color: white; font-weight: bold;">Sign Up</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script>
-// Game state variables
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCEg0uIXitNr9zGqj0DCBumG7AarwBVgRw",
+  authDomain: "kittenclickeraccount.firebaseapp.com",
+  projectId: "kittenclickeraccount",
+  storageBucket: "kittenclickeraccount.firebasestorage.app",
+  messagingSenderId: "905727568357",
+  appId: "1:905727568357:web:fca57de25b30d8c167670c",
+  measurementId: "G-KRL8TRQ8BJ"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Authentication state tracking
+let currentUser = null;
+let authOverlayOpen = false;
+
+// Function to open overlays (now checks authentication)
+function openOverlay(id) {
+  // If user is not authenticated and trying to open protected overlays
+  if (!currentUser && ['progressOverlay', 'settingsOverlay', 'achievementsOverlay', 'breedsOverlay'].includes(id)) {
+    // Show auth overlay first
+    showAuthOverlay();
+    authOverlayOpen = true;
+    return;
+  }
+  
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'block';
+  if(id === 'achievementsOverlay') renderAchievements();
+  if(id === 'breedsOverlay') renderBreeds();
+  if(id === 'settingsOverlay') updateSettingsUI();
+  if(id === 'prestigeOverlay') updatePrestigeInfo();
+}
+
+// Show authentication overlay
+function showAuthOverlay() {
+  const overlay = document.getElementById('authOverlay');
+  if (overlay) {
+    overlay.style.display = 'block';
+    overlay.classList.add('active');
+  }
+}
+
+// Close authentication overlay
+function closeAuthOverlay() {
+  const overlay = document.getElementById('authOverlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+    overlay.classList.remove('active');
+  }
+  authOverlayOpen = false;
+}
+
+// Toggle authentication state
+function toggleAuthState() {
+  if (currentUser) {
+    // Sign out
+    auth.signOut().then(() => {
+      currentUser = null;
+      document.getElementById('authButton').textContent = 'Sign In';
+      document.getElementById('authButton').style.background = 'linear-gradient(to right, #c2185b, #e91e63)';
+      showNotification('Signed out successfully');
+    });
+  } else {
+    // Show auth overlay
+    showAuthOverlay();
+  }
+}
+
+// Handle sign in
+function signIn(email, password) {
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      currentUser = userCredential.user;
+      document.getElementById('authButton').textContent = 'Sign Out';
+      document.getElementById('authButton').style.background = 'linear-gradient(to right, #b71c1c, #d32f2f)';
+      closeAuthOverlay();
+      showNotification('Signed in successfully');
+      
+      // If an overlay was pending, reopen it
+      if (authOverlayOpen) {
+        // Reopen the overlay that triggered auth
+        // This would require tracking which overlay was requested
+        authOverlayOpen = false;
+      }
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      showNotification('Sign in failed: ' + errorMessage);
+    });
+}
+
+// Handle sign up
+function signUp(email, password) {
+  auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      currentUser = userCredential.user;
+      document.getElementById('authButton').textContent = 'Sign Out';
+      document.getElementById('authButton').style.background = 'linear-gradient(to right, #b71c1c, #d32f2f)';
+      closeAuthOverlay();
+      showNotification('Account created and signed in successfully');
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      showNotification('Sign up failed: ' + errorMessage);
+    });
+}
+
+// Listen for auth state changes
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    currentUser = user;
+    document.getElementById('authButton').textContent = 'Sign Out';
+    document.getElementById('authButton').style.background = 'linear-gradient(to right, #b71c1c, #d32f2f)';
+  } else {
+    currentUser = null;
+    document.getElementById('authButton').textContent = 'Sign In';
+    document.getElementById('authButton').style.background = 'linear-gradient(to right, #c2185b, #e91e63)';
+  }
+});
+
+// Add event listener to auth button
+document.getElementById('authButton').addEventListener('click', toggleAuthState);
+
+// Add overlay closing functionality for auth overlay
+document.querySelector('#authOverlay .closeOverlay').addEventListener('click', closeAuthOverlay);
+
+// Game state variables (existing code remains unchanged)
 let kittens = 0, clickValue = 1;
 let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
 let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
@@ -1223,28 +1437,32 @@ let breedsUnlocked = {
     maine_coon: false, 
     siamese: false,
     himalayan: false,
-    halloween_cat: false
+    halloween_cat: false,
+    cat_of_the_cosmos: false
 };
 let breedImages = {
     american_shorthair: "https://cdn.pixabay.com/photo/2017/11/09/21/41/american-shorthair-2934720_1280.jpg",
     maine_coon: "https://cdn.pixabay.com/photo/2021/12/17/19/15/pet-6877246_1280.jpg",
     siamese: "https://cdn.pixabay.com/photo/2017/02/15/12/12/cat-2068462_1280.jpg",
     himalayan: "https://cdn.pixabay.com/photo/2016/03/24/21/21/cat-1277665_1280.jpg",
-    halloween_cat: "https://cdn.pixabay.com/photo/2022/08/06/15/46/halloween-7368864_1280.jpg"
+    halloween_cat: "https://cdn.pixabay.com/photo/2022/08/06/15/46/halloween-7368864_1280.jpg",
+    cat_of_the_cosmos: "https://cdn.pixabay.com/photo/2025/11/10/12/55/cat-9947981_1280.jpg"
 };
 let breedNames = {
     american_shorthair: "American Shorthair",
     maine_coon: "Maine Coon",
     siamese: "Siamese",
     himalayan: "Himalayan",
-    halloween_cat: "Halloween Cat"
+    halloween_cat: "Halloween Cat",
+    cat_of_the_cosmos: "Cat of the Cosmos"
 };
 let extraCPSBreed = {
     american_shorthair: 0,
     maine_coon: 5,
     siamese: 20,
     himalayan: 7,
-    halloween_cat: 100
+    halloween_cat: 100,
+    cat_of_the_cosmos: 400
 };
 let achievementsData = [
     { id: 'click1', text: 'CLICK: Click the kitten!', achieved: false, condition: () => kittens > 0 },
@@ -1364,7 +1582,9 @@ let achievementsData = [
     { id: 'quick_prestige_ii', text: 'Quick Prestige II | Prestige 3 times in one hour', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'persistent_saver', text: 'Persistent Saver | Save 10 times while offline', achieved: false, condition: () => false }, // Will be tracked separately
     { id: 'true_purrfection', text: 'True Purrfection | Unlock 50 achievements (action-based only) and give full achievements section', achieved: false, condition: () => achievementsData.filter(a => a.achieved).length >= 50 },
-    { id: 'reviewer', text: 'Reviewer | Leave your first review', achieved: false, condition: () => window.userHasReviewed }
+    { id: 'reviewer', text: 'Reviewer | Leave your first review', achieved: false, condition: () => window.userHasReviewed },
+    // New achievement for Cat of the Cosmos
+    { id: 'cosmos_unlock', text: 'Cosmic Explorer: Unlock the Cat of the Cosmos!', achieved: false, condition: () => breedsUnlocked.cat_of_the_cosmos }
   ];
   window.usedMysteryKitten = false;
   window.userHasReviewed = false;
@@ -1577,9 +1797,6 @@ let achievementsData = [
   function closeOverlay(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
-    if (id === 'shopOverlay') {
-      openShopBtn.style.display = 'block';
-    }
   }
   
   function showBreedsTab(tabName) {
@@ -1634,7 +1851,7 @@ let achievementsData = [
     list.innerHTML = '';
 
     // Add all breeds here (excluding halloween_cat)
-    ["american_shorthair", "maine_coon", "siamese", "himalayan"].forEach(breed => {
+    ["american_shorthair", "maine_coon", "siamese", "himalayan", "cat_of_the_cosmos"].forEach(breed => {
       const div = document.createElement('div');
       div.style.margin = "28px 0 25px 0";
       div.style.padding = "12px";
@@ -1655,6 +1872,8 @@ let achievementsData = [
           label += `<span class="breed-lock">🔒 (10 achievements required)</span>`;
         } else if (breed === "himalayan") {
           label += `<span class="breed-lock">🔒 (13 achievements required)</span>`;
+        } else if (breed === "cat_of_the_cosmos") {
+          label += `<span class="breed-lock">🔒 (20 achievements required)</span>`;
         }
       }
 
@@ -1663,6 +1882,7 @@ let achievementsData = [
       if (breed === "maine_coon") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +5 CPS</div>";
       if (breed === "siamese") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +20 CPS</div>";
       if (breed === "himalayan") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +30 Click Value & +7 CPS</div>";
+      if (breed === "cat_of_the_cosmos") bonusText = "<div style='font-size:15px;margin-top:4px;color:#ad1457;'><b>Bonus:</b> +300 Click Value & +400 CPS</div>";
 
       div.innerHTML = `
         <div style="font-size:20px;margin-bottom:8px;">${label}</div>
@@ -1787,6 +2007,16 @@ let achievementsData = [
       }
     }
     
+    // Check for Cat of the Cosmos unlock
+    if (!breedsUnlocked.cat_of_the_cosmos) {
+      const achievementCount = achievementsData.filter(a => a.achieved).length;
+      if (achievementCount >= 20) {
+        breedsUnlocked.cat_of_the_cosmos = true;
+        showNotification("You unlocked the Cat of the Cosmos! It will remain unlocked.");
+        achievementsChanged = true;
+      }
+    }
+    
     if (achievementsChanged) {
       renderAchievements();
       renderBreeds();
@@ -1899,6 +2129,8 @@ let achievementsData = [
       breedClickBonus = 30;
     } else if (selectedBreed === 'halloween_cat') {
       breedClickBonus = 100;
+    } else if (selectedBreed === 'cat_of_the_cosmos') {
+      breedClickBonus = 300;
     }
 
     // Apply click bonus multiplier
@@ -2106,6 +2338,21 @@ let achievementsData = [
   window.selectBreed = function(breed) {
     if (!breedsUnlocked[breed]) return; // Do nothing if breed is locked
 
+    // Check if it's Cat of the Cosmos and requirements are met
+    if (breed === 'cat_of_the_cosmos') {
+      const achievementCount = achievementsData.filter(a => a.achieved).length;
+      if (achievementCount < 20) {
+        showNotification("You need 20 achievements to unlock the Cat of the Cosmos!");
+        return;
+      }
+      
+      // Unlock the breed if requirements are met
+      if (!breedsUnlocked[breed]) {
+        breedsUnlocked[breed] = true;
+        showNotification("You unlocked the Cat of the Cosmos! It will remain unlocked.");
+      }
+    }
+
     // Check if it's halloween cat and requirements are met
     if (breed === 'halloween_cat') {
       const now = new Date();
@@ -2240,7 +2487,7 @@ let achievementsData = [
       upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
       upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
       selectedBreed = "american_shorthair";
-      breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, himalayan: false, halloween_cat: false };
+      breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, himalayan: false, halloween_cat: false, cat_of_the_cosmos: false };
       for(let a of achievementsData) a.achieved = false;
       bonusUpgrades = { speedBoost: 0, doublePoints: 0, goldenPaws: 0 };
       bonusUpgradeCosts = { speedBoost: 5000, doublePoints: 15000, goldenPaws: 50000 };
@@ -2465,8 +2712,8 @@ let achievementsData = [
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
     if (id === 'shopOverlay') {
-      // Don't hide the open shop button - allow re-opening
-      // openShopBtn.style.display = 'block';
+      // Ensure the shop button is visible when closing
+      openShopBtn.style.display = 'block';
     }
   }
 
