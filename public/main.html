@@ -1294,6 +1294,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
 // Firebase configuration
 const firebaseConfig = {
@@ -1309,10 +1310,24 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const database = firebase.database();
 
 // Authentication state tracking
 let currentUser = null;
 let authOverlayOpen = false;
+let userId = '';
+
+// Function to generate a unique user ID based on email
+function generateUserId(email) {
+  // Simple hash function for email
+  let hash = 0;
+  for (let i = 0; i < email.length; i++) {
+    const char = email.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return Math.abs(hash).toString();
+}
 
 // Function to open overlays (now checks authentication)
 function openOverlay(id) {
@@ -1372,17 +1387,14 @@ function signIn(email, password) {
   auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
       currentUser = userCredential.user;
+      userId = generateUserId(email);
       document.getElementById('authButton').textContent = 'Sign Out';
       document.getElementById('authButton').style.background = 'linear-gradient(to right, #b71c1c, #d32f2f)';
       closeAuthOverlay();
       showNotification('Signed in successfully');
       
-      // If an overlay was pending, reopen it
-      if (authOverlayOpen) {
-        // Reopen the overlay that triggered auth
-        // This would require tracking which overlay was requested
-        authOverlayOpen = false;
-      }
+      // Load user data from Firebase
+      loadUserData();
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -1396,10 +1408,14 @@ function signUp(email, password) {
   auth.createUserWithEmailAndPassword(email, password)
     .then((userCredential) => {
       currentUser = userCredential.user;
+      userId = generateUserId(email);
       document.getElementById('authButton').textContent = 'Sign Out';
       document.getElementById('authButton').style.background = 'linear-gradient(to right, #b71c1c, #d32f2f)';
       closeAuthOverlay();
       showNotification('Account created and signed in successfully');
+      
+      // Create user data in Firebase
+      saveUserData();
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -1408,14 +1424,100 @@ function signUp(email, password) {
     });
 }
 
+// Save user data to Firebase
+function saveUserData() {
+  if (!userId) return;
+  
+  const userData = { 
+    kittens, 
+    clickValue, 
+    upgrades, 
+    upgradeCosts, 
+    selectedBreed, 
+    breedsUnlocked, 
+    achievementsData, 
+    userSettings, 
+    bonusUpgrades, 
+    bonusUpgradeCosts, 
+    prestigeLevel, 
+    offlineClicks, 
+    offlineClickCost, 
+    offlineBoost, 
+    offlineBoostCost, 
+    offlineEmpire, 
+    offlineEmpireCost, 
+    lastSeenTime 
+  };
+  
+  database.ref('users/' + userId).set(userData)
+    .then(() => {
+      console.log('Data saved successfully');
+    })
+    .catch((error) => {
+      console.error('Error saving data:', error);
+    });
+}
+
+// Load user data from Firebase
+function loadUserData() {
+  if (!userId) return;
+  
+  database.ref('users/' + userId).once('value')
+    .then((snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        // Load all the saved data
+        kittens = data.kittens || 0;
+        clickValue = data.clickValue || 1;
+        upgrades = data.upgrades || upgrades;
+        upgradeCosts = data.upgradeCosts || upgradeCosts;
+        selectedBreed = data.selectedBreed || "american_shorthair";
+        breedsUnlocked = data.breedsUnlocked || breedsUnlocked;
+        
+        if (Array.isArray(data.achievementsData)) {
+          for (let ach of data.achievementsData) {
+            const found = achievementsData.find(a => a.id === ach.id);
+            if (found) found.achieved = ach.achieved;
+          }
+        }
+        
+        if (data.userSettings) {
+          userSettings = data.userSettings;
+          applyTheme(userSettings.theme);
+        }
+        
+        if (data.bonusUpgrades) bonusUpgrades = data.bonusUpgrades;
+        if (data.bonusUpgradeCosts) bonusUpgradeCosts = data.bonusUpgradeCosts;
+        if (data.prestigeLevel !== undefined) prestigeLevel = data.prestigeLevel;
+        if (data.offlineClicks !== undefined) offlineClicks = data.offlineClicks;
+        if (data.offlineClickCost !== undefined) offlineClickCost = data.offlineClickCost;
+        if (data.offlineBoost !== undefined) offlineBoost = data.offlineBoost;
+        if (data.offlineBoostCost !== undefined) offlineBoostCost = data.offlineBoostCost;
+        if (data.offlineEmpire !== undefined) offlineEmpire = data.offlineEmpire;
+        if (data.offlineEmpireCost !== undefined) offlineEmpireCost = data.offlineEmpireCost;
+        if (data.lastSeenTime !== undefined) lastSeenTime = data.lastSeenTime;
+        
+        updateUI();
+        renderAchievements();
+        renderBreeds();
+        updatePrestigeInfo();
+      }
+    })
+    .catch((error) => {
+      console.error('Error loading data:', error);
+    });
+}
+
 // Listen for auth state changes
 auth.onAuthStateChanged((user) => {
   if (user) {
     currentUser = user;
+    userId = generateUserId(user.email);
     document.getElementById('authButton').textContent = 'Sign Out';
     document.getElementById('authButton').style.background = 'linear-gradient(to right, #b71c1c, #d32f2f)';
   } else {
     currentUser = null;
+    userId = '';
     document.getElementById('authButton').textContent = 'Sign In';
     document.getElementById('authButton').style.background = 'linear-gradient(to right, #c2185b, #e91e63)';
   }
@@ -1628,9 +1730,6 @@ let achievementsData = [
   
   // Store last seen time
   let lastSeenTime = 0;
-
-  // User ID for saving to /userlist
-  let userId = '';
 
   // -- UI elements --
   const scoreEl = document.getElementById('score');
@@ -2748,6 +2847,9 @@ let achievementsData = [
       };
       const saveString = btoa(JSON.stringify(saveData));
       localStorage.setItem('kittenSave', saveString);
+      
+      // Also save to Firebase
+      saveUserData();
     } catch (e) {}
   }, 5000);
 
