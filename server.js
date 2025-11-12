@@ -122,6 +122,11 @@ app.get('/player-count-stream', (req, res) => {
   });
 });
 
+// FangDootle Browser route
+app.get('/fangdootle', (req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, 'fangdootle.html'));
+});
+
 // Serve main HTML file
 app.get('/', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'main.html'));
