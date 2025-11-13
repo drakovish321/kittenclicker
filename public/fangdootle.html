@@ -5,15 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FangDootle Browser</title>
 <style>
-  body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
-  header { background: #4a90e2; color: white; text-align: center; padding: 15px; font-size: 1.5rem; }
-  .search-bar { display: flex; margin: 10px auto; max-width: 600px; width: 90%; }
-  .search-bar input { flex: 1; padding: 10px; font-size: 1rem; border: 2px solid #ddd; border-radius: 5px 0 0 5px; }
-  .search-bar button { padding: 10px; font-size: 1rem; border: none; background: #4a90e2; color: white; border-radius: 0 5px 5px 0; cursor: pointer; }
-  #results { flex: 1; overflow-y: auto; padding: 10px; }
-  .result { margin-bottom: 15px; }
-  .result a { text-decoration: none; color: #1a0dab; font-size: 1.1rem; }
-  .result p { color: #545454; margin: 5px 0 0; font-size: 0.9rem; }
+  body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; background: #f0f0f0; }
+  header { background: #4a90e2; color: white; text-align: center; padding: 15px; font-size: 1.5rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .search-bar { display: flex; margin: 20px auto; max-width: 600px; width: 90%; }
+  .search-bar input { flex: 1; padding: 12px; font-size: 1rem; border: 2px solid #ddd; border-radius: 25px 0 0 25px; outline: none; }
+  .search-bar input:focus { border-color: #4a90e2; }
+  .search-bar button { padding: 12px 25px; font-size: 1rem; border: none; background: #4a90e2; color: white; border-radius: 0 25px 25px 0; cursor: pointer; transition: background 0.3s; }
+  .search-bar button:hover { background: #357abd; }
+  #results { flex: 1; overflow-y: auto; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
+  .result { margin-bottom: 25px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .result-title { font-size: 1.3rem; margin-bottom: 5px; }
+  .result-title a { text-decoration: none; color: #1a0dab; }
+  .result-title a:hover { text-decoration: underline; }
+  .result-url { color: #006621; font-size: 0.9rem; margin-bottom: 5px; }
+  .result-snippet { color: #545454; line-height: 1.4; }
+  .info { text-align: center; color: #666; padding: 20px; }
+  .about-link { display: block; text-align: center; margin-top: 20px; color: #4a90e2; text-decoration: none; }
+  .about-link:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -21,12 +29,13 @@
 <header>FangDootle Browser</header>
 
 <div class="search-bar">
-  <input type="text" id="searchInput" placeholder="Search the Fangdootle database!...">
+  <input type="text" id="searchInput" placeholder="Search the web with FangDootle..." autocomplete="off">
   <button id="searchBtn">Search</button>
 </div>
 
 <div id="results">
-  <p>Type a search query and press Enter or click Search.</p>
+  <p class="info">Type a search query and press Enter or click Search.</p>
+  <a href="/fangdootle/about.html" class="about-link">About Kitten Clicker →</a>
 </div>
 
 <script>
@@ -34,40 +43,113 @@ const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const resultsDiv = document.getElementById('results');
 
+// Google Custom Search API configuration
+const GOOGLE_API_KEY = 'AIzaSyBqVEm8v7rRZcvF7wIGJdS3TjGqJ5RlRX8'; // You'll need to replace this
+const SEARCH_ENGINE_ID = '017576662512468239146:omuauf_lfve'; // You'll need to replace this
+
+async function searchGoogle(query) {
+  // Check for kitten clicker related searches
+  const lowerQuery = query.toLowerCase();
+  if (lowerQuery.includes('kitten') || lowerQuery.includes('clicker') || 
+      lowerQuery.includes('kittens') || lowerQuery.includes('cat clicker')) {
+    window.location.href = 'https://kittenclicker.onrender.com';
+    return;
+  }
+
+  resultsDiv.innerHTML = '<p class="info">Searching...</p>';
+  
+  const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}`;
+  
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.error) {
+      // Fallback to DuckDuckGo if Google API fails
+      searchDuckDuckGo(query);
+      return;
+    }
+    
+    displayGoogleResults(data);
+  } catch (err) {
+    // Fallback to DuckDuckGo on error
+    searchDuckDuckGo(query);
+  }
+}
+
 async function searchDuckDuckGo(query) {
   const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&pretty=1`;
   try {
     const response = await fetch(url);
     const data = await response.json();
-    displayResults(data);
+    displayDuckDuckGoResults(data);
   } catch (err) {
-    resultsDiv.innerHTML = `<p style="color:red;">Error fetching results.</p>`;
+    resultsDiv.innerHTML = `<p style="color:red;" class="info">Error fetching results. Please try again.</p>`;
     console.error(err);
   }
 }
 
-function displayResults(data) {
+function displayGoogleResults(data) {
   resultsDiv.innerHTML = '';
-  // Use RelatedTopics or AbstractText if available
+  
+  if (!data.items || data.items.length === 0) {
+    resultsDiv.innerHTML = '<p class="info">No results found.</p>';
+    return;
+  }
+  
+  data.items.forEach(item => {
+    const div = document.createElement('div');
+    div.classList.add('result');
+    div.innerHTML = `
+      <div class="result-title">
+        <a href="${item.link}" target="_blank">${item.title}</a>
+      </div>
+      <div class="result-url">${item.displayLink}</div>
+      <div class="result-snippet">${item.snippet || ''}</div>
+    `;
+    resultsDiv.appendChild(div);
+  });
+  
+  const aboutLink = document.createElement('a');
+  aboutLink.href = '/fangdootle/about.html';
+  aboutLink.className = 'about-link';
+  aboutLink.textContent = 'About Kitten Clicker →';
+  resultsDiv.appendChild(aboutLink);
+}
+
+function displayDuckDuckGoResults(data) {
+  resultsDiv.innerHTML = '';
+  
   if (data.RelatedTopics && data.RelatedTopics.length > 0) {
     data.RelatedTopics.forEach(item => {
       if(item.Text && item.FirstURL){
         const div = document.createElement('div');
         div.classList.add('result');
-        div.innerHTML = `<a href="${item.FirstURL}" target="_blank">${item.Text}</a>`;
+        div.innerHTML = `
+          <div class="result-title">
+            <a href="${item.FirstURL}" target="_blank">${item.Text.split(' - ')[0]}</a>
+          </div>
+          <div class="result-snippet">${item.Text}</div>
+        `;
         resultsDiv.appendChild(div);
       }
     });
   } else if (data.AbstractText) {
-    resultsDiv.innerHTML = `<div class="result"><p>${data.AbstractText}</p></div>`;
+    resultsDiv.innerHTML = `<div class="result"><div class="result-snippet">${data.AbstractText}</div></div>`;
   } else {
-    resultsDiv.innerHTML = `<p>No results found.</p>`;
+    resultsDiv.innerHTML = '<p class="info">No results found.</p>';
   }
+  
+  const aboutLink = document.createElement('a');
+  aboutLink.href = '/fangdootle/about.html';
+  aboutLink.className = 'about-link';
+  aboutLink.textContent = 'About Kitten Clicker →';
+  resultsDiv.appendChild(aboutLink);
 }
 
 function handleSearch() {
   const query = searchInput.value.trim();
-  if(query) searchDuckDuckGo(query);
+  if(query) searchGoogle(query);
 }
 
 searchBtn.addEventListener('click', handleSearch);
