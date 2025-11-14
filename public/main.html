@@ -106,7 +106,7 @@
     margin: 10px 0 15px;
     font-size: 1.4rem;
     background: rgba(255, 255, 255, 0.7);
-    padding: 12px 20px;
+    padding: 12px 20px;\
     border-radius: 20px;
     display: inline-block;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -136,10 +136,10 @@
     animation: pulseAnim 0.3s ease forwards;
   }
 
-  @keyframes pulseAnim {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-    100% { transform: scale(1); }
+  @keyframes pulseAnim {\
+    0% { transform: scale(1); }\
+    50% { transform: scale(1.15); }\
+    100% { transform: scale(1); }\
   }
 
   /* Falling kitten emojis */
@@ -152,10 +152,10 @@
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
   }
 
-  @keyframes fall {
-    to {
-      transform: translateY(100vh) rotate(360deg);
-    }
+  @keyframes fall {\
+    to {\
+      transform: translateY(100vh) rotate(360deg);\
+    }\
   }
 
   /* Top buttons */
@@ -343,7 +343,7 @@
     margin-bottom: 10px;
     font-size: 1.4rem;
     color: #c2185b;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);\
   }
 
   .shop-item .item-text {
@@ -584,7 +584,7 @@
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   }
   
-  .breed-select-btn.selected {
+  .breed-select-btn.selected {\
     background: linear-gradient(to right, #4caf50, #81c784);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
@@ -616,17 +616,17 @@
     border-radius:15px; 
     font-weight:bold; 
     cursor:pointer; 
-    transition: all 0.3s;
+    transition: all 0.3s;\
     background: linear-gradient(to right, #ff9800, #ffc107);
     color: #5d4037;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     animation: pulseGlow 2s infinite;
   }
   
-  @keyframes pulseGlow {
-    0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+  @keyframes pulseGlow {\
+    0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }\
+    70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }\
+    100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }\
   }
 
   #mysteryKittenBtn:hover {
@@ -652,18 +652,18 @@
     border: 2px solid rgba(255, 255, 255, 0.5);
   }
   
-  #prestigeOverlay.active {
+  #prestigeOverlay.active {\
     display: block;
   }
   
-  #prestigeOverlay h2 {
+  #prestigeOverlay h2 {\
     margin-top: 0;
     color: #c2185b;
     font-size: 2.2rem;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
   }
   
-  #prestigeInfo {
+  #prestigeInfo {\
     margin: 25px 0;
     padding: 20px;
     background: linear-gradient(145deg, #f8bbd0, #f48fb1);
@@ -673,7 +673,7 @@
     border: 2px solid rgba(255, 255, 255, 0.5);
   }
   
-  #prestigeButton {
+  #prestigeButton {\
     background: linear-gradient(to bottom, #c2185b, #880e4f);
     color: white;
     font-weight: bold;
@@ -688,19 +688,19 @@
     width: 100%;
   }
   
-  #prestigeButton:hover {
+  #prestigeButton:hover {\
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   }
   
-  #prestigeButton:disabled {
+  #prestigeButton:disabled {\
     background: #ccc;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
   }
   
-  .prestige-bonus {
+  .prestige-bonus {\
     background: linear-gradient(to right, #e91e63, #c2185b);
     color: white;
     padding: 12px 18px;
@@ -711,108 +711,108 @@
   }
 
   /* --- Themes --- */
-  body.theme-pink { background: linear-gradient(135deg, #f8bbd0, #e1bee7); color: #880e4f; }
-  body.theme-blue { background: linear-gradient(135deg, #bbdefb, #90caf9); color: #1565c0; }
-  body.theme-dark { background: linear-gradient(135deg, #121212, #424242); color: #bb86fc; }
-  body.theme-mint { background: linear-gradient(135deg, #e0f2f1, #b2dfdb); color: #00796b; }
-  body.theme-orange { background: linear-gradient(135deg, #ffe0b2, #ffcc80); color: #e65100; }
+  body.theme-pink { background: linear-gradient(135deg, #f8bbd0, #e1bee7); color: #880e4f; }\
+  body.theme-blue { background: linear-gradient(135deg, #bbdefb, #90caf9); color: #1565c0; }\
+  body.theme-dark { background: linear-gradient(135deg, #121212, #424242); color: #bb86fc; }\
+  body.theme-mint { background: linear-gradient(135deg, #e0f2f1, #b2dfdb); color: #00796b; }\
+  body.theme-orange { background: linear-gradient(135deg, #ffe0b2, #ffcc80); color: #e65100; }\
 
   /* --- Responsive --- */
-  @media (max-width:600px){
+  @media (max-width:600px){\
     #achievementsList { 
       flex-direction:column; 
       align-items:center; 
-    }
+    }\
     .achievement-card { 
       min-width:0; 
       width:98%; 
       max-width:99vw; 
-    }
+    }\
     img#kitten { 
       width:80%; 
       max-width:300px; 
-    }
-    #shopOverlay {
+    }\
+    #shopOverlay {\
       left: 10px;
       width: calc(100% - 20px);
       height: 70vh;
-    }
-    #prestigeOverlay {
+    }\
+    #prestigeOverlay {\
       width: 90%;
       left: 5%;
       transform: translateY(-50%);
-    }
+    }\
     
-    h1 { font-size: 2.2rem; }
-    #score { font-size: 1.5rem; }
-    #stats { font-size: 1rem; }
+    h1 { font-size: 2.2rem; }\
+    #score { font-size: 1.5rem; }\
+    #stats { font-size: 1rem; }\
     
     /* Mobile-specific improvements */
-    .top-buttons {
+    .top-buttons {\
       top: 10px;
       right: 10px;
       gap: 8px;
-    }
+    }\
     
-    .top-buttons button {
+    .top-buttons button {\
       padding: 10px 16px;
       font-size: 14px;
-    }
+    }\
     
-    #openShopBtn {
+    #openShopBtn {\
       padding: 10px 14px;
       font-size: 14px;
-    }
+    }\
     
-    .shop-item {
+    .shop-item {\
       padding: 15px;
-    }
+    }\
     
-    .shop-item strong {
+    .shop-item strong {\
       font-size: 1.2rem;
-    }
+    }\
     
-    .shop-item .item-text {
+    .shop-item .item-text {\
       font-size: 1rem;
-    }
+    }\
     
-    .shop-item button {
+    .shop-item button {\
       padding: 8px 15px;
       font-size: 1rem;
-    }
+    }\
     
-    .upgrade-count {
+    .upgrade-count {\
       width: 26px;
       height: 26px;
       font-size: 12px;
-    }
+    }\
     
-    .shop-tab {
+    .shop-tab {\
       padding: 8px 16px;
       font-size: 14px;
-    }
+    }\
     
-    .shop-header h2 {
+    .shop-header h2 {\
       font-size: 1.5rem;
-    }
+    }\
     
-    #mysteryKittenBtn {
+    #mysteryKittenBtn {\
       padding: 14px 32px;
       font-size: 20px;
-    }
+    }\
     
-    .closeOverlay {
+    .closeOverlay {\
       width: 28px;
       height: 28px;
       font-size: 18px;
-    }
+    }\
     
-    #footer {
+    #footer {\
       font-size: 12px;
       bottom: 5px;
       left: 5px;
       padding: 5px 10px;
-    }
+    }\
   }
 
   /* --- Footer --- */
@@ -836,74 +836,74 @@
   }
   
   /* --- Enhanced blur effect based on proximity --- */
-  .proximity-blur {
+  .proximity-blur {\
     filter: blur(5px);
     transition: filter 0.5s ease;
   }
   
-  .proximity-blur.visible {
+  .proximity-blur.visible {\
     filter: blur(0);
   }
   
-  .proximity-blur .item-text {
+  .proximity-blur .item-text {\
     filter: blur(3px);
     transition: filter 0.5s ease;
   }
   
-  .proximity-blur.visible .item-text {
+  .proximity-blur.visible .item-text {\
     filter: blur(0);
   }
   
-  .proximity-blur .item-cost {
+  .proximity-blur .item-cost {\
     filter: blur(2px);
     transition: filter 0.5s ease;
   }
   
-  .proximity-blur.visible .item-cost {
+  .proximity-blur.visible .item-cost {\
     filter: blur(0);
   }
   
   /* --- Improved shop layout --- */
-  #shopOverlay {
+  #shopOverlay {\
     max-height: 80vh;
     overflow-y: auto;
   }
   
-  .shop-item {
+  .shop-item {\
     min-height: 120px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
   
-  .shop-item-content {
+  .shop-item-content {\
     flex-grow: 1;
     display: flex;
     flex-direction: column;
   }
   
-  .shop-item-content .item-text {
+  .shop-item-content .item-text {\
     margin-bottom: 8px;
   }
   
-  .shop-item-content .item-cost {
+  .shop-item-content .item-cost {\
     margin-top: auto;
   }
   
   /* --- Better visibility for unlocked items --- */
-  .shop-item.can-afford {
+  .shop-item.can-afford {\
     filter: blur(0) brightness(1.05);
     box-shadow: 0 6px 15px rgba(0,0,0,0.15);
     border: 2px solid #c2185b;
   }
   
-  .shop-item.can-afford:hover {
+  .shop-item.can-afford:hover {\
     box-shadow: 0 10px 25px rgba(233, 30, 99, 0.4);
     border: 2px solid #e91e63;
   }
   
   /* --- Floating Score Animation --- */
-  .floating-score {
+  .floating-score {\
     position: absolute;
     font-weight: bold;
     font-size: 22px;
@@ -913,19 +913,19 @@
     text-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
   }
   
-  @keyframes floatUp {
-    0% {
+  @keyframes floatUp {\
+    0% {\
       opacity: 1;
       transform: translateY(0) translateX(-50%);
-    }
-    100% {
+    }\
+    100% {\
       opacity: 0;
       transform: translateY(-100px) translateX(-50%);
-    }
+    }\
   }
   
   /* --- Open Shop Button --- */
-  #openShopBtn {
+  #openShopBtn {\
     position: fixed;
     top: 50%;
     left: 10px;
@@ -946,38 +946,38 @@
     gap: 8px;
   }
   
-  #openShopBtn:hover {
+  #openShopBtn:hover {\
     transform: translateY(-50%) scale(1.1);
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
   
   /* --- Additive upgrade effects --- */
-  .shop-item {
+  .shop-item {\
     transition: all 0.3s ease;
   }
   
-  .shop-item:hover {
+  .shop-item:hover {\
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
   
-  .shop-item.can-afford:hover {
+  .shop-item.can-afford:hover {\
     box-shadow: 0 12px 25px rgba(233, 30, 99, 0.4);
   }
   
-  .shop-item.can-afford {
+  .shop-item.can-afford {\
     filter: blur(0) brightness(1.05);
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     border: 2px solid #c2185b;
   }
   
-  .shop-item.can-afford:hover {
+  .shop-item.can-afford:hover {\
     box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     border: 2px solid #e91e63;
   }
   
   /* --- Notification Animation --- */
-  .notification {
+  .notification {\
     position: fixed;
     top: 90px;
     left: 50%;
@@ -995,15 +995,15 @@
     max-width: 90%;
   }
   
-  @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-    10% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  @keyframes fadeInOut {\
+    0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }\
+    10% { opacity: 1; transform: translateX(-50%) translateY(0); }\
+    90% { opacity: 1; transform: translateX(-50%) translateY(0); }\
+    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }\
   }
 
   /* --- Auth Overlay --- */
-  #authOverlay {
+  #authOverlay {\
     position: fixed;
     top: 50%;
     left: 50%;
@@ -1020,18 +1020,18 @@
     border: 2px solid rgba(255, 255, 255, 0.5);
   }
   
-  #authOverlay.active {
+  #authOverlay.active {\
     display: block;
   }
   
-  #authOverlay h2 {
+  #authOverlay h2 {\
     margin-top: 0;
     color: #c2185b;
     font-size: 2rem;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
   }
   
-  #authOverlay input {
+  #authOverlay input {\
     width: 90%;
     padding: 12px;
     font-size: 16px;
@@ -1041,7 +1041,7 @@
     background: white;
   }
   
-  #authOverlay button {
+  #authOverlay button {\
     margin: 10px 0;
     padding: 12px 24px;
     border-radius: 10px;
@@ -1053,12 +1053,12 @@
     width: 90%;
   }
   
-  #signInButton {
+  #signInButton {\
     background: linear-gradient(to right, #c2185b, #e91e63);
     color: white;
   }
   
-  #signUpButton {
+  #signUpButton {\
     background: linear-gradient(to right, #4caf50, #81c784);
     color: white;
   }
@@ -1770,7 +1770,7 @@ let achievementsData = [
       setTimeout(() => {
         createFallingKitten();
       }, i * 100);
-    }
+    }\
   }
 
   // Update shop item affordability status
@@ -1779,7 +1779,7 @@ let achievementsData = [
     const shopItems = document.querySelectorAll('.shop-item');
     
     shopItems.forEach(item => {
-      const costElement = item.querySelector('button').textContent.match(/Buy for (\d+)/);
+      const costElement = item.querySelector('button').textContent.match(/Buy for (\\d+)/);
       if (costElement) {
         const cost = parseInt(costElement[1]);
         if (kittens >= cost) {
@@ -2202,7 +2202,7 @@ let achievementsData = [
     // Calculate bonus multipliers
     const bonuses = calculateBonusMultipliers();
 
-    // --- Calculate total CPS ---
+    // --- Calculate total CPS ---\
     const totalCPS = (upgrades.autoClicker * 5 + 
                       upgrades.autoKittenFarm * 7 + 
                       upgrades.kittenPlanet * 30 + 
@@ -2220,7 +2220,7 @@ let achievementsData = [
     
     scoreEl.textContent = `Kittens: ${formatNumber(kittens * bonuses.scoreMultiplier)}`;
     
-    // --- Breed click bonus ---
+    // --- Breed click bonus ---\
     let breedClickBonus = 0;
     if (selectedBreed === 'siamese') {
       breedClickBonus = 20;
@@ -2250,14 +2250,13 @@ let achievementsData = [
     if(document.getElementById('autoClickerCost')) document.getElementById('autoClickerCost').textContent = upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmCost')) document.getElementById('autoKittenFarmCost').textContent = upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetCost')) document.getElementById('kittenPlanetCost').textContent = upgradeCosts.kittenPlanet;
-    if(document.getElementById('speedBoostCost')) document.getElementById('speedBoostCost').textContent = bonusUpgradeCosts.speedBoost;
-    if(document.getElementById('doublePointsCost')) document.getElementById('doublePointsCost').textContent = bonusUpgradeCosts.doublePoints;
-    if(document.getElementById('goldenPawsCost')) document.getElementById('goldenPawsCost').textContent = bonusUpgradeCosts.goldenPaws;
+    
+    // Update offline upgrade costs
     if(document.getElementById('offlineClickCost')) document.getElementById('offlineClickCost').textContent = offlineClickCost;
     if(document.getElementById('offlineBoostCost')) document.getElementById('offlineBoostCost').textContent = offlineBoostCost;
     if(document.getElementById('offlineEmpireCost')) document.getElementById('offlineEmpireCost').textContent = offlineEmpireCost;
     
-    // Update button states
+    // Update button states for regular and auto upgrades
     if(document.getElementById('milkBowlBtn')) document.getElementById('milkBowlBtn').disabled = kittens < upgradeCosts.milkBowl;
     if(document.getElementById('catFoodBtn')) document.getElementById('catFoodBtn').disabled = kittens < upgradeCosts.catFood;
     if(document.getElementById('scratcherBtn')) document.getElementById('scratcherBtn').disabled = kittens < upgradeCosts.scratcher;
@@ -2268,14 +2267,37 @@ let achievementsData = [
     if(document.getElementById('autoClickerBtn')) document.getElementById('autoClickerBtn').disabled = kittens < upgradeCosts.autoClicker;
     if(document.getElementById('autoKittenFarmBtn')) document.getElementById('autoKittenFarmBtn').disabled = kittens < upgradeCosts.autoKittenFarm;
     if(document.getElementById('kittenPlanetBtn')) document.getElementById('kittenPlanetBtn').disabled = kittens < upgradeCosts.kittenPlanet;
-    if(document.getElementById('speedBoostBtn')) document.getElementById('speedBoostBtn').disabled = kittens < bonusUpgradeCosts.speedBoost;
-    if(document.getElementById('doublePointsBtn')) document.getElementById('doublePointsBtn').disabled = kittens < bonusUpgradeCosts.doublePoints;
-    if(document.getElementById('goldenPawsBtn')) document.getElementById('goldenPawsBtn').disabled = kittens < bonusUpgradeCosts.goldenPaws;
+
+    // Update button states for offline upgrades
     if(document.getElementById('offlineClickBtn')) document.getElementById('offlineClickBtn').disabled = kittens < offlineClickCost;
     if(document.getElementById('offlineBoostBtn')) document.getElementById('offlineBoostBtn').disabled = kittens < offlineBoostCost;
     if(document.getElementById('offlineEmpireBtn')) document.getElementById('offlineEmpireBtn').disabled = kittens < offlineEmpireCost;
+
+    // Update bonus upgrade costs and counts (one-time purchase logic)
+    const bonusUpgradeNames = ['speedBoost', 'doublePoints', 'goldenPaws'];
+    bonusUpgradeNames.forEach(name => {
+      const btn = document.getElementById(`${name}Btn`);
+      const costEl = document.getElementById(`${name}Cost`);
+      const countEl = document.getElementById(`${name}Count`);
+
+      if (btn) {
+        if (bonusUpgrades[name] >= 1) {
+          btn.disabled = true;
+          btn.textContent = 'Purchased';
+          if (countEl) countEl.style.display = 'none'; // Hide count for one-time purchase
+        } else {
+          btn.disabled = kittens < bonusUpgradeCosts[name];
+          if (costEl) costEl.textContent = bonusUpgradeCosts[name];
+          btn.innerHTML = `Buy for <span class="item-cost" id="${name}Cost">${bonusUpgradeCosts[name]}</span>`;
+          if (countEl) {
+            countEl.style.display = 'flex'; // Show count if not purchased
+            countEl.textContent = bonusUpgrades[name];
+          }
+        }
+      }
+    });
     
-    // Update upgrade counts
+    // Update upgrade counts for regular and auto upgrades
     if(document.getElementById('milkBowlCount')) document.getElementById('milkBowlCount').textContent = upgrades.milkBowl;
     if(document.getElementById('catFoodCount')) document.getElementById('catFoodCount').textContent = upgrades.catFood;
     if(document.getElementById('scratcherCount')) document.getElementById('scratcherCount').textContent = upgrades.scratcher;
@@ -2286,9 +2308,8 @@ let achievementsData = [
     if(document.getElementById('autoClickerCount')) document.getElementById('autoClickerCount').textContent = upgrades.autoClicker;
     if(document.getElementById('autoKittenFarmCount')) document.getElementById('autoKittenFarmCount').textContent = upgrades.autoKittenFarm;
     if(document.getElementById('kittenPlanetCount')) document.getElementById('kittenPlanetCount').textContent = upgrades.kittenPlanet;
-    if(document.getElementById('speedBoostCount')) document.getElementById('speedBoostCount').textContent = bonusUpgrades.speedBoost;
-    if(document.getElementById('doublePointsCount')) document.getElementById('doublePointsCount').textContent = bonusUpgrades.doublePoints;
-    if(document.getElementById('goldenPawsCount')) document.getElementById('goldenPawsCount').textContent = bonusUpgrades.goldenPaws;
+    
+    // Update offline upgrade counts
     if(document.getElementById('offlineClickCount')) document.getElementById('offlineClickCount').textContent = offlineClicks;
     if(document.getElementById('offlineBoostCount')) document.getElementById('offlineBoostCount').textContent = offlineBoost;
     if(document.getElementById('offlineEmpireCount')) document.getElementById('offlineEmpireCount').textContent = offlineEmpire;
@@ -2361,10 +2382,17 @@ let achievementsData = [
   
   // Bonus upgrade purchase function
   function buyBonusUpgrade(name, multiplier) {
+    // Check if the upgrade has already been bought
+    if (bonusUpgrades[name] >= 1) {
+      showNotification(`You can only buy ${name} once!`);
+      return;
+    }
+
     if (kittens >= bonusUpgradeCosts[name]) {
       kittens -= bonusUpgradeCosts[name];
-      bonusUpgrades[name]++;
-      bonusUpgradeCosts[name] = Math.ceil(bonusUpgradeCosts[name] * 1.2);
+      bonusUpgrades[name]++; // Increment to 1
+      // No need to increase cost if it's a one-time purchase
+      // bonusUpgradeCosts[name] = Math.ceil(bonusUpgradeCosts[name] * 1.2);
       updateUI();
     }
   }
@@ -2431,7 +2459,7 @@ let achievementsData = [
   setInterval(() => {
     let breedCPS = extraCPSBreed[selectedBreed] || 0;
     const totalCPS = upgrades.autoClicker * 5 + upgrades.autoKittenFarm * 7 + upgrades.kittenPlanet * 30 + breedCPS;
-    if (totalCPS > 0) { addScore(totalCPS); }
+    if (totalCPS > 0) { addScore(totalCPS); }\
   }, 1000);
   
   window.selectBreed = function(breed) {
@@ -2545,7 +2573,7 @@ let achievementsData = [
     this.select();
   });
 
-  // --- SETTINGS LOGIC ---
+  // --- SETTINGS LOGIC ---\
   function updateSettingsUI() {
     document.getElementById('themeSelect').value = userSettings.theme;
     document.getElementById('floatScoreToggle').checked = userSettings.floatScore;
@@ -2556,7 +2584,7 @@ let achievementsData = [
   document.getElementById('themeSelect').addEventListener('change', function() {
     userSettings.theme = this.value;
     applyTheme(userSettings.theme);
-    try { localStorage.setItem('kittenTheme', userSettings.theme); } catch (e) {}
+    try { localStorage.setItem('kittenTheme', userSettings.theme); } catch (e) {}\
   });
   
   function applyTheme(theme) {
@@ -2583,8 +2611,8 @@ let achievementsData = [
   function resetProgress() {
     if(confirm('Are you sure you want to reset all progress?')) {
       kittens = 0; clickValue = 1;
-      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
-      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
+      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};\
+      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};\
       selectedBreed = "american_shorthair";
       breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, himalayan: false, halloween_cat: false, cat_of_the_cosmos: false };
       for(let a of achievementsData) a.achieved = false;
@@ -2601,11 +2629,11 @@ let achievementsData = [
       userSettings = {theme:"pink", floatScore:true, notifVolume:1, disableAnimations:false};
       applyTheme(userSettings.theme);
       updateUI(); renderAchievements(); renderBreeds(); updatePrestigeInfo();
-      try { localStorage.removeItem('kittenSave'); } catch(e){}
+      try { localStorage.removeItem('kittenSave'); } catch(e){}\
     }
   }
 
-  // --- SAVE/LOAD ON PAGE LOAD ---
+  // --- SAVE/LOAD ON PAGE LOAD ---\
   window.addEventListener('load', () => {
     try {
       const saved = localStorage.getItem('kittenSave');
@@ -2637,13 +2665,13 @@ let achievementsData = [
         if (data.offlineEmpireCost !== undefined) offlineEmpireCost = data.offlineEmpireCost;
         if (data.lastSeenTime !== undefined) lastSeenTime = data.lastSeenTime;
       }
-    } catch (e) {}
+    } catch (e) {}\
     try {
       const savedTheme = localStorage.getItem('kittenTheme');
       if (savedTheme) {
         userSettings.theme = savedTheme;
       }
-    } catch (e) {}
+    } catch (e) {}\
     applyTheme(userSettings.theme);
     updateSettingsUI();
     updateUI();
@@ -2666,10 +2694,10 @@ let achievementsData = [
   setInterval(() => {
     try {
       saveToUserList();
-    } catch (e) {}
+    } catch (e) {}\
   }, 5000);
 
-  // --- MYSTERY KITTEN RANDOM SPAWN ---
+  // --- MYSTERY KITTEN RANDOM SPAWN ---\
   let mysteryKittenTimeout = null;
   function scheduleMysteryKitten() {
     const randomDelay = Math.floor(Math.random() * 1000); // 0-999 ms
@@ -2716,7 +2744,7 @@ let achievementsData = [
     scheduleMysteryKitten();
   });
 
-  // --- CONSOLE FUNCTIONALITY ---
+  // --- CONSOLE FUNCTIONALITY ---\
   let developerMode = false;
   
   // Developer mode toggle using Ctrl+Shift+D
@@ -2800,7 +2828,7 @@ let achievementsData = [
   // Update player count periodically (fallback)
   setInterval(updatePlayerCount, 30000);
 
-  // --- SHOP OPENING LOGIC ---
+  // --- SHOP OPENING LOGIC ---\
   openShopBtn.addEventListener('click', function() {
     shopOverlay.classList.add('active');
     openShopBtn.style.display = 'none';
@@ -2822,7 +2850,7 @@ let achievementsData = [
     openShopBtn.style.display = 'block';
   });
 
-  // --- SAVE TO LOCAL STORAGE EVERY 5 SECONDS ---
+  // --- SAVE TO LOCAL STORAGE EVERY 5 SECONDS ---\
   setInterval(() => {
     try {
       const saveData = { 
@@ -2844,18 +2872,18 @@ let achievementsData = [
         offlineEmpire, 
         offlineEmpireCost, 
         lastSeenTime 
-      };
+      };\
       const saveString = btoa(JSON.stringify(saveData));
       localStorage.setItem('kittenSave', saveString);
       
       // Also save to Firebase
       saveUserData();
-    } catch (e) {}
+    } catch (e) {}\
   }, 5000);
 
-  // --- PRESTIGE LOGIC ---
+  // --- PRESTIGE LOGIC ---\
   prestigeButton.addEventListener('click', function() {
-    const requirement = Math.pow(10, 6 + prestigeLevel);
+    const requirement = Math.pow(10, 6 + prestigeLevel);\
     if (kittens >= requirement) {
       // Apply prestige bonuses
       prestigeLevel++;
@@ -2863,8 +2891,8 @@ let achievementsData = [
       // Reset kittens and upgrades but keep prestige bonuses
       kittens = 0;
       clickValue = 1;
-      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
-      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
+      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};\
+      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};\
       
       // Show notification
       showNotification(`Prestige Level ${prestigeLevel}! Bonuses applied.`);
