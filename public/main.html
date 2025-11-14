@@ -103,17 +103,15 @@
   }
 
   #stats {
-    margin: 10px 0 15px;
+    margin: 10px auto 15px; /* Changed to auto for left/right to center block element */
     font-size: 1.4rem;
     background: rgba(255, 255, 255, 0.7);
     padding: 12px 20px;
     border-radius: 20px;
-    display: inline-block;
+    display: block; /* Changed from inline-block to block */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    width: fit-content; /* Make it fit its content, then center with auto margins */
     max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   img#kitten {
@@ -149,7 +147,7 @@
     z-index: 1;
     pointer-events: none;
     animation: fall linear forwards;
-    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);\
   }
 
   @keyframes fall {
@@ -309,6 +307,7 @@
     border: 2px solid rgba(255, 255, 255, 0.5);
     overflow: hidden;
     cursor: pointer;
+    min-height: 120px; /* Revert to original min-height for non-bonus items */
   }
 
   .shop-item::before {
@@ -427,7 +426,7 @@
     font-family: monospace; 
     font-size:14px; 
     resize:none; 
-    border-radius: 10px;
+    border-radius: 10px;\
     border: 2px solid #f8bbd0;
     padding: 10px;
   }
@@ -456,7 +455,7 @@
   /* --- Settings --- */
   #settingsOverlay label, #settingsOverlay select, #settingsOverlay input, #settingsOverlay button { 
     font-size:18px; 
-    display: block;
+    display: block;\
     margin-bottom: 15px;
   }
   #settingsOverlay select, #settingsOverlay input[type="range"] { 
@@ -573,7 +572,7 @@
     font-size:18px; 
     font-weight:bold; 
     cursor:pointer; 
-    transition: all 0.2s;
+    transition: all 0.2s;\
     background: linear-gradient(to right, #c2185b, #e91e63);
     color: white;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -584,7 +583,7 @@
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   }
   
-  .breed-select-btn.selected {
+  .breed-select-btn.selected {\
     background: linear-gradient(to right, #4caf50, #81c784);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
@@ -616,17 +615,17 @@
     border-radius:15px; 
     font-weight:bold; 
     cursor:pointer; 
-    transition: all 0.3s;
+    transition: all 0.3s;\
     background: linear-gradient(to right, #ff9800, #ffc107);
     color: #5d4037;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     animation: pulseGlow 2s infinite;
   }
   
-  @keyframes pulseGlow {
-    0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+  @keyframes pulseGlow {\
+    0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }\
+    70% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }\
+    100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }\
   }
 
   #mysteryKittenBtn:hover {
@@ -851,7 +850,7 @@
   }
   
   .proximity-blur.visible .item-text {
-    filter: blur(0);
+    filter: blur(0);\
   }
   
   .proximity-blur .item-cost {
@@ -989,7 +988,7 @@
     z-index: 2000;
     opacity: 0;
     animation: fadeInOut 3s ease forwards;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);\
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
     font-weight: bold;
     text-align: center;
     max-width: 90%;
@@ -1062,6 +1061,123 @@
     background: linear-gradient(to right, #4caf50, #81c784);
     color: white;
   }
+
+  /* New styles for bonus shop items */
+  .bonus-shop-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px; /* Increased height for image + details */
+    padding: 15px; /* Adjust padding for image */
+  }
+
+  .bonus-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 10px; /* Space between image and details placeholder */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+    z-index: 2; /* Ensure image is above details when not hovered */
+  }
+
+  .bonus-shop-item:hover .bonus-item-image {
+    transform: translateY(-100%); /* Move image up and out */
+    opacity: 0;
+  }
+
+  .bonus-item-details {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    opacity: 0;
+    transform: translateY(100%); /* Start from bottom, hidden */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    color: #5d4037;
+    text-align: center;
+    z-index: 1; /* Ensure details are below image initially, but come up on hover */
+  }
+
+  .bonus-shop-item:hover .bonus-item-details {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .bonus-item-details .item-title {
+    font-size: 1.4rem;
+    color: #c2185b;
+    margin-bottom: 5px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .bonus-item-details .item-description {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #5d4037;
+  }
+
+  .bonus-item-details .item-cost-display {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #880e4f;
+    margin-bottom: 15px;
+  }
+
+  .bonus-item-details button {
+    margin-top: 0;
+    width: 80%;
+    padding: 8px 15px;
+    font-size: 1rem;
+    background: linear-gradient(to bottom, #e91e63, #c2185b);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .bonus-item-details button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .bonus-item-details button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .bonus-shop-item .upgrade-count {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #c2185b;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 3; /* Ensure it's on top of everything */
+  }
   </style>
 </head>
 <body class="theme-pink">
@@ -1116,76 +1232,94 @@
   
   <div id="shopContent" class="shop-content">
     <div id="clickValueContent" class="shop-tab-content active">
-      <div class="shop-item" onclick="buyUpgrade('milkBowl', 0.5)"><div class="shop-item-content"><strong class="item-text">Milk Bowl</strong><br /><span class="item-text">+0.5 click value</span><br />
+      <div class="shop-item" onclick="buyUpgrade('milkBowl', 0.5)"><div class="shop-item-content"><strong class="item-text">Milk Bowl</strong><br /><span class="item-text"> +0.5 click value</span><br />
         <button id="milkBowlBtn">Buy for <span class="item-cost" id="milkBowlCost">25</span></button>
         <div class="upgrade-count" id="milkBowlCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyUpgrade('catFood', 2)"><div class="shop-item-content"><strong class="item-text">Cat Food</strong><br /><span class="item-text">+2 click value</span><br />
+      <div class="shop-item" onclick="buyUpgrade('catFood', 2)"><div class="shop-item-content"><strong class="item-text">Cat Food</strong><br /><span class="item-text"> +2 click value</span><br />
         <button id="catFoodBtn">Buy for <span class="item-cost" id="catFoodCost">115</span></button>
         <div class="upgrade-count" id="catFoodCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyUpgrade('scratcher', 7)"><div class="shop-item-content"><strong class="item-text">Scratcher</strong><br /><span class="item-text">+7 click value</span><br />
+      <div class="shop-item" onclick="buyUpgrade('scratcher', 7)"><div class="shop-item-content"><strong class="item-text">Scratcher</strong><br /><span class="item-text"> +7 click value</span><br />
         <button id="scratcherBtn">Buy for <span class="item-cost" id="scratcherCost">700</span></button>
         <div class="upgrade-count" id="scratcherCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyUpgrade('kittenFactory', 15)"><div class="shop-item-content"><strong class="item-text">Kitten Factory</strong><br /><span class="item-text">+15 click value</span><br />
+      <div class="shop-item" onclick="buyUpgrade('kittenFactory', 15)"><div class="shop-item-content"><strong class="item-text">Kitten Factory</strong><br /><span class="item-text"> +15 click value</span><br />
         <button id="kittenFactoryBtn">Buy for <span class="item-cost" id="kittenFactoryCost">5000</span></button>
         <div class="upgrade-count" id="kittenFactoryCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyUpgrade('cityOfKittens', 30)"><div class="shop-item-content"><strong class="item-text">City of Kittens</strong><br /><span class="item-text">+30 click value</span><br />
+      <div class="shop-item" onclick="buyUpgrade('cityOfKittens', 30)"><div class="shop-item-content"><strong class="item-text">City of Kittens</strong><br /><span class="item-text"> +30 click value</span><br />
         <button id="cityOfKittensBtn">Buy for <span class="item-cost" id="cityOfKittensCost">30000</span></button>
         <div class="upgrade-count" id="cityOfKittensCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyUpgrade('worldOfMeows', 80)"><div class="shop-item-content"><strong class="item-text">A World of Meows</strong><br /><span class="item-text">+80 click value</span><br />
+      <div class="shop-item" onclick="buyUpgrade('worldOfMeows', 80)"><div class="shop-item-content"><strong class="item-text">A World of Meows</strong><br /><span class="item-text"> +80 click value</span><br />
         <button id="worldOfMeowsBtn">Buy for <span class="item-cost" id="worldOfMeowsCost">200000</span></button>
         <div class="upgrade-count" id="worldOfMeowsCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyUpgrade('goldKitty', 150)"><div class="shop-item-content"><strong class="item-text">Gold Kitty</strong><br /><span class="item-text">+150 click value</span><br />
+      <div class="shop-item" onclick="buyUpgrade('goldKitty', 150)"><div class="shop-item-content"><strong class="item-text">Gold Kitty</strong><br /><span class="item-text"> +150 click value</span><br />
         <button id="goldKittyBtn">Buy for <span class="item-cost" id="goldKittyCost">15000000</span></button>
         <div class="upgrade-count" id="goldKittyCount">0</div>
       </div></div>
     </div>
     
     <div id="autoContent" class="shop-tab-content">
-      <div class="shop-item" onclick="buyAutoClicker()"><div class="shop-item-content"><strong class="item-text">Auto-Mouse</strong><br /><span class="item-text">+5 CPS</span><br />
+      <div class="shop-item" onclick="buyAutoClicker()"><div class="shop-item-content"><strong class="item-text">Auto-Mouse</strong><br /><span class="item-text"> +5 CPS</span><br />
         <button id="autoClickerBtn">Buy for <span class="item-cost" id="autoClickerCost">2000</span></button>
         <div class="upgrade-count" id="autoClickerCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyAutoKittenFarm()"><div class="shop-item-content"><strong class="item-text">Auto-Kitten Farm</strong><br /><span class="item-text">+7 CPS</span><br />
+      <div class="shop-item" onclick="buyAutoKittenFarm()"><div class="shop-item-content"><strong class="item-text">Auto-Kitten Farm</strong><br /><span class="item-text"> +7 CPS</span><br />
         <button id="autoKittenFarmBtn">Buy for <span class="item-cost" id="autoKittenFarmCost">15000</span></button>
         <div class="upgrade-count" id="autoKittenFarmCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyKittenPlanet()"><div class="shop-item-content"><strong class="item-text">Kitten Planet</strong><br /><span class="item-text">+30 CPS</span><br />
+      <div class="shop-item" onclick="buyKittenPlanet()"><div class="shop-item-content"><strong class="item-text">Kitten Planet</strong><br /><span class="item-text"> +30 CPS</span><br />
         <button id="kittenPlanetBtn">Buy for <span class="item-cost" id="kittenPlanetCost">1000000</span></button>
         <div class="upgrade-count" id="kittenPlanetCount">0</div>
       </div></div>
     </div>
     
     <div id="bonusContent" class="shop-tab-content">
-      <div class="shop-item" onclick="buyBonusUpgrade('speedBoost', 0.05)"><div class="shop-item-content"><strong class="item-text">Speed Boost</strong><br /><span class="item-text">+5% click value</span><br />
-        <button id="speedBoostBtn">Buy for <span class="item-cost" id="speedBoostCost">5000</span></button>
+      <div class="shop-item bonus-shop-item" onclick="buyBonusUpgrade('speedBoost', 0.05)">
+        <img src="https://cdn.pixabay.com/photo/2016/03/31/19/52/lightning-1295982_1280.png" alt="Speed Boost" class="bonus-item-image">
+        <div class="bonus-item-details">
+          <strong class="item-title">Speed Boost</strong>
+          <span class="item-description">Increases click value by 5%</span>
+          <span class="item-cost-display">Cost: <span class="item-cost" id="speedBoostCost">5000</span> Kittens</span>
+          <button id="speedBoostBtn">Buy</button>
+        </div>
         <div class="upgrade-count" id="speedBoostCount">0</div>
-      </div></div>
-      <div class="shop-item" onclick="buyBonusUpgrade('doublePoints', 0.1)"><div class="shop-item-content"><strong class="item-text">Double Points</strong><br /><span class="item-text">+10% score multiplier</span><br />
-        <button id="doublePointsBtn">Buy for <span class="item-cost" id="doublePointsCost">15000</span></button>
+      </div>
+      <div class="shop-item bonus-shop-item" onclick="buyBonusUpgrade('doublePoints', 0.1)">
+        <img src="https://cdn.pixabay.com/photo/2013/07/12/17/36/star-152438_1280.png" alt="Double Points" class="bonus-item-image">
+        <div class="bonus-item-details">
+          <strong class="item-title">Double Points</strong>
+          <span class="item-description">Increases score multiplier by 10%</span>
+          <span class="item-cost-display">Cost: <span class="item-cost" id="doublePointsCost">15000</span> Kittens</span>
+          <button id="doublePointsBtn">Buy</button>
+        </div>
         <div class="upgrade-count" id="doublePointsCount">0</div>
-      </div></div>
-      <div class="shop-item" onclick="buyBonusUpgrade('goldenPaws', 0.2)"><div class="shop-item-content"><strong class="item-text">Golden Paws</strong><br /><span class="item-text">+20% CPS</span><br />
-        <button id="goldenPawsBtn">Buy for <span class="item-cost" id="goldenPawsCost">50000</span></button>
+      </div>
+      <div class="shop-item bonus-shop-item" onclick="buyBonusUpgrade('goldenPaws', 0.2)">
+        <img src="https://cdn.pixabay.com/photo/2017/02/01/10/21/paw-2029013_1280.png" alt="Golden Paws" class="bonus-item-image">
+        <div class="bonus-item-details">
+          <strong class="item-title">Golden Paws</strong>
+          <span class="item-description">Increases CPS by 20%</span>
+          <span class="item-cost-display">Cost: <span class="item-cost" id="goldenPawsCost">50000</span> Kittens</span>
+          <button id="goldenPawsBtn">Buy</button>
+        </div>
         <div class="upgrade-count" id="goldenPawsCount">0</div>
-      </div></div>
+      </div>
     </div>
     
     <div id="offlineContent" class="shop-tab-content">
-      <div class="shop-item" onclick="buyOfflineClick()"><div class="shop-item-content"><strong class="item-text">Offline Clicks</strong><br /><span class="item-text">+1 offline click/sec</span><br />
+      <div class="shop-item" onclick="buyOfflineClick()"><div class="shop-item-content"><strong class="item-text">Offline Clicks</strong><br /><span class="item-text"> +1 offline click/sec</span><br />
         <button id="offlineClickBtn">Buy for <span class="item-cost" id="offlineClickCost">1000</span></button>
         <div class="upgrade-count" id="offlineClickCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyOfflineBoost()"><div class="shop-item-content"><strong class="item-text">Offline Boost</strong><br /><span class="item-text">+50% offline bonus</span><br />
+      <div class="shop-item" onclick="buyOfflineBoost()"><div class="shop-item-content"><strong class="item-text">Offline Boost</strong><br /><span class="item-text"> +50% offline bonus</span><br />
         <button id="offlineBoostBtn">Buy for <span class="item-cost" id="offlineBoostCost">5000</span></button>
         <div class="upgrade-count" id="offlineBoostCount">0</div>
       </div></div>
-      <div class="shop-item" onclick="buyOfflineEmpire()"><div class="shop-item-content"><strong class="item-text">Offline Empire</strong><br /><span class="item-text">+100% offline bonus</span><br />
+      <div class="shop-item" onclick="buyOfflineEmpire()"><div class="shop-item-content"><strong class="item-text">Offline Empire</strong><br /><span class="item-text"> +100% offline bonus</span><br />
         <button id="offlineEmpireBtn">Buy for <span class="item-cost" id="offlineEmpireCost">25000</span></button>
         <div class="upgrade-count" id="offlineEmpireCount">0</div>
       </div></div>
@@ -1478,7 +1612,7 @@ function loadUserData() {
           for (let ach of data.achievementsData) {
             const found = achievementsData.find(a => a.id === ach.id);
             if (found) found.achieved = ach.achieved;
-          }
+          }\
         }
         
         if (data.userSettings) {
@@ -1531,8 +1665,8 @@ document.querySelector('#authOverlay .closeOverlay').addEventListener('click', c
 
 // Game state variables (existing code remains unchanged)
 let kittens = 0, clickValue = 1;
-let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
-let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
+let upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};\
+let upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};\
 let selectedBreed = "american_shorthair";
 let breedsUnlocked = { 
     american_shorthair: true, 
@@ -1770,7 +1904,7 @@ let achievementsData = [
       setTimeout(() => {
         createFallingKitten();
       }, i * 100);
-    }
+    }\
   }
 
   // Update shop item affordability status
@@ -1779,9 +1913,9 @@ let achievementsData = [
     const shopItems = document.querySelectorAll('.shop-item');
     
     shopItems.forEach(item => {
-      const costElement = item.querySelector('button').textContent.match(/Buy for (\d+)/);
+      const costElement = item.querySelector('.item-cost'); // Target the span with class item-cost
       if (costElement) {
-        const cost = parseInt(costElement[1]);
+        const cost = parseInt(costElement.textContent);
         if (kittens >= cost) {
           item.classList.add('can-afford');
         } else {
@@ -1896,6 +2030,10 @@ let achievementsData = [
   function closeOverlay(id) {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
+    if (id === 'shopOverlay') {
+      // Ensure the shop button is visible when closing
+      openShopBtn.style.display = 'block';
+    }
   }
   
   function showBreedsTab(tabName) {
@@ -2202,7 +2340,7 @@ let achievementsData = [
     // Calculate bonus multipliers
     const bonuses = calculateBonusMultipliers();
 
-    // --- Calculate total CPS ---
+    // --- Calculate total CPS ---\
     const totalCPS = (upgrades.autoClicker * 5 + 
                       upgrades.autoKittenFarm * 7 + 
                       upgrades.kittenPlanet * 30 + 
@@ -2220,7 +2358,7 @@ let achievementsData = [
     
     scoreEl.textContent = `Kittens: ${formatNumber(kittens * bonuses.scoreMultiplier)}`;
     
-    // --- Breed click bonus ---
+    // --- Breed click bonus ---\
     let breedClickBonus = 0;
     if (selectedBreed === 'siamese') {
       breedClickBonus = 20;
@@ -2240,7 +2378,7 @@ let achievementsData = [
     kittenImg.src = breedImages[selectedBreed];
     
     // Update upgrade costs
-    if(document.getElementById('milkBowlCost')) document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;
+    if(document.getElementById('milkBowlCost')) document.getElementById('milkBowlCost').textContent = upgradeCosts.milkBowl;\
     if(document.getElementById('catFoodCost')) document.getElementById('catFoodCost').textContent = upgradeCosts.catFood;
     if(document.getElementById('scratcherCost')) document.getElementById('scratcherCost').textContent = upgradeCosts.scratcher;
     if(document.getElementById('kittenFactoryCost')) document.getElementById('kittenFactoryCost').textContent = upgradeCosts.kittenFactory;
@@ -2288,10 +2426,10 @@ let achievementsData = [
         } else {
           btn.disabled = kittens < bonusUpgradeCosts[name];
           if (costEl) costEl.textContent = bonusUpgradeCosts[name];
-          btn.innerHTML = `Buy for <span class="item-cost" id="${name}Cost">${bonusUpgradeCosts[name]}</span>`;
+          btn.textContent = 'Buy'; // Ensure button text is 'Buy' if not purchased
           if (countEl) {
             countEl.style.display = 'flex'; // Show count if not purchased
-            countEl.textContent = bonusUpgrades[name];
+            countEl.textContent = bonusUpgrades[name]; // This will be 0
           }
         }
       }
@@ -2496,7 +2634,7 @@ let achievementsData = [
       if (kittens < 100000 || achievementCount < 15) {
         showNotification("You need 100,000 kittens and 15 achievements to unlock the Halloween Cat!");
         return;
-      }
+      }\
       
       // Unlock the breed if requirements are met
       if (!breedsUnlocked[breed]) {
@@ -2541,7 +2679,7 @@ let achievementsData = [
       breedsUnlocked = data.breedsUnlocked || breedsUnlocked;
       if (Array.isArray(data.achievementsData)) {
         for (let ach of data.achievementsData) {
-          const found = achievementsData.find(a => a.id === ach.id);
+          const found = achievementsData.find(a => a.id === ach.id);\
           if (found) found.achieved = ach.achieved;
         }
       }
@@ -2573,7 +2711,7 @@ let achievementsData = [
     this.select();
   });
 
-  // --- SETTINGS LOGIC ---
+  // --- SETTINGS LOGIC ---\
   function updateSettingsUI() {
     document.getElementById('themeSelect').value = userSettings.theme;
     document.getElementById('floatScoreToggle').checked = userSettings.floatScore;
@@ -2584,7 +2722,7 @@ let achievementsData = [
   document.getElementById('themeSelect').addEventListener('change', function() {
     userSettings.theme = this.value;
     applyTheme(userSettings.theme);
-    try { localStorage.setItem('kittenTheme', userSettings.theme); } catch (e) {}
+    try { localStorage.setItem('kittenTheme', userSettings.theme); } catch (e) {}\
   });
   
   function applyTheme(theme) {
@@ -2611,8 +2749,8 @@ let achievementsData = [
   function resetProgress() {
     if(confirm('Are you sure you want to reset all progress?')) {
       kittens = 0; clickValue = 1;
-      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
-      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
+      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};\
+      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};\
       selectedBreed = "american_shorthair";
       breedsUnlocked = { american_shorthair: true, maine_coon: false, siamese: false, himalayan: false, halloween_cat: false, cat_of_the_cosmos: false };
       for(let a of achievementsData) a.achieved = false;
@@ -2626,14 +2764,14 @@ let achievementsData = [
       offlineEmpire = 0;
       offlineEmpireCost = 25000;
       lastSeenTime = 0;
-      userSettings = {theme:"pink", floatScore:true, notifVolume:1, disableAnimations:false};
+      userSettings = {theme:"pink", floatScore:true, notifVolume:1, disableAnimations:false};\
       applyTheme(userSettings.theme);
       updateUI(); renderAchievements(); renderBreeds(); updatePrestigeInfo();
-      try { localStorage.removeItem('kittenSave'); } catch(e){}
+      try { localStorage.removeItem('kittenSave'); } catch(e){}\
     }
   }
 
-  // --- SAVE/LOAD ON PAGE LOAD ---
+  // --- SAVE/LOAD ON PAGE LOAD ---\
   window.addEventListener('load', () => {
     try {
       const saved = localStorage.getItem('kittenSave');
@@ -2665,13 +2803,13 @@ let achievementsData = [
         if (data.offlineEmpireCost !== undefined) offlineEmpireCost = data.offlineEmpireCost;
         if (data.lastSeenTime !== undefined) lastSeenTime = data.lastSeenTime;
       }
-    } catch (e) {}
+    } catch (e) {}\
     try {
       const savedTheme = localStorage.getItem('kittenTheme');
       if (savedTheme) {
         userSettings.theme = savedTheme;
       }
-    } catch (e) {}
+    } catch (e) {}\
     applyTheme(userSettings.theme);
     updateSettingsUI();
     updateUI();
@@ -2694,14 +2832,14 @@ let achievementsData = [
   setInterval(() => {
     try {
       saveToUserList();
-    } catch (e) {}
+    } catch (e) {}\
   }, 5000);
 
-  // --- MYSTERY KITTEN RANDOM SPAWN ---
+  // --- MYSTERY KITTEN RANDOM SPAWN ---\
   let mysteryKittenTimeout = null;
   function scheduleMysteryKitten() {
     const randomDelay = Math.floor(Math.random() * 1000); // 0-999 ms
-    // For debug: const randomDelay = (10 + Math.random()*20)*1000;\
+    // For debug: const randomDelay = (10 + Math.random()*20)*1000;
     mysteryKittenTimeout = setTimeout(() => {
       mysteryKittenBtn.style.display = '';
     }, randomDelay);
@@ -2744,7 +2882,7 @@ let achievementsData = [
     scheduleMysteryKitten();
   });
 
-  // --- CONSOLE FUNCTIONALITY ---
+  // --- CONSOLE FUNCTIONALITY ---\
   let developerMode = false;
   
   // Developer mode toggle using Ctrl+Shift+D
@@ -2828,7 +2966,7 @@ let achievementsData = [
   // Update player count periodically (fallback)
   setInterval(updatePlayerCount, 30000);
 
-  // --- SHOP OPENING LOGIC ---
+  // --- SHOP OPENING LOGIC ---\
   openShopBtn.addEventListener('click', function() {
     shopOverlay.classList.add('active');
     openShopBtn.style.display = 'none';
@@ -2850,7 +2988,7 @@ let achievementsData = [
     openShopBtn.style.display = 'block';
   });
 
-  // --- SAVE TO LOCAL STORAGE EVERY 5 SECONDS ---
+  // --- SAVE TO LOCAL STORAGE EVERY 5 SECONDS ---\
   setInterval(() => {
     try {
       const saveData = { 
@@ -2878,10 +3016,10 @@ let achievementsData = [
       
       // Also save to Firebase
       saveUserData();
-    } catch (e) {}
+    } catch (e) {}\
   }, 5000);
 
-  // --- PRESTIGE LOGIC ---
+  // --- PRESTIGE LOGIC ---\
   prestigeButton.addEventListener('click', function() {
     const requirement = Math.pow(10, 6 + prestigeLevel);
     if (kittens >= requirement) {
@@ -2891,8 +3029,8 @@ let achievementsData = [
       // Reset kittens and upgrades but keep prestige bonuses
       kittens = 0;
       clickValue = 1;
-      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};
-      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};
+      upgrades = {milkBowl:0,catFood:0,scratcher:0,kittenFactory:0,cityOfKittens:0,worldOfMeows:0,autoClicker:0,autoKittenFarm:0,kittenPlanet:0,goldKitty:0};\
+      upgradeCosts = {milkBowl:25,catFood:115,scratcher:700,kittenFactory:5000,cityOfKittens:30000,worldOfMeows:200000,autoClicker:2000,autoKittenFarm:15000,kittenPlanet:1000000,goldKitty:15000000};\
       
       // Show notification
       showNotification(`Prestige Level ${prestigeLevel}! Bonuses applied.`);
